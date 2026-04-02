@@ -1,5 +1,19 @@
 # Superpowers
 
+## Personalized Plugin Profile
+
+This workspace is configured as a personalized plugin profile that combines:
+- Superpowers as the execution skills engine
+- Optional AI Team orchestration as the structural backbone
+
+Runtime modes:
+- `Mode A (Solo)`: Superpowers-only workflow, no team-agent dependency
+- `Mode B (Team Spine)`: Superpowers + dispatcher + specialist/implementer agents
+
+Primary runtime docs:
+- `docs/claude/runtime-modes.md`
+- `docs/claude/current-process-workflow.md`
+
 Superpowers is a complete software development workflow for your coding agents, built on top of a set of composable "skills" and some initial instructions that make sure your agent uses them.
 
 ## How it works

@@ -1,20 +1,22 @@
 {
-  "name": "superpowers",
-  "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
-  "version": "5.0.7",
+  "name": "superpowers-ai-team-personal",
+  "description": "Personalized plugin: Superpowers execution skills + optional AI Team orchestration spine",
+  "version": "5.1.0",
   "author": {
     "name": "Jesse Vincent",
     "email": "jesse@fsck.com"
   },
-  "homepage": "https://github.com/obra/superpowers",
-  "repository": "https://github.com/obra/superpowers",
+  "homepage": "https://github.com/your-org/superpowers-ai-team-personal",
+  "repository": "https://github.com/your-org/superpowers-ai-team-personal",
   "license": "MIT",
   "keywords": [
     "skills",
+    "superpowers",
+    "ai-team",
     "tdd",
     "debugging",
     "collaboration",
-    "best-practices",
-    "workflows"
+    "personalized-workflows",
+    "runtime-modes"
   ]
 }
