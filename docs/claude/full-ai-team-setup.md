@@ -90,11 +90,17 @@ Every agent handoff should include:
 - Risks: top known risks and mitigations
 
 ## 7) Suggested Execution Pattern in Claude Code
-1. Team Orchestrator receives request and dispatches phase lead
-2. Phase lead creates scoped tasks and dispatches specialist/implementer agents
-3. QA gate runs before phase completion
-4. DevOps gate runs before release decisions
-5. Orchestrator summarizes status, blockers, and next actions
+1. Brainstorm phase runs first — output: problem, scope, constraints, approved design direction
+2. Mode Selection Gate runs — read `docs/claude/mode-selection-criteria.md`, score, suggest mode, user approves
+3. (Mode B) Team Orchestrator receives brainstorm output as context and dispatches spec/plan leads
+4. (Mode B) Discovery Lead + Architecture Lead formalize spec from brainstorm output (no re-brainstorm)
+5. (Mode B) Orchestrator reviews spec internally, then user approves spec
+6. (Mode B) Implementation Lead writes plan from approved spec
+7. (Mode B) Orchestrator reviews plan internally, then user approves plan
+8. Phase lead dispatches stack implementer agents for implementation
+9. QA gate runs before phase completion
+10. DevOps gate runs before release decisions
+11. Orchestrator summarizes status, blockers, and next actions
 
 ## 8) Master Dispatcher and Output Contracts
 - Master dispatcher prompt: `docs/claude/master-dispatcher-prompt.md`
@@ -102,6 +108,7 @@ Every agent handoff should include:
 - Standard output templates: `docs/claude/agent-output-templates.md`
 - End-to-end workflow runbook: `docs/claude/current-process-workflow.md`
 - Runtime modes: `docs/claude/runtime-modes.md`
+- Mode selection criteria: `docs/claude/mode-selection-criteria.md`
 - Stack skill/rule map: `docs/claude/stack-skill-rule-map.md`
 - Fast Lane support (hotfix/small task): `fast-lane-assessment-v1`
 
