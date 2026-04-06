@@ -15,6 +15,8 @@ Assume they are a skilled developer, but know almost nothing about our toolset o
 
 **Context:** This should be run in a dedicated worktree (created by brainstorming skill).
 
+**Mode B path:** When invoked after a Mode B session, the implementation plan input is the user-approved spec written by team agents (phase-discovery-lead + phase-architecture-lead). The plan is then written by phase-implementation-lead using this skill's structure as the standard. This skill guides plan format regardless of who writes it.
+
 **Save plans to:** `docs/superpowers/plans/YYYY-MM-DD-<feature-name>.md`
 - (User preferences for plan location override this default)
 
