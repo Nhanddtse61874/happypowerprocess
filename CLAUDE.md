@@ -8,17 +8,20 @@ This workspace is configured as a personalized plugin that combines:
 
 Primary references:
 - `docs/claude/runtime-modes.md`
+- `docs/claude/mode-selection-criteria.md`
 - `docs/claude/current-process-workflow.md`
 - `docs/claude/master-dispatcher-prompt.md`
 - `docs/claude/agent-output-templates.md`
 - `docs/claude/full-ai-team-setup.md`
 
 Execution rule in this workspace:
-- Select runtime mode first (`Mode A: Solo`, `Mode B: Team Spine`).
-- In Mode A, run pure Superpowers workflow without team-agent dependency.
-- In Mode B, use dispatcher-based role selection and template-based outputs.
+- Run Brainstorm phase first (`skills/brainstorming/SKILL.md`) for all non-Fast-Lane tasks.
+- After brainstorm, run Mode Selection Gate: read `docs/claude/mode-selection-criteria.md`, score each criterion, present suggested mode with reason, and wait for user approval.
+- User-approved mode is the source of truth for all downstream phases. Do not re-evaluate after approval.
+- In Mode A: run pure Superpowers workflow — solo spec, solo plan, solo implementation.
+- In Mode B: Spec and Plan are written by team agents (phase-discovery-lead, phase-architecture-lead, phase-implementation-lead) using brainstorm output as input artifact. Orchestrator reviews internally, then user approves both spec and plan before implementation begins.
 - In both modes, every implementation task must follow mandatory stack/domain skills from `docs/claude/stack-skill-rule-map.md` (example: C# tasks must follow `skills/implementer-dotnet-csharp/SKILL.md`).
-- In both modes, run Fast Lane analysis for hotfix/small tasks and recommend skipping brainstorm only when `fast-lane-assessment-v1` marks the task eligible. Minimum verification/testing gates are still required.
+- For hotfix/small tasks: run Fast Lane analysis (`fast-lane-assessment-v1`). If eligible, skip brainstorm but still run Mode Selection Gate with Fast Lane output as input. Minimum verification/testing gates are still required.
 
 If you are preparing an upstream PR to `obra/superpowers`, the Contributor Guidelines below remain mandatory.
 

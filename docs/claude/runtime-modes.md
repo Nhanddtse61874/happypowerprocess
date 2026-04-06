@@ -41,20 +41,20 @@ Characteristics:
 
 ## Mode Selection Rules
 
-Choose Mode A when:
-- Task scope is small to medium
-- One technical domain is dominant
-- You want minimal orchestration overhead
+Mode selection is determined by the Mode Selection Gate after brainstorming.
 
-Choose Mode B when:
-- Work spans multiple domains or stacks
-- You need explicit QA and DevOps gating
-- You want machine-readable, role-based reporting
+Reference: `docs/claude/mode-selection-criteria.md`
+
+The criteria file contains:
+- 5 scored criteria (domain count, risk, QA/DevOps need, cross-team coordination, output format)
+- Threshold rules for mode suggestion
+- Hard exclusions that always require Mode B
+- Gate output format to present to user
+- Override rule: user decision always wins
 
 ## Default Recommendation
 
-- Start with Mode A for straightforward tasks.
-- Switch to Mode B when complexity, risk, or cross-team coordination increases.
+Run the Mode Selection Gate after every brainstorm session. Do not select a mode manually without running the gate first.
 
 ## Output Contract
 

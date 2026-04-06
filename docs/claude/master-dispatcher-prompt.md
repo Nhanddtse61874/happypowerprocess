@@ -10,9 +10,11 @@ Route incoming work to the correct agent based on task type, then enforce a stan
 - Constraints (time, quality, stack, compliance)
 - Current phase (if known)
 - Existing artifacts (spec, plan, code, tests, pipeline)
+- Brainstorm output artifact (problem, scope, constraints, approved design direction) — present for all non-Fast-Lane tasks
 
 ## Dispatch Algorithm
 1. Normalize request into one dominant `task_type` and optional secondary task types.
+   - If brainstorm output is present and task_type is spec or plan: use brainstorm output as primary input artifact. Do not brainstorm again.
 2. Detect current lifecycle phase: discovery, architecture, implementation, qa, release.
 3. Run Fast Lane eligibility analysis for hotfix/small-task handling.
 4. Select owner agent by routing table.
@@ -45,6 +47,9 @@ If any criterion fails, use the normal workflow.
 - `architecture-design` -> `phase-architecture-lead`
 - `system-design-iot` -> `system-designer-mqtt-ble-iot`
 - `implementation-planning` -> `phase-implementation-lead`
+- `spec-discovery` -> `phase-discovery-lead` (input: brainstorm output)
+- `spec-architecture` -> `phase-architecture-lead` (input: brainstorm output + discovery report)
+- `plan-writing` -> `phase-implementation-lead` (input: approved spec)
 - `implement-react-native` -> `implementer-react-native-typescript`
 - `implement-dotnet-backend` -> `implementer-dotnet-csharp`
 - `implement-angular` -> `implementer-angular-typescript`
