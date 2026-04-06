@@ -29,7 +29,8 @@ You MUST create a task for each of these items and complete them in order:
 6. **Write design doc** - save to `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md` and commit
 7. **Spec self-review** - quick inline check for placeholders, contradictions, ambiguity, scope (see below)
 8. **User reviews written spec** - ask user to review the spec file before proceeding
-9. **Transition to implementation** - invoke writing-plans skill to create implementation plan
+9. **Mode Selection Gate** - read `docs/claude/mode-selection-criteria.md`, score complexity, present suggested mode with reason, wait for user approval (see Mode Selection Gate section below)
+10. **Transition to implementation** - invoke writing-plans skill to create implementation plan
 
 ## Process Flow
 
@@ -143,6 +144,24 @@ Wait for the user's response. If they request changes, make them and re-run the 
 - **Explore alternatives** - Always propose 2-3 approaches before settling
 - **Incremental validation** - Present design, get approval before moving on
 - **Be flexible** - Go back and clarify when something doesn't make sense
+
+## Mode Selection Gate
+
+This gate runs at the end of every brainstorm session (step 9 of the checklist), before invoking writing-plans.
+
+**Steps:**
+1. Read `docs/claude/mode-selection-criteria.md`
+2. Score each of the 5 criteria against the brainstorm output
+3. Count Mode B signals and determine suggestion per threshold rules
+4. Check hard exclusions — if any apply, suggest Mode B regardless of score
+5. Present the gate output in the format defined in `mode-selection-criteria.md`
+6. Wait for user to approve or override the suggested mode
+
+**Rule:** Do not proceed to writing-plans until user has approved a mode.
+
+**User authority:** User-approved mode is the source of truth for all downstream phases. If user overrides from Mode B to Mode A, all subsequent phases (spec, plan, implementation, QA, finish) run in Mode A — no exceptions.
+
+**Fast Lane exception:** If this session started via Fast Lane (brainstorm was skipped), run the gate using the Fast Lane output (`fast-lane-assessment-v1`) as input instead of brainstorm output.
 
 ## Visual Companion
 
