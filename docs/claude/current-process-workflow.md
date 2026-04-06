@@ -2,19 +2,23 @@
 
 This file records the complete runtime workflow for the personalized plugin.
 
-## Mode Entry
+## Workflow Entry
 
-Before execution starts, select one runtime mode:
-- `Mode A: Superpowers Solo Mode` (no team-agent dependency)
-- `Mode B: AI Team Spine Mode` (dispatcher + specialist/implementer agents)
+Before execution starts:
 
-Reference: `docs/claude/runtime-modes.md`
+1. Run Fast Lane eligibility check (see Fast Lane Entry below).
+2. If not Fast Lane: run Brainstorm phase — `skills/brainstorming/SKILL.md`.
+3. Run Mode Selection Gate — read `docs/claude/mode-selection-criteria.md`, score complexity, present suggested mode, wait for user approval.
+4. Execute the user-approved mode path below.
+
+Reference: `docs/claude/runtime-modes.md`, `docs/claude/mode-selection-criteria.md`
 
 ## Fast Lane Entry (Hotfix/Small Task)
 
-Before running the full phase flow, run Fast Lane analysis.
-If the task is eligible, recommend skipping:
-- Brainstorm phase
+Run Fast Lane analysis before the full phase flow.
+If eligible:
+- Skip brainstorm phase
+- Still run Mode Selection Gate (abbreviated, using Fast Lane output as input)
 - Keep minimum verification/testing gate
 
 Use template:
@@ -33,6 +37,11 @@ Use template:
 - 2-3 approaches with trade-offs
 - Approved design direction
 - Skip when Fast Lane is approved
+
+2b. Mode Selection Gate - using `docs/claude/mode-selection-criteria.md` - output:
+- Scored complexity evaluation (5 criteria)
+- Suggested mode with reason
+- User-approved mode (Mode A confirmed)
 
 3. Design documentation phase - using `skills/brainstorming/SKILL.md` - output:
 - Spec file in `docs/superpowers/specs/YYYY-MM-DD-<topic>-design.md`
@@ -68,35 +77,52 @@ Use template:
 - Skill-first behavior is active
 - Combined workflow is ready
 
-2. Brainstorm and design phase - using `skills/brainstorming/SKILL.md` - output:
-- Approved design direction
-- Written and approved spec document
+2. Brainstorm phase - using `skills/brainstorming/SKILL.md` - output:
+- Problem statement, scope, constraints, success criteria
+- 2-3 approaches with trade-offs
+- Approved design direction (becomes input artifact for spec/plan)
 - Skip when Fast Lane is approved
 
-3. Planning phase - using `skills/writing-plans/SKILL.md` - output:
-- Approved implementation plan with small tasks
+2b. Mode Selection Gate - using `docs/claude/mode-selection-criteria.md` - output:
+- Scored complexity evaluation (5 criteria)
+- Suggested mode with reason
+- User-approved mode (Mode B confirmed)
 
-4. Orchestration intake phase - using `agents/team-orchestrator.md` - output:
+3. Orchestration intake phase - using `agents/team-orchestrator.md` - output:
 - Shared objective, ownership, risks, checkpoints
+- Input: brainstorm output as context artifact
 - `orchestrator-status-v1`
 
-5. Dispatch phase - using `agents/master-dispatcher.md` and `docs/claude/master-dispatcher-prompt.md` - output:
-- `task_type`, selected owner agent, phase, done criteria
-- Output template assignment
+4. Dispatch phase - using `agents/master-dispatcher.md` and `docs/claude/master-dispatcher-prompt.md` - output:
+- Routes spec task → phase-discovery-lead + phase-architecture-lead
+- Routes plan task → phase-implementation-lead
 - Dispatcher JSON contract
-- Fast Lane recommendation via `fast-lane-assessment-v1`
 
-6. Discovery/architecture alignment phase - using `agents/phase-discovery-lead.md` and `agents/phase-architecture-lead.md` (plus specialists as needed) - output:
-- Requirement and acceptance alignment
-- Architecture/contracts/trade-offs alignment
-- `phase-lead-report-v1` or `specialist-report-v1`
-
-7. Implementation control phase - using `agents/phase-implementation-lead.md` - output:
-- Task ownership and implementation sequencing
-- Integration status and blockers
+5. Discovery phase - using `agents/phase-discovery-lead.md` - output:
+- Input: brainstorm output (no re-brainstorming)
+- Formalizes requirements spec from brainstorm output
 - `phase-lead-report-v1`
 
-8. Stack/domain implementation phase - using dispatcher-selected implementer agent:
+6. Architecture phase - using `agents/phase-architecture-lead.md` - output:
+- Input: brainstorm output + discovery report
+- Formalizes technical spec (contracts, interfaces, trade-offs)
+- `phase-lead-report-v1` or `specialist-report-v1`
+
+7. Spec review phase - output:
+- Orchestrator internal review gate
+- Spec written to `docs/specs/YYYY-MM-DD-design.md`
+- User approves or requests changes
+
+8. Planning phase - using `agents/phase-implementation-lead.md` - output:
+- Input: user-approved spec
+- Ordered, testable implementation plan
+- `phase-lead-report-v1`
+
+9. Plan review phase - output:
+- Orchestrator internal review gate
+- User approves or requests changes
+
+10. Stack/domain implementation phase - using dispatcher-selected implementer agent:
 - `agents/implementer-react-native-typescript.md`
 - `agents/implementer-dotnet-csharp.md`
 - `agents/implementer-angular-typescript.md`
@@ -107,22 +133,22 @@ Use template:
 - `implementer-delivery-v1`
 - Mandatory stack skill source: `docs/claude/stack-skill-rule-map.md`
 
-9. QA gate phase - using `agents/phase-qa-gate.md`, `agents/qa-code-reviewer.md`, and `skills/requesting-code-review/SKILL.md` - output:
+11. QA gate phase - using `agents/phase-qa-gate.md`, `agents/qa-code-reviewer.md`, and `skills/requesting-code-review/SKILL.md` - output:
 - Findings by severity
 - Coverage/regression assessment
 - Release recommendation
 - `qa-review-v1`
 
-10. Release and operations phase - using `agents/phase-release-devops-lead.md`, `agents/devops-cicd-assistant.md`, and `skills/finishing-a-development-branch/SKILL.md` - output:
+12. Release and operations phase - using `agents/phase-release-devops-lead.md`, `agents/devops-cicd-assistant.md`, and `skills/finishing-a-development-branch/SKILL.md` - output:
 - CI/CD gates, deployment strategy, rollback, observability
 - Release readiness decision
 - `devops-release-v1` plus phase summary
 
-11. Final handoff phase - using `agents/team-orchestrator.md` and `docs/claude/agent-output-templates.md` - output:
+13. Final handoff phase - using `agents/team-orchestrator.md` and `docs/claude/agent-output-templates.md` - output:
 - Final status, blockers, residual risks, next actions
 - `orchestrator-status-v1`
 
-12. Escalation phase - using `docs/claude/master-dispatcher-prompt.md` - output:
+14. Escalation phase - using `docs/claude/master-dispatcher-prompt.md` - output:
 - 2-3 option escalation when constraints conflict with scope, architecture, security/reliability, or timeline
 
 ---
