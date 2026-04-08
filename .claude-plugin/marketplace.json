@@ -1,19 +1,17 @@
 {
   "name": "superpowers-ai-team-personal-dev",
-  "description": "Development marketplace for personalized Superpowers + AI Team plugin",
+  "description": "Development marketplace for personalized Superpowers + GSD + AI Team plugin",
   "owner": {
-    "name": "Jesse Vincent",
-    "email": "jesse@fsck.com"
+    "name": "Nhan"
   },
   "plugins": [
     {
       "name": "superpowers-ai-team-personal",
-      "description": "Personalized plugin: Superpowers execution skills + optional AI Team orchestration spine",
-      "version": "5.1.0",
+      "description": "Unified 11-step AI workflow: Superpowers execution skills + GSD state persistence + optional AI Team orchestration.",
+      "version": "5.2.0",
       "source": "./",
       "author": {
-        "name": "Jesse Vincent",
-        "email": "jesse@fsck.com"
+        "name": "Nhan"
       }
     }
   ]
