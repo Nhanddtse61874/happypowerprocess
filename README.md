@@ -199,50 +199,44 @@ Stack-specific skills enforced on every implementation task:
 
 ## Installation
 
-**Note:** Installation differs by platform. Claude Code or Cursor have built-in plugin marketplaces. Codex and OpenCode require manual setup.
+**Note:** This is a personalized plugin. Install directly from the GitHub repo.
 
-### Claude Code Official Marketplace
+### Claude Code
 
 ```bash
-/plugin install superpowers@claude-plugins-official
+# Add the marketplace from this repo
+/plugin marketplace add Nhanddtse61874/privateAgentTeam
+
+# Install the plugin
+/plugin install superpowers-ai-team-personal@superpowers-ai-team-personal-dev
 ```
 
-### Claude Code (via Plugin Marketplace)
+### Claude Code (local development)
 
 ```bash
-/plugin marketplace add obra/superpowers-marketplace
-/plugin install superpowers@superpowers-marketplace
+# Clone the repo
+git clone https://github.com/Nhanddtse61874/privateAgentTeam
+
+# Load plugin for a session
+claude --plugin-dir ./privateAgentTeam
 ```
 
 ### Cursor
 
 ```text
-/add-plugin superpowers
+/add-plugin https://github.com/Nhanddtse61874/privateAgentTeam
 ```
 
 ### Codex
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.codex/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/Nhanddtse61874/privateAgentTeam/main/.codex/INSTALL.md
 ```
 
 ### OpenCode
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/obra/superpowers/refs/heads/main/.opencode/INSTALL.md
-```
-
-### GitHub Copilot CLI
-
-```bash
-copilot plugin marketplace add obra/superpowers-marketplace
-copilot plugin install superpowers@superpowers-marketplace
-```
-
-### Gemini CLI
-
-```bash
-gemini extensions install https://github.com/obra/superpowers
+Fetch and follow instructions from https://raw.githubusercontent.com/Nhanddtse61874/privateAgentTeam/main/.opencode/INSTALL.md
 ```
 
 ---

@@ -1,21 +1,25 @@
 {
   "name": "superpowers-ai-team-personal",
-  "description": "Personalized plugin: Superpowers execution skills + optional AI Team orchestration spine",
-  "version": "5.1.0",
+  "description": "Unified 11-step AI workflow: Superpowers execution skills + GSD state persistence + optional AI Team orchestration. Persistent memory across sessions, evidence-based planning, human checkpoints at every key decision.",
+  "version": "5.2.0",
   "author": {
-    "name": "Jesse Vincent",
-    "email": "jesse@fsck.com"
+    "name": "Nhan"
   },
-  "homepage": "https://github.com/your-org/superpowers-ai-team-personal",
-  "repository": "https://github.com/your-org/superpowers-ai-team-personal",
+  "homepage": "https://github.com/Nhanddtse61874/privateAgentTeam",
+  "repository": "https://github.com/Nhanddtse61874/privateAgentTeam",
   "license": "MIT",
   "keywords": [
     "skills",
     "superpowers",
+    "gsd",
     "ai-team",
     "tdd",
     "debugging",
-    "collaboration",
+    "state-persistence",
+    "workflow",
+    "research-phase",
+    "wave-execution",
+    "goal-backward-planning",
     "personalized-workflows",
     "runtime-modes"
   ]
