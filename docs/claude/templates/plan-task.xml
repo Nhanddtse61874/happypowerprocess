@@ -1,29 +1,121 @@
-<!-- Template cho mỗi task trong .planning/{phase}-{N}-PLAN.md -->
-<!-- Wave N: Tasks trong cùng wave chạy song song. Tasks phụ thuộc wave trước chạy sau. -->
+<!--
+  Template cho .planning/{phase}-{N}-PLAN.md
+  File naming: {padded_phase}-{NN}-PLAN.md
+  Ví dụ: 01-01-PLAN.md, 03-02-PLAN.md
+-->
+
+---
+phase: {01-phase-name}
+plan: {01}
+type: execute|tdd
+wave: {N}
+depends_on: [{list of plan IDs, e.g. "01-01"}]
+files_modified: [exact/file/paths.ts]
+autonomous: true|false
+requirements: [AUTH-01, CONT-02]
+
+must_haves:
+  truths:
+    - "User can {observable behavior 1}"
+    - "User can {observable behavior 2}"
+  artifacts:
+    - "src/path/to/required/file.ts"
+    - "tests/path/to/test.ts"
+  key_links:
+    - "{Component A} fetches from {Component B} on {trigger}"
+---
+
+<!--
+  WAVE ASSIGNMENT ALGORITHM:
+  if task.depends_on is empty → Wave 1
+  else → Wave = max(wave of dependencies) + 1
+  if task.files_modified overlap with earlier task → force later wave
+  Same-wave plans MUST have zero file overlap.
+
+  CONTEXT BUDGET RULE:
+  - Target ~50% token usage per plan
+  - Maximum 2-3 tasks per plan
+  - If scope exceeds budget → split into smaller plans, NEVER compress
+-->
 
 <wave number="1" description="Independent tasks — run in parallel">
   <task type="auto">
-    <name>{Task name}</name>
-    <action>{Mô tả implementation approach — đủ cụ thể để AI hiểu}</action>
+    <name>{Action-oriented task name — e.g. "Add JWT validation middleware"}</name>
+
+    <read_first>
+      <!-- Files executor MUST read before starting -->
+      {path/to/existing/file.ts}
+      {path/to/conventions.md}
+    </read_first>
+
     <files>
-      <create>{path/to/new/file}</create>
-      <modify>{path/to/existing/file}</modify>
+      <create>{path/to/new/file.ts}</create>
+      <modify>{path/to/existing/file.ts}</modify>
     </files>
+
+    <action>
+      <!--
+        Specific implementation — include:
+        - WHAT to build (specific values, not abstract)
+        - WHAT to AVOID and why
+        - Which library/approach to use (e.g. "use jose, NOT jsonwebtoken — CommonJS issues")
+        - REQ-ID this task addresses: {AUTH-01}
+      -->
+      {Specific implementation description}
+    </action>
+
+    <verify>
+      <automated>{npm test -- path/to/test.ts}</automated>
+      <!-- Nyquist Rule: automated command MUST complete in under 60 seconds -->
+      <!-- NEVER use "looks good" — must be a runnable command -->
+    </verify>
+
+    <done>
+      <!-- Measurable acceptance criteria — grep-verifiable -->
+      {e.g. "Valid tokens return 200, invalid return 401, missing token return 403"}
+    </done>
+
     <stack>{dotnet | react | react-native | angular | iot-edge}</stack>
-    <verify>{Command hoặc check để verify task đã xong}</verify>
-    <done>{Success criteria — rõ ràng, đo lường được}</done>
   </task>
 </wave>
 
-<wave number="2" description="Dependent on wave 1">
+<wave number="2" description="Dependent on wave 1 — run after wave 1 completes">
   <task type="auto">
     <name>{Task name}</name>
-    <action>{...}</action>
+
+    <read_first>
+      {path/to/file/created/in/wave1.ts}
+    </read_first>
+
     <files>
-      <modify>{...}</modify>
+      <modify>{path/to/file.ts}</modify>
     </files>
-    <stack>{...}</stack>
-    <verify>{...}</verify>
-    <done>{...}</done>
+
+    <action>{Specific implementation}</action>
+
+    <verify>
+      <automated>{command to verify}</automated>
+    </verify>
+
+    <done>{Measurable criteria}</done>
+
+    <stack>{stack}</stack>
   </task>
 </wave>
+
+<!--
+  PLAN CHECKER validates 11 dimensions before execution:
+  1. Requirement Coverage — every REQ-ID has covering task
+  2. Task Completeness — every task has read_first + action + verify + done
+  3. Dependency Correctness — acyclic, correctly waved
+  4. Key Links Planned — artifacts wired together (not just created)
+  5. Scope Sanity — 2-3 tasks/plan, ~50% context
+  6. Verification Derivation — must_haves trace to phase goal
+  7. Context Compliance — honors CONTEXT.md decisions
+  8. Nyquist Compliance — automated verify present and <60s
+  9. Cross-Plan Data Contracts — shared data compatible
+  10. CLAUDE.md Compliance — respects project conventions
+  11. Research Resolution — open questions answered
+
+  Revision loop: max 3 iterations before manual intervention.
+-->
