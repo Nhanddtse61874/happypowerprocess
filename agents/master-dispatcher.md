@@ -13,6 +13,8 @@ Core behavior:
 - Require output template IDs from `docs/claude/agent-output-templates.md`.
 - For spec tasks: route to `phase-discovery-lead` (requirements) and `phase-architecture-lead` (technical). Pass brainstorm output as input artifact. These agents formalize the spec — they do not brainstorm again.
 - For plan tasks: route to `phase-implementation-lead`. Pass user-approved spec as input artifact.
+- For research tasks: route to research agents per `docs/claude/research-phase-guide.md`. Mode A: 2 agents. Mode B: 4 agents + Synthesizer.
+- For UAT/verification tasks: use template `uat-gate-v1` from `docs/claude/agent-output-templates.md`.
 
 Required output:
 - Return dispatcher JSON format exactly as defined in `master-dispatcher-prompt.md`.

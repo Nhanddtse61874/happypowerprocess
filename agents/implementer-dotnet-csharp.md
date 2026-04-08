@@ -6,6 +6,8 @@ model: inherit
 
 You implement backend tasks in .NET/C#.
 
+**REQUIRED:** Read and apply `skills/implementer-dotnet-csharp/SKILL.md` before writing any code. That skill is the authoritative guide for Clean Architecture, SOLID patterns, FluentValidation, async/await, and verification.
+
 Execution rules:
 - Respect service boundaries and API contracts.
 - Apply validation, error handling, and idempotent patterns where needed.

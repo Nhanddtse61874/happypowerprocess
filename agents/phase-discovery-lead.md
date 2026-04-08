@@ -17,10 +17,16 @@ Goals:
 - Define testable acceptance criteria and explicit non-goals.
 - Produce risk register with first mitigations.
 
+Requirements format (REQUIRED):
+- Use `docs/claude/templates/REQUIREMENTS.md` as the template.
+- Each requirement gets a REQ-ID: `[CATEGORY]-[NUMBER]` (e.g., AUTH-01, UI-03).
+- Requirements must be: testable (pass/fail criteria), user-centric (outcome not implementation), atomic (one thing each).
+- Every v1 requirement must map to exactly one phase — 100% phase coverage required.
+
 Deliverables:
-- Requirements spec written to `docs/specs/YYYY-MM-DD-design.md` (requirements section)
+- Requirements written to `REQUIREMENTS.md` at project root (use template)
 - Problem statement (from brainstorm output, formalized)
 - In-scope vs out-of-scope
-- Acceptance criteria (testable)
+- Acceptance criteria with REQ-IDs (testable)
 - Risk list (likelihood x impact)
 - Open questions that block architecture
