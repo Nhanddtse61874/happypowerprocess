@@ -221,14 +221,49 @@ git clone https://github.com/Nhanddtse61874/privateAgentTeam
 claude --plugin-dir ./privateAgentTeam
 ```
 
+### Codex
+
+```bash
+# Clone the repo
+git clone https://github.com/Nhanddtse61874/privateAgentTeam.git ~/.codex/privateAgentTeam
+
+# Create the skills symlink
+mkdir -p ~/.agents/skills
+ln -s ~/.codex/privateAgentTeam/skills ~/.agents/skills/privateAgentTeam
+```
+
+**Windows (PowerShell):**
+```powershell
+New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
+cmd /c mklink /J "$env:USERPROFILE\.agents\skills\privateAgentTeam" "$env:USERPROFILE\.codex\privateAgentTeam\skills"
+```
+
+Restart Codex after install. Full guide: [.codex/INSTALL.md](.codex/INSTALL.md)
+
+### OpenCode
+
+```
+Fetch and follow instructions from https://raw.githubusercontent.com/Nhanddtse61874/privateAgentTeam/main/.opencode/INSTALL.md
+```
+
+### Cursor
+
+```
+/add-plugin https://github.com/Nhanddtse61874/privateAgentTeam
+```
+
 ### Verify Installation
 
 Start a new session and say something like _"let's build a feature"_. The agent should automatically invoke the `brainstorming` skill.
 
-### Reload after update
+### Update
 
 ```bash
-/reload-plugins
+# Claude Code
+/plugin update superpowers-ai-team-personal
+
+# Codex
+cd ~/.codex/privateAgentTeam && git pull
 ```
 
 ---
