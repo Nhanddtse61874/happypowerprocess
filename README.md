@@ -199,44 +199,36 @@ Stack-specific skills enforced on every implementation task:
 
 ## Installation
 
-**Note:** This is a personalized plugin. Install directly from the GitHub repo.
+> **Prerequisite:** Repo must be **public** on GitHub for marketplace install to work.
 
-### Claude Code
+### Claude Code — Marketplace (recommended)
 
 ```bash
-# Add the marketplace from this repo
+# Step 1: Add this repo as a marketplace
 /plugin marketplace add Nhanddtse61874/privateAgentTeam
 
-# Install the plugin
+# Step 2: Install the plugin
 /plugin install superpowers-ai-team-personal@superpowers-ai-team-personal-dev
 ```
 
-### Claude Code (local development)
+### Claude Code — Local (no public repo needed)
 
 ```bash
 # Clone the repo
 git clone https://github.com/Nhanddtse61874/privateAgentTeam
 
-# Load plugin for a session
+# Load plugin for the session
 claude --plugin-dir ./privateAgentTeam
 ```
 
-### Cursor
+### Verify Installation
 
-```text
-/add-plugin https://github.com/Nhanddtse61874/privateAgentTeam
-```
+Start a new session and say something like _"let's build a feature"_. The agent should automatically invoke the `brainstorming` skill.
 
-### Codex
+### Reload after update
 
-```
-Fetch and follow instructions from https://raw.githubusercontent.com/Nhanddtse61874/privateAgentTeam/main/.codex/INSTALL.md
-```
-
-### OpenCode
-
-```
-Fetch and follow instructions from https://raw.githubusercontent.com/Nhanddtse61874/privateAgentTeam/main/.opencode/INSTALL.md
+```bash
+/reload-plugins
 ```
 
 ---

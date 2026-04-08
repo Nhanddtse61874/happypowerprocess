@@ -1,0 +1,21 @@
+{
+  "name": "superpowers-ai-team-personal-dev",
+  "description": "Development marketplace for personalized Superpowers + GSD + AI Team plugin",
+  "owner": {
+    "name": "Nhan"
+  },
+  "plugins": [
+    {
+      "name": "superpowers-ai-team-personal",
+      "description": "Unified 11-step AI workflow: Superpowers execution skills + GSD state persistence + optional AI Team orchestration.",
+      "version": "5.2.0",
+      "source": {
+        "source": "github",
+        "repo": "Nhanddtse61874/privateAgentTeam"
+      },
+      "author": {
+        "name": "Nhan"
+      }
+    }
+  ]
+}
