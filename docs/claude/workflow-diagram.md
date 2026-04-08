@@ -1,4 +1,4 @@
-# Superpowers Personalized Plugin — Workflow Diagram
+# Superpowers + GSD Unified Workflow Diagram
 
 > **Cách xem:** Mở file này trong VS Code → `Ctrl+Shift+V` để preview (cần cài extension [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid))
 
@@ -6,113 +6,112 @@
 
 ```mermaid
 flowchart TD
-    START([Submit Request]) --> BOOT["Session Bootstrap\nusing-superpowers skill"]
+    START([Submit Request]) --> S0["STEP 0: Bootstrap\nĐọc STATE.md hoặc tạo state files mới\n→ PROJECT.md · REQUIREMENTS.md\n→ ROADMAP.md · STATE.md"]
 
-    BOOT --> FAST{"Fast Lane\nEligible?\nhotfix / small task"}
-    FAST -- "Yes" --> FL["fast-lane-assessment-v1\nSkip Brainstorm"]
-    FAST -- "No" --> BRAIN
+    S0 --> HUMAN0{{"USER CONFIRMS\nProject context"}}
+    HUMAN0 --> S1["STEP 1: Fast Lane Check\nfast-lane-assessment-v1"]
 
-    %% ─── BRAINSTORM FIRST ────────────────────────────────
-    BRAIN["Brainstorm\nbrainstorming skill\n→ problem · scope · constraints\n→ 2-3 approaches · trade-offs\n→ approved design direction"]
+    S1 --> FL{"Fast Lane\nEligible?"}
+    FL -- "Yes → skip Steps 2-4" --> S5
+    FL -- "No" --> S2
 
-    FL --> MODE
-    BRAIN --> MODE{"Select\nRuntime Mode\nbased on brainstorm output"}
+    S2["STEP 2: Brainstorm\nbrainstorming skill\n→ problem · scope · constraints\n→ 2-3 approaches · approved direction\n→ REQUIREMENTS.md updated"]
+    S2 --> HUMAN2{{"USER APPROVES\nDesign direction"}}
+    HUMAN2 --> S3
 
-    MODE -- "Mode A\n1 domain · low complexity" --> A_SPEC
-    MODE -- "Mode B\nmulti-domain · complex · needs QA/DevOps" --> B_ORCH
+    S3["STEP 3: Mode Selection Gate\nmode-selection-criteria.md\n→ Score 5 criteria\n→ Suggest Mode A or B"]
+    S3 --> HUMAN3{{"USER APPROVES\nMode A or B"}}
+    HUMAN3 --> S4
 
-    %% ─── MODE A: SPEC + PLAN (SOLO) ──────────────────────
-    A_SPEC["Design Spec\nbrainstorming skill\n→ docs/specs/YYYY-MM-DD-design.md\n(self-reviewed + user-approved)"]
-    A_SPEC --> A_PLAN["Implementation Plan\nwriting-plans skill\n→ ordered · testable · per-task verification"]
-    A_PLAN --> STACKA{"Stack\nDetect"}
-    STACKA --> A_IMPL["Implementation\nsubagent-driven-development\nor executing-plans\n+ mandatory stack skill"]
-    A_IMPL --> A_TDD["TDD\ntest-driven-development skill\nRED → GREEN → REFACTOR"]
-    A_TDD --> A_QA["Code Review\nrequesting-code-review skill\n→ severity findings"]
-    A_QA --> QA_A{"Issues\nFound?"}
-    QA_A -- "Yes" --> FIX_A["Fix & Re-implement"]
-    FIX_A --> A_QA
-    QA_A -- "No" --> FINISH["Finish Branch\nfinishing-a-development-branch\n→ Merge / PR / Discard"]
-    FINISH --> DONE([Done])
+    S4["STEP 4: Research\nParallel research agents\nMode A: 2 agents · Mode B: 4 agents\n→ .planning/phase-RESEARCH.md"]
+    S4 --> HUMAN4{{"USER REVIEWS\nResearch findings"}}
+    HUMAN4 --> S5
 
-    %% ─── MODE B: SPEC + PLAN (TEAM AGENTS) ───────────────
-    B_ORCH["Orchestration Intake\nteam-orchestrator\n→ shared objective · ownership · risks\n→ orchestrator-status-v1"]
-    B_ORCH --> B_DISP["Dispatch\nmaster-dispatcher\n→ task_type · selected agent · phase\n→ Dispatcher JSON Contract"]
+    S5["STEP 5: Spec Writing\nMode A: brainstorming skill solo\nMode B: phase-discovery-lead\n+ phase-architecture-lead\n→ docs/specs/YYYY-MM-DD-design.md"]
+    S5 --> HUMAN5{{"USER APPROVES\nSpec"}}
+    HUMAN5 --> S6
 
-    B_DISP --> B_DISC["Discovery Phase\nphase-discovery-lead\n→ requirements · acceptance criteria · risk list\n→ phase-lead-report-v1"]
-    B_DISC --> B_ARCH["Architecture Phase\nphase-architecture-lead\n→ contracts · interfaces · trade-offs\n→ phase-lead-report-v1 / specialist-report-v1"]
+    S6["STEP 6: Planning\nMode A: writing-plans skill\nMode B: phase-implementation-lead\nXML tasks + wave grouping\n→ .planning/phase-N-PLAN.md"]
+    S6 --> HUMAN6{{"USER APPROVES\nPlan + waves"}}
+    HUMAN6 --> S7
 
-    B_ARCH --> B_SPEC["Design Spec\n(Team Agent)\nphase-discovery-lead + phase-architecture-lead\n→ docs/specs/YYYY-MM-DD-design.md\n→ user-approved"]
-    B_SPEC --> B_PLAN["Implementation Plan\n(Team Agent)\nwriting-plans skill\nphase-implementation-lead\n→ approved plan with small tasks"]
+    S7["STEP 7: Execute — Wave by Wave\nFresh context per task · Atomic commits\nMode A: subagent-driven-development\nMode B: stack implementer agents\n→ implementer-delivery-v1"]
+    S7 --> HUMAN7{{"USER APPROVES\nEach wave result"}}
+    HUMAN7 --> WAVE{"More\nwaves?"}
+    WAVE -- "Yes" --> S7
+    WAVE -- "No" --> S8
 
-    B_PLAN --> STACKB{"Stack\nSelect"}
-    STACKB -- "React Native" --> IMP1["implementer-react-native-typescript"]
-    STACKB -- ".NET / C#" --> IMP2["implementer-dotnet-csharp"]
-    STACKB -- "Angular" --> IMP3["implementer-angular-typescript"]
-    STACKB -- "React" --> IMP4["implementer-react-typescript"]
-    STACKB -- "IoT/MQTT/BLE" --> IMP5["implementer-iot-edge"]
+    S8["STEP 8: UAT\nAI tạo .planning/phase-UAT.md\nUser tự test feature\n→ uat-gate-v1"]
+    S8 --> UATRES{"UAT\nResult?"}
+    UATRES -- "Fail → fix plan" --> S7
+    UATRES -- "Pass" --> S9
 
-    IMP1 & IMP2 & IMP3 & IMP4 & IMP5 --> IMPL_OUT["Implementer Delivery\n→ implementer-delivery-v1\n+ mandatory stack skill"]
-    IMPL_OUT --> QA_B["QA Gate\nphase-qa-gate · qa-code-reviewer\nrequesting-code-review skill\n→ qa-review-v1"]
-    QA_B --> REL_DEC{"Release\nApproved?"}
-    REL_DEC -- "Block" --> FIX_B["Fix & Re-implement"]
-    FIX_B --> QA_B
-    REL_DEC -- "Approve" --> DEVOPS["Release & Ops\nphase-release-devops-lead\n→ devops-release-v1"]
-    DEVOPS --> HANDOFF["Final Handoff\nteam-orchestrator\n→ orchestrator-status-v1"]
-    HANDOFF --> ESC{"Risk /\nConflict?"}
-    ESC -- "No" --> DONE
-    ESC -- "Yes" --> ESC_OUT["Escalation\n2–3 options → User decides"]
-    ESC_OUT --> DONE
+    S9["STEP 9: QA Gate\nMode A: requesting-code-review skill\nMode B: phase-qa-gate + qa-code-reviewer\n→ qa-review-v1"]
+    S9 --> HUMAN9{{"USER APPROVES\nQA findings"}}
+    HUMAN9 --> QARES{"QA\nDecision?"}
+    QARES -- "Block → fix" --> S7
+    QARES -- "Approve" --> S10
 
-    %% ─── STYLING ──────────────────────────────────────────
+    S10["STEP 10: Release / DevOps\nMode A: finishing-a-development-branch\nMode B: phase-release-devops-lead\n→ devops-release-v1"]
+    S10 --> HUMAN10{{"USER APPROVES\nRelease readiness"}}
+    HUMAN10 --> S11
+
+    S11["STEP 11: Ship & Milestone Close\nPR / Merge\n.planning/phase-SUMMARY.md\nROADMAP.md + STATE.md updated\n→ phase-summary-v1"]
+    S11 --> ESC{"Risk /\nConflict?"}
+    ESC -- "Yes → 2-3 options" --> ESCOUT["Escalation\nUser decides"]
+    ESCOUT --> NEXT
+    ESC -- "No" --> NEXT
+
+    NEXT{"Next\nMilestone?"}
+    NEXT -- "Yes" --> S0
+    NEXT -- "No" --> DONE([Done])
+
     style START fill:#1565C0,color:#fff,stroke:none
     style DONE fill:#1565C0,color:#fff,stroke:none
 
-    style FAST fill:#fff,stroke:#1565C0,color:#1565C0
-    style MODE fill:#fff,stroke:#1565C0,color:#1565C0
-    style STACKA fill:#fff,stroke:#1565C0,color:#1565C0
-    style STACKB fill:#fff,stroke:#1565C0,color:#1565C0
-    style QA_A fill:#fff,stroke:#1565C0,color:#1565C0
-    style REL_DEC fill:#fff,stroke:#1565C0,color:#1565C0
+    style HUMAN0 fill:#E65100,color:#fff,stroke:none
+    style HUMAN2 fill:#E65100,color:#fff,stroke:none
+    style HUMAN3 fill:#E65100,color:#fff,stroke:none
+    style HUMAN4 fill:#E65100,color:#fff,stroke:none
+    style HUMAN5 fill:#E65100,color:#fff,stroke:none
+    style HUMAN6 fill:#E65100,color:#fff,stroke:none
+    style HUMAN7 fill:#E65100,color:#fff,stroke:none
+    style HUMAN9 fill:#E65100,color:#fff,stroke:none
+    style HUMAN10 fill:#E65100,color:#fff,stroke:none
+
+    style FL fill:#fff,stroke:#1565C0,color:#1565C0
+    style WAVE fill:#fff,stroke:#1565C0,color:#1565C0
+    style UATRES fill:#fff,stroke:#1565C0,color:#1565C0
+    style QARES fill:#fff,stroke:#1565C0,color:#1565C0
     style ESC fill:#fff,stroke:#1565C0,color:#1565C0
+    style NEXT fill:#fff,stroke:#1565C0,color:#1565C0
 
-    style BOOT fill:#1976D2,color:#fff,stroke:none
-    style BRAIN fill:#0D47A1,color:#fff,stroke:none
-    style FL fill:#1976D2,color:#fff,stroke:none
-
-    style A_SPEC fill:#1976D2,color:#fff,stroke:none
-    style A_PLAN fill:#1976D2,color:#fff,stroke:none
-    style A_IMPL fill:#1976D2,color:#fff,stroke:none
-    style A_TDD fill:#1976D2,color:#fff,stroke:none
-    style A_QA fill:#1976D2,color:#fff,stroke:none
-    style FIX_A fill:#90CAF9,color:#0D47A1,stroke:none
-    style FINISH fill:#1976D2,color:#fff,stroke:none
-
-    style B_ORCH fill:#1565C0,color:#fff,stroke:none
-    style B_DISP fill:#1565C0,color:#fff,stroke:none
-    style B_DISC fill:#1565C0,color:#fff,stroke:none
-    style B_ARCH fill:#1565C0,color:#fff,stroke:none
-    style B_SPEC fill:#0D47A1,color:#fff,stroke:none
-    style B_PLAN fill:#0D47A1,color:#fff,stroke:none
-    style IMP1 fill:#90CAF9,color:#0D47A1,stroke:none
-    style IMP2 fill:#90CAF9,color:#0D47A1,stroke:none
-    style IMP3 fill:#90CAF9,color:#0D47A1,stroke:none
-    style IMP4 fill:#90CAF9,color:#0D47A1,stroke:none
-    style IMP5 fill:#90CAF9,color:#0D47A1,stroke:none
-    style IMPL_OUT fill:#1565C0,color:#fff,stroke:none
-    style QA_B fill:#1565C0,color:#fff,stroke:none
-    style FIX_B fill:#90CAF9,color:#0D47A1,stroke:none
-    style DEVOPS fill:#1565C0,color:#fff,stroke:none
-    style HANDOFF fill:#1565C0,color:#fff,stroke:none
-    style ESC_OUT fill:#1976D2,color:#fff,stroke:none
+    style S0 fill:#1976D2,color:#fff,stroke:none
+    style S1 fill:#1976D2,color:#fff,stroke:none
+    style S2 fill:#0D47A1,color:#fff,stroke:none
+    style S3 fill:#1976D2,color:#fff,stroke:none
+    style S4 fill:#1976D2,color:#fff,stroke:none
+    style S5 fill:#0D47A1,color:#fff,stroke:none
+    style S6 fill:#0D47A1,color:#fff,stroke:none
+    style S7 fill:#1565C0,color:#fff,stroke:none
+    style S8 fill:#1976D2,color:#fff,stroke:none
+    style S9 fill:#1565C0,color:#fff,stroke:none
+    style S10 fill:#1565C0,color:#fff,stroke:none
+    style S11 fill:#0D47A1,color:#fff,stroke:none
+    style ESCOUT fill:#1976D2,color:#fff,stroke:none
 ```
 
 ---
 
-## Thay đổi so với version cũ
+## Thay đổi so với v1 (Brainstorm-First)
 
-| Khía cạnh | Version cũ | Version mới |
+| Khía cạnh | v1 | v2 (Unified GSD+Superpowers) |
 |---|---|---|
-| Thứ tự Brainstorm | Sau khi chọn mode | **Trước khi chọn mode** |
-| Cơ sở chọn mode | Tự đánh giá | **Dựa trên output brainstorm** |
-| Spec + Plan (Mode B) | Solo | **Chạy qua team agents** (discovery-lead + architecture-lead + implementation-lead) |
-| Fast Lane | Bypass brainstorm | Vẫn bypass brainstorm, vào thẳng mode select |
+| Session continuity | Memory files (AI-only) | **STATE.md trong repo (ai cũng đọc được)** |
+| Research before spec | Không có | **Step 4: parallel research agents** |
+| Execution context | Shared context → context rot | **Fresh context per task** |
+| Parallel execution | Ad-hoc | **Wave-based: dependency-aware** |
+| Git discipline | Không enforce | **Atomic commit sau mỗi task** |
+| User verification | Không có UAT gate | **Step 8: UAT gate (human-driven)** |
+| Milestone tracking | Không có | **ROADMAP.md + SUMMARY.md per phase** |
+| Human touchpoints | Brainstorm + Mode + Spec + Plan | **9 explicit touchpoints (màu cam)** |
