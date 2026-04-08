@@ -1,0 +1,29 @@
+<!-- Template cho mỗi task trong .planning/{phase}-{N}-PLAN.md -->
+<!-- Wave N: Tasks trong cùng wave chạy song song. Tasks phụ thuộc wave trước chạy sau. -->
+
+<wave number="1" description="Independent tasks — run in parallel">
+  <task type="auto">
+    <name>{Task name}</name>
+    <action>{Mô tả implementation approach — đủ cụ thể để AI hiểu}</action>
+    <files>
+      <create>{path/to/new/file}</create>
+      <modify>{path/to/existing/file}</modify>
+    </files>
+    <stack>{dotnet | react | react-native | angular | iot-edge}</stack>
+    <verify>{Command hoặc check để verify task đã xong}</verify>
+    <done>{Success criteria — rõ ràng, đo lường được}</done>
+  </task>
+</wave>
+
+<wave number="2" description="Dependent on wave 1">
+  <task type="auto">
+    <name>{Task name}</name>
+    <action>{...}</action>
+    <files>
+      <modify>{...}</modify>
+    </files>
+    <stack>{...}</stack>
+    <verify>{...}</verify>
+    <done>{...}</done>
+  </task>
+</wave>

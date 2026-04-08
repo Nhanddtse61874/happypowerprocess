@@ -182,6 +182,58 @@ Template ID: `fast-lane-assessment-v1`
 }
 ```
 
+## T7: UAT Gate
+Template ID: `uat-gate-v1`
+
+```json
+{
+  "template_id": "uat-gate-v1",
+  "phase": "...",
+  "date": "YYYY-MM-DD",
+  "acceptance_criteria_results": [
+    {
+      "id": "AC-1",
+      "criterion": "...",
+      "result": "pass|fail",
+      "notes": "..."
+    }
+  ],
+  "issues_found": [
+    {
+      "id": "I-1",
+      "description": "...",
+      "severity": "critical|important|minor",
+      "fix_plan": "..."
+    }
+  ],
+  "overall_result": "pass|fail",
+  "decision": "proceed_to_qa|back_to_execute"
+}
+```
+
+## T8: Phase Summary
+Template ID: `phase-summary-v1`
+
+```json
+{
+  "template_id": "phase-summary-v1",
+  "phase": "...",
+  "completed": "YYYY-MM-DD",
+  "mode": "A|B",
+  "deliverables": ["..."],
+  "key_decisions": [
+    {
+      "decision": "...",
+      "rationale": "..."
+    }
+  ],
+  "commits": ["..."],
+  "lessons": ["..."],
+  "residual_risks": ["..."],
+  "next_milestone_input": "..."
+}
+```
+
 ## Minimal Human-Readable Block (Fallback)
 If JSON is not possible, return this block:
 

@@ -7,21 +7,32 @@ This workspace is configured as a personalized plugin that combines:
 - Optional AI Team orchestration as the structural backbone
 
 Primary references:
-- `docs/claude/runtime-modes.md`
-- `docs/claude/mode-selection-criteria.md`
-- `docs/claude/current-process-workflow.md`
-- `docs/claude/master-dispatcher-prompt.md`
-- `docs/claude/agent-output-templates.md`
-- `docs/claude/full-ai-team-setup.md`
+- `docs/claude/current-process-workflow.md` — full 11-step unified workflow (primary reference)
+- `docs/claude/state-files-guide.md` — state files guide (PROJECT, STATE, REQUIREMENTS, ROADMAP)
+- `docs/claude/templates/` — templates for all state and phase output files
+- `docs/claude/research-phase-guide.md` — research phase agents and outputs
+- `docs/claude/mode-selection-criteria.md` — Mode A vs B scoring
+- `docs/claude/master-dispatcher-prompt.md` — task routing
+- `docs/claude/agent-output-templates.md` — output template contracts
+- `docs/claude/runtime-modes.md` — Mode A and B details
+- `docs/claude/stack-skill-rule-map.md` — mandatory stack skills
+- `docs/claude/full-ai-team-setup.md` — AI team topology
 
 Execution rule in this workspace:
-- Run Brainstorm phase first (`skills/brainstorming/SKILL.md`) for all non-Fast-Lane tasks.
-- After brainstorm, run Mode Selection Gate: read `docs/claude/mode-selection-criteria.md`, score each criterion, present suggested mode with reason, and wait for user approval.
-- User-approved mode is the source of truth for all downstream phases. Do not re-evaluate after approval.
-- In Mode A: run pure Superpowers workflow — solo spec, solo plan, solo implementation.
-- In Mode B: Spec and Plan are written by team agents (phase-discovery-lead, phase-architecture-lead, phase-implementation-lead) using brainstorm output as input artifact. Orchestrator reviews internally, then user approves both spec and plan before implementation begins.
-- In both modes, every implementation task must follow mandatory stack/domain skills from `docs/claude/stack-skill-rule-map.md` (example: C# tasks must follow `skills/implementer-dotnet-csharp/SKILL.md`).
-- For hotfix/small tasks: run Fast Lane analysis (`fast-lane-assessment-v1`). If eligible, skip brainstorm but still run Mode Selection Gate with Fast Lane output as input. Minimum verification/testing gates are still required.
+- **STEP 0:** Đọc STATE.md (nếu đang resume) hoặc tạo state files mới từ templates trong `docs/claude/templates/`. Không bắt đầu bất kỳ task nào trước khi có project context.
+- **STEP 1:** Chạy Fast Lane check (`fast-lane-assessment-v1`) trước mọi task. Nếu eligible, skip Steps 2-4.
+- **STEP 2:** Brainstorm phase (`skills/brainstorming/SKILL.md`) — bắt buộc trừ Fast Lane. Output: approved design direction + REQUIREMENTS.md updated.
+- **STEP 3:** Mode Selection Gate — đọc `docs/claude/mode-selection-criteria.md`, score 5 criteria, suggest mode, chờ user approve. Sau approve, mode không thay đổi cho toàn bộ downstream.
+- **STEP 4:** Research phase — xem `docs/claude/research-phase-guide.md`. Mode A: 2 parallel agents. Mode B: 4 parallel agents. Output: `.planning/{phase}-RESEARCH.md`. Skip nếu Fast Lane.
+- **STEP 5:** Spec Writing — Mode A: `skills/brainstorming/SKILL.md` solo. Mode B: phase-discovery-lead + phase-architecture-lead dùng brainstorm output + research (không re-brainstorm).
+- **STEP 6:** Planning — Mode A: `skills/writing-plans/SKILL.md`. Mode B: phase-implementation-lead. XML task format + wave grouping. Output: `.planning/{phase}-{N}-PLAN.md`.
+- **STEP 7:** Execution wave by wave — fresh context per task, atomic commit sau mỗi task, stack skill mandatory (`docs/claude/stack-skill-rule-map.md`). User approve mỗi wave trước khi tiếp.
+- **STEP 8:** UAT — AI tạo `.planning/{phase}-UAT.md`, user tự test. AI không tự claim done. Fail → fix plan → back to Step 7.
+- **STEP 9:** QA Gate — Mode A: `skills/requesting-code-review/SKILL.md`. Mode B: phase-qa-gate + qa-code-reviewer. Block → fix. Approve → tiếp.
+- **STEP 10:** Release/DevOps — Mode A: `skills/finishing-a-development-branch/SKILL.md`. Mode B: phase-release-devops-lead.
+- **STEP 11:** Ship — PR/merge + `.planning/{phase}-SUMMARY.md` + cập nhật ROADMAP.md và STATE.md.
+- **Không tự động advance:** Dừng sau mỗi step, chờ user confirm trước khi tiếp tục.
+- **Full reference:** `docs/claude/current-process-workflow.md`
 
 If you are preparing an upstream PR to `obra/superpowers`, the Contributor Guidelines below remain mandatory.
 

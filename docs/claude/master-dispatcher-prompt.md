@@ -50,6 +50,10 @@ If any criterion fails, use the normal workflow.
 - `spec-discovery` -> `phase-discovery-lead` (input: brainstorm output)
 - `spec-architecture` -> `phase-architecture-lead` (input: brainstorm output + discovery report)
 - `plan-writing` -> `phase-implementation-lead` (input: approved spec)
+- `research-phase-mode-a` -> main session (2 parallel research subagents: stack + pitfall)
+- `research-phase-mode-b` -> `team-orchestrator` (4 parallel research subagents: stack + architecture + feature + pitfall)
+- `uat-gate` -> human (AI tạo `.planning/{phase}-UAT.md` template, user điền kết quả)
+- `phase-summary` -> main session or `team-orchestrator` (tổng hợp sau Ship)
 - `implement-react-native` -> `implementer-react-native-typescript`
 - `implement-dotnet-backend` -> `implementer-dotnet-csharp`
 - `implement-angular` -> `implementer-angular-typescript`
@@ -74,6 +78,12 @@ Escalate with 2-3 options when:
 - Security/reliability trade-off affects production risk.
 - Timeline forces scope cuts.
 - Task requires architectural change not yet approved.
+
+## Execution Task Additional Fields
+When task_type is implementation or research:
+- `wave_number`: wave number trong execution sequence
+- `fresh_context`: true (mỗi task chạy trong context độc lập)
+- `atomic_commit`: true (commit sau khi task hoàn thành)
 
 ## Required Handoff Block
 Every dispatch must include:
