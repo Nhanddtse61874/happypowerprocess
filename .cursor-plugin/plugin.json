@@ -1,13 +1,13 @@
 {
-  "name": "superpowers-ai-team-personal",
-  "displayName": "Superpowers — Personalized Plugin",
+  "name": "happypowerprocess",
+  "displayName": "Happy Power Process",
   "description": "Unified 11-step AI workflow: Superpowers execution skills + GSD state persistence + optional AI Team orchestration.",
   "version": "5.2.0",
   "author": {
     "name": "Nhan"
   },
-  "homepage": "https://github.com/Nhanddtse61874/firstworkflowagent",
-  "repository": "https://github.com/Nhanddtse61874/firstworkflowagent",
+  "homepage": "https://github.com/Nhanddtse61874/happypowerprocess",
+  "repository": "https://github.com/Nhanddtse61874/happypowerprocess",
   "license": "MIT",
   "keywords": [
     "skills",

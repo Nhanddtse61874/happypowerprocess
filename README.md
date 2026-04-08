@@ -208,7 +208,7 @@ Stack-specific skills enforced on every implementation task:
 /plugin marketplace add Nhanddtse61874/happypowerprocess
 
 # Step 2: Install the plugin
-/plugin install superpowers-ai-team-personal@superpowers-ai-team-personal-dev
+/plugin install happypowerprocess@happypowerprocess
 ```
 
 ### Claude Code — Local (no public repo needed)
@@ -260,7 +260,7 @@ Start a new session and say something like _"let's build a feature"_. The agent 
 
 ```bash
 # Claude Code
-/plugin update superpowers-ai-team-personal
+/plugin update happypowerprocess
 
 # Codex
 cd ~/.codex/happypowerprocess && git pull

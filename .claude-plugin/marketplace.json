@@ -1,12 +1,12 @@
 {
-  "name": "superpowers-ai-team-personal-dev",
-  "description": "Development marketplace for personalized Superpowers + GSD + AI Team plugin",
+  "name": "happypowerprocess",
+  "description": "Personalized AI workflow plugin: Superpowers + GSD + AI Team orchestration",
   "owner": {
     "name": "Nhan"
   },
   "plugins": [
     {
-      "name": "superpowers-ai-team-personal",
+      "name": "happypowerprocess",
       "description": "Unified 11-step AI workflow: Superpowers execution skills + GSD state persistence + optional AI Team orchestration.",
       "version": "5.2.0",
       "source": "./",

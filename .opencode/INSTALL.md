@@ -10,7 +10,7 @@ Add the plugin to the `plugin` array in your `opencode.json` (global or project-
 
 ```json
 {
-  "plugin": ["superpowers-ai-team-personal@git+https://github.com/Nhanddtse61874/firstworkflowagent.git"]
+  "plugin": ["happypowerprocess@git+https://github.com/Nhanddtse61874/happypowerprocess.git"]
 }
 ```
 
@@ -52,7 +52,7 @@ To pin a specific version:
 
 ```json
 {
-  "plugin": ["superpowers-ai-team-personal@git+https://github.com/Nhanddtse61874/firstworkflowagent.git#v5.2.0"]
+  "plugin": ["happypowerprocess@git+https://github.com/Nhanddtse61874/happypowerprocess.git#v5.2.0"]
 }
 ```
 
@@ -60,7 +60,7 @@ To pin a specific version:
 
 ### Plugin not loading
 
-1. Check logs: `opencode run --print-logs "hello" 2>&1 | grep -i superpowers-ai-team-personal`
+1. Check logs: `opencode run --print-logs "hello" 2>&1 | grep -i happypowerprocess`
 2. Verify the plugin line in your `opencode.json`
 3. Make sure you're running a recent version of OpenCode
 
@@ -79,5 +79,5 @@ When skills reference Claude Code tools:
 
 ## Getting Help
 
-- Report issues: https://github.com/Nhanddtse61874/firstworkflowagent/issues
-- Full documentation: https://github.com/Nhanddtse61874/firstworkflowagent/blob/main/docs/README.opencode.md
+- Report issues: https://github.com/Nhanddtse61874/happypowerprocess/issues
+- Full documentation: https://github.com/Nhanddtse61874/happypowerprocess/blob/main/docs/README.opencode.md
