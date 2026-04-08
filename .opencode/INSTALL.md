@@ -10,7 +10,7 @@ Add the plugin to the `plugin` array in your `opencode.json` (global or project-
 
 ```json
 {
-  "plugin": ["superpowers-ai-team-personal@git+https://github.com/Nhanddtse61874/privateAgentTeam.git"]
+  "plugin": ["superpowers-ai-team-personal@git+https://github.com/Nhanddtse61874/firstworkflowagent.git"]
 }
 ```
 
@@ -52,7 +52,7 @@ To pin a specific version:
 
 ```json
 {
-  "plugin": ["superpowers-ai-team-personal@git+https://github.com/Nhanddtse61874/privateAgentTeam.git#v5.2.0"]
+  "plugin": ["superpowers-ai-team-personal@git+https://github.com/Nhanddtse61874/firstworkflowagent.git#v5.2.0"]
 }
 ```
 
@@ -79,5 +79,5 @@ When skills reference Claude Code tools:
 
 ## Getting Help
 
-- Report issues: https://github.com/Nhanddtse61874/privateAgentTeam/issues
-- Full documentation: https://github.com/Nhanddtse61874/privateAgentTeam/blob/main/docs/README.opencode.md
+- Report issues: https://github.com/Nhanddtse61874/firstworkflowagent/issues
+- Full documentation: https://github.com/Nhanddtse61874/firstworkflowagent/blob/main/docs/README.opencode.md

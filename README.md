@@ -205,7 +205,7 @@ Stack-specific skills enforced on every implementation task:
 
 ```bash
 # Step 1: Add this repo as a marketplace
-/plugin marketplace add Nhanddtse61874/privateAgentTeam
+/plugin marketplace add Nhanddtse61874/firstworkflowagent
 
 # Step 2: Install the plugin
 /plugin install superpowers-ai-team-personal@superpowers-ai-team-personal-dev
@@ -215,27 +215,27 @@ Stack-specific skills enforced on every implementation task:
 
 ```bash
 # Clone the repo
-git clone https://github.com/Nhanddtse61874/privateAgentTeam
+git clone https://github.com/Nhanddtse61874/firstworkflowagent
 
 # Load plugin for the session
-claude --plugin-dir ./privateAgentTeam
+claude --plugin-dir ./firstworkflowagent
 ```
 
 ### Codex
 
 ```bash
 # Clone the repo
-git clone https://github.com/Nhanddtse61874/privateAgentTeam.git ~/.codex/privateAgentTeam
+git clone https://github.com/Nhanddtse61874/firstworkflowagent.git ~/.codex/firstworkflowagent
 
 # Create the skills symlink
 mkdir -p ~/.agents/skills
-ln -s ~/.codex/privateAgentTeam/skills ~/.agents/skills/privateAgentTeam
+ln -s ~/.codex/firstworkflowagent/skills ~/.agents/skills/firstworkflowagent
 ```
 
 **Windows (PowerShell):**
 ```powershell
 New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
-cmd /c mklink /J "$env:USERPROFILE\.agents\skills\privateAgentTeam" "$env:USERPROFILE\.codex\privateAgentTeam\skills"
+cmd /c mklink /J "$env:USERPROFILE\.agents\skills\firstworkflowagent" "$env:USERPROFILE\.codex\firstworkflowagent\skills"
 ```
 
 Restart Codex after install. Full guide: [.codex/INSTALL.md](.codex/INSTALL.md)
@@ -243,13 +243,13 @@ Restart Codex after install. Full guide: [.codex/INSTALL.md](.codex/INSTALL.md)
 ### OpenCode
 
 ```
-Fetch and follow instructions from https://raw.githubusercontent.com/Nhanddtse61874/privateAgentTeam/main/.opencode/INSTALL.md
+Fetch and follow instructions from https://raw.githubusercontent.com/Nhanddtse61874/firstworkflowagent/main/.opencode/INSTALL.md
 ```
 
 ### Cursor
 
 ```
-/add-plugin https://github.com/Nhanddtse61874/privateAgentTeam
+/add-plugin https://github.com/Nhanddtse61874/firstworkflowagent
 ```
 
 ### Verify Installation
@@ -263,7 +263,7 @@ Start a new session and say something like _"let's build a feature"_. The agent 
 /plugin update superpowers-ai-team-personal
 
 # Codex
-cd ~/.codex/privateAgentTeam && git pull
+cd ~/.codex/firstworkflowagent && git pull
 ```
 
 ---
