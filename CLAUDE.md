@@ -19,19 +19,19 @@ Primary references:
 - `docs/claude/full-ai-team-setup.md` — AI team topology
 
 Execution rule in this workspace:
-- **STEP 0:** Đọc STATE.md (nếu đang resume) hoặc tạo state files mới từ templates trong `docs/claude/templates/`. Không bắt đầu bất kỳ task nào trước khi có project context.
+- **STEP 0:** Resuming: đọc STATE.md → biết chính xác next action. New project: thu thập config upfront → lưu `.planning/config.json` (mode, granularity, parallelization, workflow flags) → deep questioning → tạo state files từ `docs/claude/templates/`. Artifact persistence: viết ra disk ngay, không giữ trong memory.
 - **STEP 1:** Chạy Fast Lane check (`fast-lane-assessment-v1`) trước mọi task. Nếu eligible, skip Steps 2-4.
-- **STEP 2:** Brainstorm phase (`skills/brainstorming/SKILL.md`) — bắt buộc trừ Fast Lane. Output: approved design direction + REQUIREMENTS.md updated.
-- **STEP 3:** Mode Selection Gate — đọc `docs/claude/mode-selection-criteria.md`, score 5 criteria, suggest mode, chờ user approve. Sau approve, mode không thay đổi cho toàn bộ downstream.
-- **STEP 4:** Research phase — xem `docs/claude/research-phase-guide.md`. Mode A: 2 parallel agents. Mode B: 4 parallel agents. Output: `.planning/{phase}-RESEARCH.md`. Skip nếu Fast Lane.
-- **STEP 5:** Spec Writing — Mode A: `skills/brainstorming/SKILL.md` solo. Mode B: phase-discovery-lead + phase-architecture-lead dùng brainstorm output + research (không re-brainstorm).
-- **STEP 6:** Planning — Mode A: `skills/writing-plans/SKILL.md`. Mode B: phase-implementation-lead. XML task format + wave grouping. Output: `.planning/{phase}-{N}-PLAN.md`.
-- **STEP 7:** Execution wave by wave — fresh context per task, atomic commit sau mỗi task, stack skill mandatory (`docs/claude/stack-skill-rule-map.md`). User approve mỗi wave trước khi tiếp.
-- **STEP 8:** UAT — AI tạo `.planning/{phase}-UAT.md`, user tự test. AI không tự claim done. Fail → fix plan → back to Step 7.
-- **STEP 9:** QA Gate — Mode A: `skills/requesting-code-review/SKILL.md`. Mode B: phase-qa-gate + qa-code-reviewer. Block → fix. Approve → tiếp.
-- **STEP 10:** Release/DevOps — Mode A: `skills/finishing-a-development-branch/SKILL.md`. Mode B: phase-release-devops-lead.
-- **STEP 11:** Ship — PR/merge + `.planning/{phase}-SUMMARY.md` + cập nhật ROADMAP.md và STATE.md.
-- **Không tự động advance:** Dừng sau mỗi step, chờ user confirm trước khi tiếp tục.
+- **STEP 2:** Brainstorm (`skills/brainstorming/SKILL.md`) — bắt buộc trừ Fast Lane. Output: approved design direction + REQUIREMENTS.md với REQ-IDs (testable, user-centric, atomic). Mọi v1 requirement phải map về đúng một phase — 100% coverage bắt buộc.
+- **STEP 3:** Mode Selection Gate — score 5 criteria, suggest mode, chờ user approve. Mode không thay đổi sau approve.
+- **STEP 4:** Research — xem `docs/claude/research-phase-guide.md`. Mỗi agent load CONTEXT.md + config.json trước khi research. Mọi claim phải có [VERIFIED/CITED/ASSUMED] tag. Mode A: 2 agents. Mode B: 4 agents + Synthesizer. Skip nếu Fast Lane hoặc `workflow.research: false`.
+- **STEP 5:** Spec — Mode A: brainstorming skill solo. Mode B: phase-discovery-lead + phase-architecture-lead (input: brainstorm + research, không re-brainstorm).
+- **STEP 6:** Plan — goal-backward methodology trước (Observable Truths → Artifacts → Wiring → Key Links → must_haves frontmatter). XML tasks với read_first, action, verify (Nyquist: automated <60s), done. Context budget: ~50% per plan, max 2-3 tasks. Wave assignment algorithm. Plan Checker validate 11 dimensions (max 3 revision loops) nếu `workflow.plan_check: true`.
+- **STEP 7:** Execution wave by wave — intra-wave file overlap check trước khi execute. Fresh context per task (chỉ inject files từ read_first). Worktree isolation khi parallelization: true (sequential dispatch, parallel run). Atomic commit sau mỗi task. Stack skill mandatory. Failure recovery: retry/skip/abort per plan.
+- **STEP 8:** UAT (user tự test, AI không claim done) + Goal-Backward Verification (cross-reference must_haves với artifacts). Gap closure nếu cần. Regression gate + schema drift detection (Mode B).
+- **STEP 9:** QA Gate — Mode A: requesting-code-review. Mode B: phase-qa-gate + qa-code-reviewer. Block → fix → Step 7.
+- **STEP 10:** Release/DevOps — Mode A: finishing-a-development-branch. Mode B: phase-release-devops-lead.
+- **STEP 11:** Ship — PR/merge + SUMMARY.md + ROADMAP.md + STATE.md updated. Escalation nếu conflict.
+- **Không tự động advance:** Dừng sau mỗi step, chờ user confirm.
 - **Full reference:** `docs/claude/current-process-workflow.md`
 
 If you are preparing an upstream PR to `obra/superpowers`, the Contributor Guidelines below remain mandatory.
