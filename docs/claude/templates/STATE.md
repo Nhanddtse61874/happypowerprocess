@@ -28,6 +28,10 @@
 
 {Mode A / Mode B} — approved {YYYY-MM-DD}
 
+## Config
+
+Xem `.planning/config.json` cho granularity, parallelization, git tracking settings.
+
 ## Notes
 
-{Bất kỳ context quan trọng nào khác}
+{Bất kỳ context quan trọng nào khác. Nếu context bị mất, file này phải đủ để resume.}
