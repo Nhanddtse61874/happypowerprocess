@@ -1,7 +1,7 @@
 <!--
-  Template cho .planning/{phase}-{N}-PLAN.md
+  Template for .planning/{phase}-{N}-PLAN.md
   File naming: {padded_phase}-{NN}-PLAN.md
-  Ví dụ: 01-01-PLAN.md, 03-02-PLAN.md
+  Example: 01-01-PLAN.md, 03-02-PLAN.md
 -->
 
 ---
@@ -41,6 +41,19 @@ must_haves:
 <wave number="1" description="Independent tasks — run in parallel">
   <task type="auto">
     <name>{Action-oriented task name — e.g. "Add JWT validation middleware"}</name>
+
+    <model>
+      <!--
+        Model assignment — planner assigns based on task complexity:
+        - haiku:  Mechanical tasks (1-2 files, clear spec, isolated function)
+        - sonnet: Integration tasks (multi-file coordination, pattern matching)
+        - opus:   Complex tasks (architecture, design judgment, broad codebase)
+
+        Defaults from config.json model_defaults. User can override per task before approve.
+        model_profile shifts tiers: "budget" → all down one tier, "quality" → all up one tier.
+      -->
+      {haiku | sonnet | opus}
+    </model>
 
     <read_first>
       <!-- Files executor MUST read before starting -->
@@ -83,6 +96,8 @@ must_haves:
   <task type="auto">
     <name>{Task name}</name>
 
+    <model>{haiku | sonnet | opus}</model>
+
     <read_first>
       {path/to/file/created/in/wave1.ts}
     </read_first>
@@ -106,7 +121,7 @@ must_haves:
 <!--
   PLAN CHECKER validates 11 dimensions before execution:
   1. Requirement Coverage — every REQ-ID has covering task
-  2. Task Completeness — every task has read_first + action + verify + done
+  2. Task Completeness — every task has model + read_first + action + verify + done
   3. Dependency Correctness — acyclic, correctly waved
   4. Key Links Planned — artifacts wired together (not just created)
   5. Scope Sanity — 2-3 tasks/plan, ~50% context

@@ -19,19 +19,20 @@ Primary references:
 - `docs/claude/full-ai-team-setup.md` — AI team topology
 
 Execution rule in this workspace:
-- **STEP 0:** Resuming: đọc STATE.md → biết chính xác next action. New project: thu thập config upfront → lưu `.planning/config.json` (mode, granularity, parallelization, workflow flags) → deep questioning → tạo state files từ `docs/claude/templates/`. Artifact persistence: viết ra disk ngay, không giữ trong memory.
-- **STEP 1:** Chạy Fast Lane check (`fast-lane-assessment-v1`) trước mọi task. Nếu eligible, skip Steps 2-4.
-- **STEP 2:** Brainstorm (`skills/brainstorming/SKILL.md`) — bắt buộc trừ Fast Lane. Output: approved design direction + REQUIREMENTS.md với REQ-IDs (testable, user-centric, atomic). Mọi v1 requirement phải map về đúng một phase — 100% coverage bắt buộc.
-- **STEP 3:** Mode Selection Gate — score 5 criteria, suggest mode, chờ user approve. Mode không thay đổi sau approve.
-- **STEP 4:** Research — xem `docs/claude/research-phase-guide.md`. Mỗi agent load CONTEXT.md + config.json trước khi research. Mọi claim phải có [VERIFIED/CITED/ASSUMED] tag. Mode A: 2 agents. Mode B: 4 agents + Synthesizer. Skip nếu Fast Lane hoặc `workflow.research: false`.
-- **STEP 5:** Spec — Mode A: brainstorming skill solo. Mode B: phase-discovery-lead + phase-architecture-lead (input: brainstorm + research, không re-brainstorm).
-- **STEP 6:** Plan — goal-backward methodology trước (Observable Truths → Artifacts → Wiring → Key Links → must_haves frontmatter). XML tasks với read_first, action, verify (Nyquist: automated <60s), done. Context budget: ~50% per plan, max 2-3 tasks. Wave assignment algorithm. Plan Checker validate 11 dimensions (max 3 revision loops) nếu `workflow.plan_check: true`.
-- **STEP 7:** Execution wave by wave — intra-wave file overlap check trước khi execute. Fresh context per task (chỉ inject files từ read_first). Worktree isolation khi parallelization: true (sequential dispatch, parallel run). Atomic commit sau mỗi task. Stack skill mandatory. Failure recovery: retry/skip/abort per plan.
-- **STEP 8:** UAT (user tự test, AI không claim done) + Goal-Backward Verification (cross-reference must_haves với artifacts). Gap closure nếu cần. Regression gate + schema drift detection (Mode B).
+- **STEP 0:** Resume: read STATE.md + `.planning/config.json` → display config → ask "keep or edit?" → update if needed → continue. New project: collect config upfront → save `.planning/config.json` (mode, granularity, parallelization, commit_docs, commit_atomic, model_defaults, workflow flags) → deep questioning → create state files from `docs/claude/templates/`. `commit_docs`: `{state_files: bool, planning_artifacts: bool}` — when `planning_artifacts: false`, `.planning/` auto-added to `.gitignore`. `commit_atomic`: `true` (per task) / `false` (batch per wave). `model_defaults`: `{mechanical: "haiku", standard: "sonnet", complex: "opus"}` — per-task model assignment. Artifact persistence: write to disk immediately, never hold in memory.
+- **Config Update (anytime):** User says "update config" at any time → AI reads `.planning/config.json`, displays it, lets user edit, updates immediately. If changes affect completed steps → warn + suggest re-plan.
+- **STEP 1:** Run Fast Lane check (`fast-lane-assessment-v1`) before every task. If eligible, skip Steps 2-4.
+- **STEP 2:** Brainstorm (`skills/brainstorming/SKILL.md`) — required unless Fast Lane. Output: approved design direction + REQUIREMENTS.md with REQ-IDs (testable, user-centric, atomic). Every v1 requirement must map to exactly one phase — 100% coverage required.
+- **STEP 3:** Mode Selection Gate — score 5 criteria, suggest mode, wait for user approval. Mode is locked after approval.
+- **STEP 4:** Research — see `docs/claude/research-phase-guide.md`. Each agent loads CONTEXT.md + config.json before researching. All claims must have [VERIFIED/CITED/ASSUMED] tags. Mode A: 2 agents. Mode B: 4 agents + Synthesizer. Skip if Fast Lane or `workflow.research: false`.
+- **STEP 5:** Spec — Mode A: brainstorming skill solo. Mode B: phase-discovery-lead + phase-architecture-lead (input: brainstorm + research, no re-brainstorm).
+- **STEP 6:** Plan — goal-backward methodology (Observable Truths → Artifacts → Wiring → Key Links → must_haves frontmatter). XML tasks with model, read_first, action, verify (Nyquist: automated <60s), done. `<model>` required per task (`haiku`/`sonnet`/`opus`) — planner assigns from `model_defaults`, user overrides before approval. Context budget: ~50% per plan, max 2-3 tasks. Wave assignment algorithm. Plan Checker validates 11 dimensions (max 3 revision loops) if `workflow.plan_check: true`.
+- **STEP 7:** Execute wave by wave — intra-wave file overlap check before execution. **Pre-task confirmation** (interactive mode): show model + files, ask if user wants to switch model. Controller dispatches subagent with model from `<model>` tag (or user override). Escalation: haiku→sonnet→opus if BLOCKED. **Commit strategy confirmation** before first wave: confirm `commit_atomic` (true=per task, false=batch per wave). Worktree isolation when parallelization: true (sequential dispatch, parallel run). Commit behavior per `commit_docs` + `commit_atomic` config. Stack skill mandatory. Failure recovery: retry/skip/abort per plan.
+- **STEP 8:** UAT (user tests, AI does not claim done) + Goal-Backward Verification (cross-reference must_haves with artifacts). Gap closure if needed. Regression gate + schema drift detection (Mode B).
 - **STEP 9:** QA Gate — Mode A: requesting-code-review. Mode B: phase-qa-gate + qa-code-reviewer. Block → fix → Step 7.
 - **STEP 10:** Release/DevOps — Mode A: finishing-a-development-branch. Mode B: phase-release-devops-lead.
-- **STEP 11:** Ship — PR/merge + SUMMARY.md + ROADMAP.md + STATE.md updated. Escalation nếu conflict.
-- **Không tự động advance:** Dừng sau mỗi step, chờ user confirm.
+- **STEP 11:** Ship — PR/merge + SUMMARY.md + ROADMAP.md + STATE.md updated. Escalation if conflict.
+- **Never auto-advance:** Stop after each step, wait for user confirmation.
 - **Full reference:** `docs/claude/current-process-workflow.md`
 
 If you are preparing an upstream PR to `obra/superpowers`, the Contributor Guidelines below remain mandatory.

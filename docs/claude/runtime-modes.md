@@ -71,6 +71,51 @@ Example:
 Reference:
 - `docs/claude/stack-skill-rule-map.md`
 
+## Per-Task Model Assignment (Both Modes)
+
+Every task in the plan XML has a `<model>` element specifying the exact model to use:
+- `haiku` — mechanical tasks (1-2 files, clear spec)
+- `sonnet` — integration tasks (multi-file coordination, pattern matching)
+- `opus` — complex tasks (architecture, design judgment, broad codebase)
+
+Default mapping is defined in `config.json` under `model_defaults`:
+```json
+{
+  "model_defaults": {
+    "mechanical": "haiku",
+    "standard": "sonnet",
+    "complex": "opus"
+  }
+}
+```
+
+`model_profile` shifts all tiers: `budget` shifts down (opus→sonnet, sonnet→haiku), `quality` shifts up (haiku→sonnet, sonnet→opus). Clamped at boundaries — haiku cannot go lower than haiku, opus cannot go higher than opus.
+
+Planner assigns model per task during Step 6. User can override per task before approving the plan. Controller dispatches subagent with the assigned model during Step 7.
+
+## Commit Configuration (Both Modes)
+
+`config.json` has two commit-related settings:
+
+```json
+{
+  "commit_docs": {
+    "state_files": true,
+    "planning_artifacts": true
+  },
+  "commit_atomic": true
+}
+```
+
+**`commit_docs`** — controls what gets committed:
+- `state_files`: PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md — always recommended `true` for resume capability
+- `planning_artifacts`: `.planning/` files (research, plans, UAT, summaries) — set `false` to keep planning artifacts out of git (`.planning/` auto-added to `.gitignore`)
+
+**`commit_atomic`** — controls when commits happen during execution (Step 7):
+- `true` (default): commit immediately after each task — bisectable, revertable
+- `false`: batch — stage changes per task, commit once after wave completes. When `parallelization: true`, worktrees still commit internally (git requires it for merge), but squash into a single commit per wave on merge back to main
+- Controller confirms this strategy with user before executing the first wave (skipped when `mode: yolo`)
+
 ## Fast Lane (Hotfix/Small Task) - Both Modes
 
 Both modes support a Fast Lane recommendation path for hotfix and small tasks.

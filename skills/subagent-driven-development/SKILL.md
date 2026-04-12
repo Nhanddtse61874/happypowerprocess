@@ -86,18 +86,35 @@ digraph process {
 
 ## Model Selection
 
-Use the least powerful model that can handle each role to conserve cost and increase speed.
+Each task in the plan has a `<model>` element specifying the exact model to use (`haiku`, `sonnet`, or `opus`). The planner assigns this based on task complexity; the user may override per task before approving the plan.
 
-**Mechanical implementation tasks** (isolated functions, clear specs, 1-2 files): use a fast, cheap model. Most implementation tasks are mechanical when the plan is well-specified.
+**Controller dispatch rule:** Read `<model>` from the task XML and dispatch the subagent with that model. Do not re-evaluate — the plan is the source of truth for model assignment.
 
-**Integration and judgment tasks** (multi-file coordination, pattern matching, debugging): use a standard model.
+**Escalation on BLOCKED:** If a subagent reports BLOCKED and the blocker suggests insufficient reasoning capability, escalate to the next tier:
+- `haiku` → re-dispatch with `sonnet`
+- `sonnet` → re-dispatch with `opus`
+- `opus` → escalate to human (cannot go higher)
 
-**Architecture, design, and review tasks**: use the most capable available model.
+**Fallback (no `<model>` in task):** If a task has no `<model>` element (legacy plans), apply complexity signals:
+- 1-2 files with complete spec → `haiku` (or `model_defaults.mechanical` from config.json)
+- Multiple files with integration concerns → `sonnet` (or `model_defaults.standard`)
+- Design judgment or broad codebase understanding → `opus` (or `model_defaults.complex`)
 
-**Task complexity signals:**
-- Touches 1-2 files with a complete spec → cheap model
-- Touches multiple files with integration concerns → standard model
-- Requires design judgment or broad codebase understanding → most capable model
+## Pre-Task Confirmation
+
+Before dispatching each task, confirm with the user:
+
+```
+Task: {task name}
+Model: {haiku/sonnet/opus} (from plan)
+Files: {files_modified}
+
+Proceed with this model, or switch? [proceed / haiku / sonnet / opus]
+```
+
+- `proceed` → dispatch with the model from the plan
+- User picks a different model → override for this task only (does not change the plan)
+- Skip confirmation when `mode: yolo` in config.json — use model from plan directly
 
 ## Handling Implementer Status
 

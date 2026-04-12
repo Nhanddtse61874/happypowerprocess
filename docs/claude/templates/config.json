@@ -2,13 +2,19 @@
   "mode": "interactive",
   "granularity": "standard",
   "parallelization": true,
-  "commit_docs": true,
+  "commit_docs": {
+    "state_files": true,
+    "planning_artifacts": true
+  },
+  "commit_atomic": true,
   "model_profile": "balanced",
+  "model_defaults": {
+    "mechanical": "haiku",
+    "standard": "sonnet",
+    "complex": "opus"
+  },
   "workflow": {
     "research": true,
-    "plan_check": true,
-    "verifier": true,
-    "nyquist_validation": true,
-    "auto_advance": false
+    "plan_check": true
   }
 }

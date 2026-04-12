@@ -1,63 +1,63 @@
 # Research Phase Guide (Step 4)
 
-Research phase chạy sau Mode Selection Gate và trước Spec Writing. Mục đích: thu thập evidence trước khi plan, thay vì plan từ assumption.
+Research phase runs after Mode Selection Gate and before Spec Writing. Purpose: gather evidence before planning, instead of planning from assumptions.
 
-## Khi nào chạy
+## When to Run
 
-- Sau Step 3 (Mode Gate) — cả Mode A và Mode B đều chạy research
-- Skip nếu: Fast Lane eligible, hoặc `workflow.research: false` trong config.json
+- After Step 3 (Mode Gate) — both Mode A and Mode B run research
+- Skip if: Fast Lane eligible, or `workflow.research: false` in config.json
 
-## Critical Startup Protocol (mỗi research agent)
+## Critical Startup Protocol (each research agent)
 
-Trước khi research bất kỳ điều gì, agent phải:
-1. Load CONTEXT.md nếu tồn tại — locked decisions ràng buộc scope
-2. Load `.planning/config.json` — đọc validation settings
-3. Đọc CLAUDE.md — project directives override mọi recommendation
+Before researching anything, agent must:
+1. Load CONTEXT.md if it exists — locked decisions constrain scope
+2. Load `.planning/config.json` — read validation settings
+3. Read CLAUDE.md — project directives override all recommendations
 
 ## Mode A: Research (Solo) — 2 agents
 
-| Agent | Nhiệm vụ | Output section |
+| Agent | Task | Output section |
 |---|---|---|
-| Stack Researcher | Patterns, conventions, best practices cho stack hiện tại | Stack Findings |
-| Pitfall Researcher | Known issues, anti-patterns, gotchas với approach đang xem xét | Pitfalls & Anti-patterns |
+| Stack Researcher | Patterns, conventions, best practices for current stack | Stack Findings |
+| Pitfall Researcher | Known issues, anti-patterns, gotchas with the approach under consideration | Pitfalls & Anti-patterns |
 
 ## Mode B: Research (Team) — 4 agents + Synthesizer
 
-| Agent | Nhiệm vụ | Output file |
+| Agent | Task | Output file |
 |---|---|---|
-| Stack Researcher | Current stack với versions và rationale | `.planning/research/STACK.md` |
+| Stack Researcher | Current stack with versions and rationale | `.planning/research/STACK.md` |
 | Feature Researcher | Table stakes vs differentiators vs anti-features | `.planning/research/FEATURES.md` |
 | Architecture Researcher | Component boundaries, data flow, build order | `.planning/research/ARCHITECTURE.md` |
 | Pitfall Researcher | Common mistakes, prevention strategies, edge cases | `.planning/research/PITFALLS.md` |
-| **Research Synthesizer** | Consolidate 4 outputs thành actionable summary | `.planning/research/SUMMARY.md` |
+| **Research Synthesizer** | Consolidate 4 outputs into actionable summary | `.planning/research/SUMMARY.md` |
 
-**Synthesizer chạy sau 4 agents** — SUMMARY.md là input chính cho Spec Writing (Step 5).
+**Synthesizer runs after all 4 agents** — SUMMARY.md is the primary input for Spec Writing (Step 5).
 
 ## Claim Provenance (CRITICAL)
 
-Mọi factual claim phải được tag nguồn:
+Every factual claim must be tagged with its source:
 
-| Tag | Ý nghĩa | Trust level |
+| Tag | Meaning | Trust level |
 |---|---|---|
 | `[VERIFIED: npm registry]` | Tool-confirmed | HIGH |
 | `[CITED: docs.example.com]` | Official documentation | HIGH-MEDIUM |
-| `[ASSUMED]` | Training knowledge, cần user validation | LOW |
+| `[ASSUMED]` | Training knowledge, needs user validation | LOW |
 
-**Không bao giờ present assumed knowledge như verified fact** — đặc biệt với compliance, security, performance.
+**Never present assumed knowledge as verified fact** — especially for compliance, security, performance claims.
 
 **Honest research philosophy:**
-- Verify trước khi assert — training data có thể 6-18 tháng cũ
-- Report gaps honestly — "couldn't find X" có giá trị hơn fabricate
-- Flag LOW confidence rõ ràng — surfaces items cần validation
+- Verify before asserting — training data may be 6-18 months stale
+- Report gaps honestly — "couldn't find X" is more valuable than fabricating
+- Flag LOW confidence clearly — surfaces items needing validation
 - Treat evidence as driver, not confirmation bias
 
-## Tool Priority cho Research
+## Tool Priority for Research
 
 1. **Context7** — Library APIs, configs, versions (HIGH trust)
 2. **Official docs / WebFetch** — READMEs, changelogs (HIGH-MEDIUM)
-3. **WebSearch** — Ecosystem patterns (cần cross-verify)
+3. **WebSearch** — Ecosystem patterns (needs cross-verification)
 
-## Research Workflow (từng agent)
+## Research Workflow (each agent)
 
 | Step | Action |
 |------|--------|
@@ -65,8 +65,8 @@ Mọi factual claim phải được tag nguồn:
 | 2 | Identify research domains |
 | 2.5 | *Rename/refactor phases only:* Runtime state inventory (stored data, live config, OS registration, secrets, build artifacts) |
 | 2.6 | *External dependency phases:* Environment availability audit via bash probes |
-| 3 | Execute research theo tool priority |
-| 4 | Map requirements to tests, identify gaps (nếu enabled) |
+| 3 | Execute research per tool priority |
+| 4 | Map requirements to tests, identify gaps (if enabled) |
 | 5 | Quality check: domains covered, negatives verified, confidence assigned |
 | 6 | Write output file |
 
@@ -80,7 +80,7 @@ Mọi factual claim phải được tag nguồn:
 **Input:** Brainstorm output + approved design direction
 
 <user_constraints>
-## User Constraints (from CONTEXT.md, nếu tồn tại)
+## User Constraints (from CONTEXT.md, if exists)
 ### Locked Decisions
 ### Claude's Discretion
 ### Deferred Ideas (OUT OF SCOPE)
@@ -93,7 +93,7 @@ Mọi factual claim phải được tag nguồn:
 
 ## Standard Stack
 
-{Stack findings với claim tags}
+{Stack findings with claim tags}
 
 ## Architecture Patterns
 
@@ -101,30 +101,30 @@ Mọi factual claim phải được tag nguồn:
 
 ## Don't Hand-Roll
 
-{Libraries/tools đã có, không tự viết lại}
+{Libraries/tools that already exist — do not reimplement}
 
 ## Common Pitfalls
 
-{Anti-patterns cần tránh}
+{Anti-patterns to avoid}
 
 ## Assumptions Log
 
-{Mọi ASSUMED claim — cần user validation}
+{All ASSUMED claims — need user validation}
 
 ## Open Questions
 
-{Những gì không tìm thấy hoặc cần clarification}
+{Items not found or needing clarification}
 
 ## Sources
 
-{URLs, docs tham khảo}
+{URLs, docs referenced}
 ```
 
 ## Human Touchpoint
 
-Sau khi research xong: User review `.planning/{phase}-RESEARCH.md` (Mode A) hoặc `.planning/research/SUMMARY.md` (Mode B), confirm đủ thông tin trước khi tiếp tục Step 5.
+After research completes: User reviews `.planning/{phase}-RESEARCH.md` (Mode A) or `.planning/research/SUMMARY.md` (Mode B), confirms sufficient information before continuing to Step 5.
 
-Nếu thiếu: thêm targeted research agent cho vùng cụ thể, không cần restart toàn bộ phase.
+If gaps exist: add a targeted research agent for the specific area — do not restart the entire phase.
 
 ## Dispatcher Routing
 

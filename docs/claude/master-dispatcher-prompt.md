@@ -52,8 +52,8 @@ If any criterion fails, use the normal workflow.
 - `plan-writing` -> `phase-implementation-lead` (input: approved spec)
 - `research-phase-mode-a` -> main session (2 parallel research subagents: stack + pitfall)
 - `research-phase-mode-b` -> `team-orchestrator` (4 parallel research subagents: stack + architecture + feature + pitfall)
-- `uat-gate` -> human (AI tạo `.planning/{phase}-UAT.md` template, user điền kết quả)
-- `phase-summary` -> main session or `team-orchestrator` (tổng hợp sau Ship)
+- `uat-gate` -> human (AI creates `.planning/{phase}-UAT.md` template, user fills in results)
+- `phase-summary` -> main session or `team-orchestrator` (compile after Ship)
 - `implement-react-native` -> `implementer-react-native-typescript`
 - `implement-dotnet-backend` -> `implementer-dotnet-csharp`
 - `implement-angular` -> `implementer-angular-typescript`
@@ -81,9 +81,10 @@ Escalate with 2-3 options when:
 
 ## Execution Task Additional Fields
 When task_type is implementation or research:
-- `wave_number`: wave number trong execution sequence
-- `fresh_context`: true (mỗi task chạy trong context độc lập)
-- `atomic_commit`: true (commit sau khi task hoàn thành)
+- `wave_number`: wave number in execution sequence
+- `model`: model name from task XML (`haiku` / `sonnet` / `opus`) — dispatcher dispatches subagent with this model
+- `fresh_context`: true (each task runs in independent context)
+- `atomic_commit`: per `commit_atomic` config (true = commit per task, false = batch per wave)
 
 ## Required Handoff Block
 Every dispatch must include:
@@ -101,6 +102,7 @@ Every dispatch must include:
 {
   "task_type": "...",
   "selected_agent": "...",
+  "model": "haiku|sonnet|opus",
   "phase": "discovery|architecture|implementation|qa|release",
   "fast_lane_assessment": {
     "eligible": true,
