@@ -1,4 +1,26 @@
-# Release Notes — Superpowers Personalized Plugin
+# Release Notes — happypowerprocess
+
+## v5.3.0 (2026-04-13)
+
+### Per-Task Model Config & Granular Commit Control
+
+- **Per-task model assignment** — each plan task now has a `<model>` element (`haiku`/`sonnet`/`opus`). Planner assigns from `model_defaults` in config. User can override before execution.
+- **Granular commit control** — `commit_docs` changed from boolean to `{state_files: bool, planning_artifacts: bool}`. `commit_atomic` controls per-task vs per-wave commits.
+- **Config management** — new "update config" anytime mechanism. Resume sessions display config with keep/edit prompt. Mid-workflow config changes warn about impact on completed steps.
+- **Pre-task confirmation** — Step 7 now shows model + files before each task, asks if user wants to switch model. Commit strategy confirmed before first wave.
+- **Cleaned up config** — removed redundant fields (verifier, nyquist_validation, auto_advance). All workflow docs translated to English.
+
+### Version Control & README
+
+- **Single source of truth** — `package.json` is the canonical version. All references (`marketplace.json`, badges, RELEASE-NOTES, CHANGELOG) sync from it.
+- **README rewrite** — 17-section structure with TOC, badges, project structure, configuration guide, prerequisites, troubleshooting/FAQ, contributing link, and attribution.
+- **CHANGELOG backfill** — added entries for v5.1.0 and v5.2.0 from RELEASE-NOTES.
+
+### Version Skill
+
+- **`/version` command** — new skill that reads `package.json` and displays the current plugin version. Quick way to verify which version is installed.
+
+---
 
 ## v5.2.0 (2026-04-08)
 
@@ -13,11 +35,11 @@ Complete integration of GSD (Get Shit Done) workflow mechanics into the Superpow
 - **Nyquist Rule** — all automated verify steps must complete in <60s
 - **Plan Checker** — 11-dimension validation before execution
 - **Wave execution** — intra-wave file overlap check, fresh context per task, atomic commits, worktree isolation
-- **9 human touchpoints** — AI never auto-advances between steps without user confirmation
+- **10 human touchpoints** — AI never auto-advances between steps without user confirmation
 
 ### Implementer Skills Rewritten (2026 Best Practices)
 
-All 4 implementer skills rewritten with syntax examples, decision trees, and anti-pattern tables:
+All 5 implementer skills rewritten with syntax examples, decision trees, and anti-pattern tables:
 
 - **React/TypeScript** — TanStack Query v6, Zustand, React Hook Form + Zod, discriminated unions, compound components
 - **Angular/TypeScript** — Signals (signal/computed/effect, input()/output()), RxJS with takeUntilDestroyed, OnPush mandatory
@@ -26,7 +48,7 @@ All 4 implementer skills rewritten with syntax examples, decision trees, and ant
 
 ### Agent Updates
 
-All 12 agents aligned with unified workflow:
+All 20 agents aligned with unified workflow:
 
 - Implementer agents now reference their corresponding skill (REQUIRED directive)
 - Phase lead agents updated with REQ-ID format, goal-backward methodology, STATE.md updates
