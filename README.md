@@ -339,7 +339,7 @@ The workflow uses `.planning/config.json` to control behavior. This file is crea
 | Key | Description | Values |
 |---|---|---|
 | `mode` | Interaction style | `"interactive"` (confirm each step) |
-| `granularity` | Level of detail in plans | `"low"` / `"standard"` / `"high"` |
+| `granularity` | Number of phases in ROADMAP.md | `"coarse"` (3-5) / `"standard"` (5-8) / `"fine"` (8-12+) |
 | `parallelization` | Run independent tasks in parallel | `true` / `false` |
 | `commit_atomic` | When to commit changes | `true` (after each task) / `false` (batch per wave) |
 | `commit_docs` | Which documentation to commit | `{state_files: bool, planning_artifacts: bool}` |
