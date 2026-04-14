@@ -377,6 +377,18 @@ The workflow uses `.planning/config.json` to control behavior. This file is crea
 - **`workflow.research: false`** — skips the research phase (Step 4)
 - **`workflow.plan_check: false`** — skips the 11-dimension plan validation
 
+### How `model_profile` shifts tiers
+
+`model_profile` applies a uniform shift to all three `model_defaults` tiers. Boundaries are clamped — `haiku` cannot shift lower, `opus` cannot shift higher.
+
+| Profile | mechanical | standard | complex |
+|---|---|---|---|
+| `balanced` (default) | haiku | sonnet | opus |
+| `quality` (tier up) | sonnet | opus | opus |
+| `budget` (tier down) | haiku | haiku | sonnet |
+
+Use `quality` when you want higher accuracy at higher cost. Use `budget` when you want faster, cheaper execution at lower capability.
+
 ---
 
 ## Troubleshooting / FAQ
