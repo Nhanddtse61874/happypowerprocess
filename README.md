@@ -344,7 +344,7 @@ The workflow uses `.planning/config.json` to control behavior. This file is crea
 | `commit_atomic` | When to commit changes | `true` (after each task) / `false` (batch per wave) |
 | `commit_docs` | Which documentation to commit | `{state_files: bool, planning_artifacts: bool}` |
 | `model_defaults` | Model assignment per task complexity | `{mechanical: "haiku", standard: "sonnet", complex: "opus"}` |
-| `model_profile` | Overall model cost/speed balance | `"balanced"` / `"fast"` / `"quality"` |
+| `model_profile` | Shifts all model tiers up/down from defaults | `"balanced"` (no shift) / `"quality"` (tier up) / `"budget"` (tier down) |
 | `workflow` | Toggle optional workflow phases | `{research: bool, plan_check: bool}` |
 
 ### Sample Config
