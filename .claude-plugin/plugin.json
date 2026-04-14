@@ -1,7 +1,7 @@
 {
   "name": "happypowerprocess",
   "description": "Unified 11-step AI workflow: Superpowers execution skills + GSD state persistence + optional AI Team orchestration. Persistent memory across sessions, evidence-based planning, human checkpoints at every key decision.",
-  "version": "5.2.0",
+  "version": "5.3.0",
   "author": {
     "name": "Nhan"
   },
