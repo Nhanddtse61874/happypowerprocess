@@ -37,6 +37,32 @@ Execution rule in this workspace:
 
 If you are preparing an upstream PR to `obra/superpowers`, the Contributor Guidelines below remain mandatory.
 
+## Code-Level Behavioral Guidelines
+
+The 11-step workflow above defines WHAT/WHEN. This section defines HOW when actually touching code in STEP 7.
+
+### Think Before Coding
+- When code relies on an unverified assumption, tag `[ASSUMED]` in the commit message or PR description (extends the `[VERIFIED/CITED/ASSUMED]` mechanism from STEP 4 to code-level).
+- If a REQ-ID has multiple interpretations, surface all of them — do not silently pick one.
+- If a simpler approach than the approved plan exists, push back with justification before coding.
+
+### Simplicity First
+- Write the minimum code that satisfies the REQ-ID. Nothing speculative.
+- No abstractions, flexibility, or configurability that were not requested.
+- No error handling for impossible scenarios.
+- Self-check: "Would a senior engineer call this overcomplicated?"
+- If this conflicts with Plan Checker's 11 dimensions, prefer simplicity and flag it in the QA Gate (STEP 9).
+
+### Surgical Changes
+- Only modify what is strictly required for the current task/REQ-ID.
+- Do not "improve" surrounding code, formatting, or comments.
+- Do not refactor things that are not broken; match existing style.
+- Unrelated dead code — mention it in the PR description, do not delete.
+- Only remove imports/variables/functions that your own changes made orphan.
+- Every changed line must trace back to a REQ-ID or a task in the plan.
+
+### Goal-Driven Execution
+
 ## If You Are an AI Agent
 
 Stop. Read this section before doing anything.
