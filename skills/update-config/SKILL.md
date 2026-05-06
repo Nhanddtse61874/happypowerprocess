@@ -19,10 +19,17 @@ Detect plugin install path before reading the schema doc:
 
 Store result as `{PLUGIN_PATH}`.
 
+**Fallback (if hardcoded path missing)**:
+If `{PLUGIN_PATH}/docs/claude/config-schema.md` does not exist, search broader:
+- Windows: Glob `$env:USERPROFILE\.claude\plugins\**\docs\claude\config-schema.md` (max depth 4)
+- macOS/Linux: Glob `$HOME/.claude/plugins/**/docs/claude/config-schema.md` (max depth 4)
+- Use the first match's grandparent dir as `{PLUGIN_PATH}`
+- If still no match → abort: `Plugin schema doc not found. Searched marketplace path and user plugin dir. Verify happypowerprocess installed: claude plugin list`
+
 ## c. Load Schema + Current Config
 
 - Read `{PLUGIN_PATH}/docs/claude/config-schema.md` — AI reads the markdown table mentally for field names, valid values, and mid-workflow impact text. No programmatic parse needed.
-- Read `.planning/config.json` — parse JSON. **Capture `mtime` of the file now** (used in section h to detect concurrent edits).
+- Read `.planning/config.json` — parse JSON.
 - Schema doc missing → abort: `Plugin schema doc malformed. Reinstall plugin.`
 - Config malformed JSON → abort: `Config malformed JSON at line {N}. Suggest: restore from backup or run /init-project --force.`
 
@@ -51,7 +58,7 @@ Index 8 covers all 3 `model_defaults` sub-fields together — when picked, walk 
 ## e. User Picks Fields
 
 - Prompt: `Which fields to change? (số, comma-separated, hoặc 'all')`
-- Validate: comma-separated indices in range 1-10, or literal `all`.
+- Validate: comma-separated indices within the range of entries rendered in section d (do not hardcode — derive the valid range from the count of numbered rows actually displayed), or literal `all`.
 - Invalid → re-prompt up to 3 times, then abort.
 - Empty input or all "keep" → exit cleanly with `No changes made.`
 
@@ -81,7 +88,6 @@ Summary:
 
 ## h. Write Config
 
-- **Concurrent edit check**: re-stat `.planning/config.json` mtime. If different from the value captured in section c → abort: `Config modified externally during your edit. Re-run /update-config.`
 - Write updated `.planning/config.json` (preserve original key ordering; pretty-print with 2-space indent).
 - Write fails (permissions) → abort, original config unchanged.
 
@@ -98,11 +104,10 @@ Only when specific fields changed:
 
 ## j. Mid-Workflow Impact Warnings
 
-For each changed field, display a warning using the **exact text** from the schema's "Mid-workflow impact" column:
+For each changed field, display a warning using the **exact text** from the schema's "Mid-workflow impact" column. Format:
 
 ```
-⚠ granularity changed: Affects unplanned phases only. Already-planned phases unchanged.
-⚠ commit_atomic changed: Apply from next task. Existing commits unchanged.
+⚠ {field} changed: {exact text from schema 'Mid-workflow impact' column}
 ```
 
 ## k. STATE.md Audit Entry
@@ -134,7 +139,6 @@ Print:
 | Invalid value for field | Re-prompt with valid options, max 3 retries → skip field, continue to next |
 | Write to `config.json` fails | Abort, original unchanged |
 | `.gitignore` update fails | Warn but do not abort the whole flow |
-| Concurrent edit (mtime mismatch) | Abort: `Config modified externally during your edit. Re-run /update-config.` |
 
 **Constraints (do not violate):**
 - Do NOT open an external editor (no `notepad`, `vim`, `code`).
