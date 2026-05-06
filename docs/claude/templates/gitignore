@@ -1,0 +1,6 @@
+# happypowerprocess workflow
+.worktrees/
+.claude/settings.local.json
+
+# Conditional (added when commit_docs.planning_artifacts: false):
+# .planning/
