@@ -21,6 +21,10 @@
     "wave-execution",
     "goal-backward-planning",
     "personalized-workflows",
-    "runtime-modes"
+    "runtime-modes",
+    "init-project",
+    "bootstrap",
+    "config-management",
+    "project-setup"
   ]
 }

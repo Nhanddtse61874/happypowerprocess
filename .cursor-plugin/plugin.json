@@ -18,7 +18,11 @@
     "debugging",
     "state-persistence",
     "workflow",
-    "personalized-workflows"
+    "personalized-workflows",
+    "init-project",
+    "bootstrap",
+    "config-management",
+    "project-setup"
   ],
   "skills": "./skills/",
   "agents": "./agents/",
