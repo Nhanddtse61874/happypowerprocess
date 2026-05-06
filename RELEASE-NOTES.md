@@ -1,5 +1,28 @@
 # Release Notes — happypowerprocess
 
+## v5.4.0 (2026-05-06)
+
+### Bootstrap Commands
+
+- **`/init-project`** — bootstrap project state files, config, CLAUDE.md, permissions, and gitignore in one command. Asks 2 minimal prompts (project name + primary stack), supports `--force` flag for re-init with backup, brownfield auto-detection via Glob markers (`*.csproj`, `package.json`, etc.). Idempotency: 4-choice menu when STATE.md exists. Cross-platform plugin path detection (Windows + macOS/Linux) with Glob fallback for non-marketplace installs.
+- **`/update-config`** — interactive config update with field validation against schema, mid-workflow impact warnings, summary diff before apply. Auto-updates `.gitignore` when `commit_docs.planning_artifacts` toggles. Trigger phrases: "update config", "change config", "change model", "change commit strategy".
+
+### Single Source of Truth
+
+- **`docs/claude/config-schema.md`** — new schema doc consolidates all 9 config fields (12 rendered rows for nested fields). Documents valid values, defaults, mid-workflow impact, display grouping convention, and Read-permission trade-off. Both new skills defer to schema at runtime instead of hardcoding values.
+
+### Project Templates
+
+- **`docs/claude/templates/CLAUDE.md`** — project-level CLAUDE.md template (consumed by `/init-project`). Generic, no plugin-specific naming, embedded config schema, full STEP 7 operational details, Stack-Specific Rules table, Project-Specific Deviations table.
+- **`docs/claude/templates/settings.json`** — Option C workflow-aware permission allowlist (read-only ops pre-allowed, writes/destructive require user approval).
+- **`docs/claude/templates/gitignore`** — base entries for new projects.
+
+### Fixed
+
+- **Marketplace version drift** — `.claude-plugin/marketplace.json` was lagging at 5.2.0 (vs other manifests at 5.3.0). All 6 manifests now synced at 5.4.0.
+
+---
+
 ## v5.3.0 (2026-04-13)
 
 ### Per-Task Model Config & Granular Commit Control
