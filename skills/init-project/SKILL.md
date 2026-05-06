@@ -19,6 +19,13 @@ Store result as `{PLUGIN_PATH}`. All template paths below are relative to `{PLUG
 
 If `{PLUGIN_PATH}/docs/claude/templates/` is missing or empty → abort: `Plugin templates not found at {path}. Verify happypowerprocess installed: 'claude plugin list'`.
 
+**Fallback (if hardcoded path missing)**:
+If `{PLUGIN_PATH}/docs/claude/templates/config.json` does not exist, search broader:
+- Windows: Glob `$env:USERPROFILE\.claude\plugins\**\docs\claude\templates\config.json` (max depth 4)
+- macOS/Linux: Glob `$HOME/.claude/plugins/**/docs/claude/templates/config.json` (max depth 4)
+- Use the first match's grandparent dir as `{PLUGIN_PATH}`
+- If still no match → abort: `Plugin templates not found. Searched marketplace path and $HOME/.claude/plugins/. Verify happypowerprocess installed: claude plugin list`
+
 ## b. Detection Phase
 
 In the target project root, check three things:
@@ -40,13 +47,13 @@ Display a status check (which of PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.
 ```
 
 Default = [1]. On `--force` → skip menu, jump to [4] with the single confirmation prompt described above.
+  - **`--force` detection**: AI detects `--force` by text-pattern matching in the user's invocation message (case-insensitive). Look for tokens: `--force`, `force`, `force re-init`. This is text-pattern detection, not real argv parsing (skills are markdown instructions, not executables). If matched → skip the 4-choice menu above, go directly to choice [4] flow.
 
 ## d. Brownfield Handling
 
 Runs only if `{DETECTED_STACKS}` is non-empty.
 - Display: `📦 Brownfield detected: {DETECTED_STACKS}`.
 - Skip stack prompt in section e — auto-fill `{STACK}` from `{DETECTED_STACKS}`.
-- Add note to STATE.md "Notes": `Brownfield project. Run /brainstorm to map architecture properly.`
 - If multiple stacks detected and ambiguous (monorepo): prompt `Detected {N} stacks. Use all? [y/n] (else specify primary)` and resolve before proceeding.
 
 ## e. Interactive Prompts
@@ -62,7 +69,7 @@ Greenfield only (or override of brownfield auto-fill).
 
 Create in this order. For idempotency choice [3], skip any path that already exists. Track every file actually created in a creation list (used for rollback on error).
 
-1. `mkdir .planning/`, `mkdir .planning/research/`, `mkdir docs/specs/` (no-op if present).
+1. `mkdir .planning/`, `mkdir .planning/research/`, `mkdir docs/specs/` (no-op if present). Then create `.planning/research/.gitkeep` and `docs/specs/.gitkeep` (empty files — forces git to track these dirs; `.gitkeep` is a convention).
 2. Copy templates from `{PLUGIN_PATH}/docs/claude/templates/` and fill placeholders:
    - `PROJECT.md` → `.planning/PROJECT.md` — fill `{PROJECT_NAME}`, `{STACK}`, `{INIT_DATE}` (Created field).
    - `REQUIREMENTS.md` → `.planning/REQUIREMENTS.md` — copy as-is.
@@ -103,9 +110,8 @@ Always runs after files are created.
 ## i. STATE.md Audit Entry
 
 Append to STATE.md "Notes" section:
-```
-- {YYYY-MM-DD HH:MM}: Project initialized via /init-project (Mode: {greenfield|brownfield}, Stack: {STACK})
-```
+- For greenfield: `- {YYYY-MM-DD HH:MM}: Project initialized via /init-project (Mode: greenfield, Stack: {STACK})`
+- For brownfield: `- {YYYY-MM-DD HH:MM}: Project initialized via /init-project (Mode: brownfield, Stack: {STACK}) — Brownfield: run /brainstorm to map architecture`
 
 ## j. Output Summary
 
