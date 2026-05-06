@@ -82,7 +82,7 @@ Create in this order. For idempotency choice [3], skip any path that already exi
 4. Append `gitignore` template entries to project's `.gitignore`:
    - If `.gitignore` doesn't exist → create new with template content.
    - If exists → grep each entry; append only entries not already present (idempotent).
-   - **Do NOT** uncomment the `# .planning/` line — that toggle is owned by `/update-config` per `commit_docs.planning_artifacts`.
+   - **Do NOT** add `.planning/` to gitignore — that line is owned by `/update-config` per `commit_docs.planning_artifacts` toggle (only added when set to `false`).
 
 ## g. Git Init Prompt
 

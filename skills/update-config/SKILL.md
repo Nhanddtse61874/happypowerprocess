@@ -35,7 +35,7 @@ If `{PLUGIN_PATH}/docs/claude/config-schema.md` does not exist, search broader:
 
 ## d. Display Current Config
 
-Print a numbered table (10 entries; `commit_docs` splits into 2 rows, `model_defaults` groups under index 8 with 3 sub-fields):
+Print a numbered table (entries derived from schema's "Display Grouping Convention" section; current count is 10, but use schema as source of truth):
 
 ```
 Current config:
@@ -96,10 +96,10 @@ Summary:
 Only when specific fields changed:
 
 - `commit_docs.planning_artifacts: true → false`:
-  - Append the line `.planning/` to project's `.gitignore` (idempotent — skip if the uncommented line already present).
+  - Append the line `.planning/` to project's `.gitignore` (idempotent — skip if the line already present).
   - On write failure → warn: `Config updated but failed to update .gitignore. Add '.planning/' line manually.` (do not abort).
 - `commit_docs.planning_artifacts: false → true`:
-  - Remove the uncommented `.planning/` line from `.gitignore` if present. **Do not** touch the comment line `# .planning/`.
+  - Remove the `.planning/` line from `.gitignore` if present.
   - If line not present → silent no-op.
 
 ## j. Mid-Workflow Impact Warnings
