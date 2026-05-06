@@ -37,6 +37,17 @@ Execution rule in this workspace:
 
 If you are preparing an upstream PR to `obra/superpowers`, the Contributor Guidelines below remain mandatory.
 
+## Bootstrap Commands (New in v5.4.0)
+
+Two slash commands handle project setup and config management:
+
+- **`/init-project`**: Bootstrap state files, config, CLAUDE.md, permissions, gitignore. Skill: `skills/init-project/SKILL.md`. Asks 2 prompts (project name, primary stack), supports `--force` flag for re-init with backup. Brownfield auto-detection via Glob markers.
+- **`/update-config`**: Interactive config update with field validation and mid-workflow impact warnings. Skill: `skills/update-config/SKILL.md`. Reads from `docs/claude/config-schema.md` (single source of truth for all 9 config fields).
+
+Both skills follow the 11-step workflow: `/init-project` produces STEP 0 artifacts, `/update-config` is invoked by user trigger phrases at any time.
+
+Schema reference: `docs/claude/config-schema.md`
+
 ## Code-Level Behavioral Guidelines
 
 The 11-step workflow above defines WHAT/WHEN. This section defines HOW when actually touching code in STEP 7.
