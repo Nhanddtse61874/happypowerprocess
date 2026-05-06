@@ -8,7 +8,7 @@
     {
       "name": "happypowerprocess",
       "description": "Unified 11-step AI workflow: Superpowers execution skills + GSD state persistence + optional AI Team orchestration.",
-      "version": "5.2.0",
+      "version": "5.4.0",
       "source": "./",
       "author": {
         "name": "Nhan"
