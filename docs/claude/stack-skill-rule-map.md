@@ -31,11 +31,12 @@ When the agent needs the skill or agent for a stack:
 
 1. Read `.claude/stack-skills/registry.json` (project-scoped registry, source of truth).
 2. Find the entry where `name == <stack>`:
-   - If found and `skill_path` begins with `.claude/...` → load the project snapshot (overrides plugin default).
-   - If found and `source == "plugin"` and the path lives in the plugin install dir → load the plugin default listed above.
+   - If found: load skill from `entry.skill_path` and agent from `entry.agent_path`. The registry path field is authoritative.
+     - For `source == "plugin"` entries, paths point to plugin install dir (`skills/implementer-<canonical>/SKILL.md`).
+     - For `source == "customized"` or `source == "project"` entries, paths point to `.claude/...` snapshot files in the project. The registry path field is rewritten by `/add-tech-stack` whenever source flips, so this branch always reflects the current customization state.
    - If not found → halt and instruct the user to run `/add-tech-stack <stack>` (T2 trigger).
 
-Project snapshots always win over plugin defaults when both exist. The 5 plugin defaults remain available as fallbacks until the user customizes them.
+Project snapshots always win over plugin defaults: when `/add-tech-stack` customizes a stack, it (a) writes the snapshot files, (b) flips `source` to `customized`, AND (c) rewrites `skill_path` + `agent_path` to point to the snapshots. The 5 plugin defaults remain available unchanged at the plugin install location and serve as fallback if a user manually deletes their snapshot directory and resets `source` back to `plugin`.
 
 ## How to Apply in Mode A (Solo)
 

@@ -104,22 +104,28 @@ For each section, display the plugin default content and prompt: `[keep / overri
 - `append` → prompt user multi-line input (terminate with empty line); AI appends below the plugin section content in snapshot.
 - `skip` → AI inserts best-practice MINIMUM (slim values per spec §6.1 minimum-skip column for SKILL.md sections; per spec §6.2 minimum-skip column for AGENT.md sections).
 
-**Step e.5 — Write snapshot files.** After both files are walked, write:
-- `.claude/stack-skills/<name>/SKILL.md` (if chosen).
-- `.claude/agents/implementer-<name>.md` (if chosen).
+**Step e.5 — Resolve canonical paths from current registry entry** (BEFORE any writes):
+- `canonical_agent_basename` = basename of `entry.agent_path` without `.md` (e.g., `implementer-dotnet-csharp` from `agents/implementer-dotnet-csharp.md`).
+- `snapshot_skill_path` = `.claude/stack-skills/<name>/SKILL.md` (where `<name>` is the registry's short-form name).
+- `snapshot_agent_path` = `.claude/agents/<canonical_agent_basename>.md` (PRESERVES the canonical long-form so the snapshot truly overrides the plugin agent — runtime treats `implementer-dotnet-csharp` snapshot as overriding plugin's `implementer-dotnet-csharp` agent).
 
-Then update `.claude/stack-skills/registry.json`:
-- If current `source: plugin` → flip to `customized`.
-- If current `source: customized` → stays `customized`.
-- If current `source: project` → stays `project`.
+**Step e.6 — Write snapshot files** to the resolved paths:
+- `snapshot_skill_path` (if SKILL chosen).
+- `snapshot_agent_path` (if AGENT chosen).
+
+**Step e.7 — Update `.claude/stack-skills/registry.json` for entry `<name>`:**
+- `source` flips `plugin` → `customized` (or stays `customized` if already customized; stays `project` if already project).
+- **`skill_path` MUST be rewritten to `snapshot_skill_path`** (e.g., `.claude/stack-skills/dotnet/SKILL.md`).
+- **`agent_path` MUST be rewritten to `snapshot_agent_path`** (e.g., `.claude/agents/implementer-dotnet-csharp.md`).
+- Without these rewrites, runtime lookup will not find the snapshot — load-bearing for F2/F3.
 
 Validate registry per spec §5.6 BEFORE write (regex name, uniqueness, no `..` in paths).
 
-**Step e.6 — Regenerate CLAUDE.md `<!-- stack-table -->` block.** If project root `CLAUDE.md` exists and contains both `<!-- stack-table:start ... -->` and `<!-- stack-table:end -->` markers, replace the entire content between markers from the registry (table format per spec §5.7).
+**Step e.8 — Regenerate CLAUDE.md `<!-- stack-table -->` block.** If project root `CLAUDE.md` exists and contains both `<!-- stack-table:start ... -->` and `<!-- stack-table:end -->` markers, replace the entire content between markers from the registry (table format per spec §5.7). The Skill column now shows the `.claude/...` path for customized entries — that's correct.
 
 If markers are missing, prompt: `❓ CLAUDE.md missing stack-table markers. Restore? [y/skip]`. Do **not** auto-fix — wait for user consent.
 
-**Step e.7 — Auto-commit prompt.** Prompt: `❓ Auto-commit "feat: customize <name> stack skill"? [y/n]`.
+**Step e.9 — Auto-commit prompt.** Prompt: `❓ Auto-commit "feat: customize <name> stack skill"? [y/n]`.
 - `y` → stage `.claude/stack-skills/`, `.claude/agents/`, `CLAUDE.md`; commit; if commit fails (pre-commit hook), show stderr and leave staged.
 - `n` → skip with note: `Files written. Commit manually when ready.`
 
@@ -170,11 +176,15 @@ Auto-fill remaining placeholders at write time:
 
 Output contract section: copy template default's 3 hardcoded bullets verbatim (no prompt — fixed by spec §6.2).
 
-**Step f.5 — Write SKILL.md.** Write `.claude/stack-skills/<name>/SKILL.md` with full normalized content; all placeholders substituted. Create directory as needed.
+**Step f.5 — Resolve snapshot paths** (Scenario B has no plugin source, so canonical agent basename is `implementer-<name>`):
+- `snapshot_skill_path` = `.claude/stack-skills/<name>/SKILL.md`
+- `snapshot_agent_path` = `.claude/agents/implementer-<name>.md`
 
-**Step f.6 — Write AGENT.md.** Write `.claude/agents/implementer-<name>.md`. Create directory as needed.
+**Step f.6 — Write SKILL.md.** Write `.claude/stack-skills/<name>/SKILL.md` with full normalized content; all placeholders substituted. Create directory as needed.
 
-**Step f.7 — Append registry entry.** Append a new entry to `.claude/stack-skills/registry.json`:
+**Step f.7 — Write AGENT.md.** Write `.claude/agents/implementer-<name>.md` (NOT a different short form — the canonical form for a new stack IS `implementer-<name>` since there's no plugin agent to mirror). Create directory as needed.
+
+**Step f.8 — Append registry entry.** Append a new entry to `.claude/stack-skills/registry.json` with `source: "project"`, `created: {today_date_ISO}`, `skill_path: <snapshot_skill_path>`, `agent_path: <snapshot_agent_path>`:
 
 ```json
 {
@@ -191,11 +201,11 @@ Output contract section: copy template default's 3 hardcoded bullets verbatim (n
 
 Validate per spec §5.6 BEFORE write (regex name, uniqueness, no `..` in paths). Backup current `registry.json` first.
 
-**Step f.8 — Append to PROJECT.md.** Append `{STACK_LABEL}` (or `<name>` if PROJECT.md does not have a Stack section yet) to `.planning/PROJECT.md` Stack section. If `.planning/PROJECT.md` does not exist, skip silently with note: `ℹ .planning/PROJECT.md not found — skipped Stack section update.`
+**Step f.9 — Append to PROJECT.md.** Append `{STACK_LABEL}` (or `<name>` if PROJECT.md does not have a Stack section yet) to `.planning/PROJECT.md` Stack section. If `.planning/PROJECT.md` does not exist, skip silently with note: `ℹ .planning/PROJECT.md not found — skipped Stack section update.`
 
-**Step f.9 — Regenerate CLAUDE.md `<!-- stack-table -->` block.** Same condition and behavior as Scenario A step e.6 (only if markers present; else prompt `❓ CLAUDE.md missing stack-table markers. Restore? [y/skip]`).
+**Step f.10 — Regenerate CLAUDE.md `<!-- stack-table -->` block.** Same condition and behavior as Scenario A step e.8 (only if markers present; else prompt `❓ CLAUDE.md missing stack-table markers. Restore? [y/skip]`).
 
-**Step f.10 — Auto-commit prompt.** Prompt: `❓ Auto-commit "feat: add <name> stack"? [y/n]`. Same behavior as Scenario A step e.7.
+**Step f.11 — Auto-commit prompt.** Prompt: `❓ Auto-commit "feat: add <name> stack"? [y/n]`. Same behavior as Scenario A step e.9.
 
 ## g. Force Mode (`--force`)
 
@@ -237,7 +247,7 @@ Per spec §5.6 + §8.2:
 
 Per spec decision #5: web search is **always opt-in** via prompt. There is **no `--use-web` flag** anywhere in this skill.
 
-Each `suggest` action (in Scenario A `override` and Scenario B `[input/suggest/skip]` menus) must prompt:
+The `suggest` action exists ONLY in Scenario B (and the T1 architecture detection sub-flow inside `/init-project`). When user picks `suggest`, prompt:
 
 ```
 ❓ Use web search to enrich proposals? [y/n]
@@ -245,6 +255,8 @@ Each `suggest` action (in Scenario A `override` and Scenario B `[input/suggest/s
 
 - `y` → AI uses WebSearch to surface current best-practice references; combines with training knowledge; proposes 2-3 approaches.
 - `n` → AI uses heuristic + training knowledge only; still proposes 2-3 approaches.
+
+Scenario A actions (`keep / override / append / skip`) do NOT trigger web search.
 
 E3 spirit: force the user to consent to token cost per use. Never call WebSearch without an explicit `y` to that prompt.
 

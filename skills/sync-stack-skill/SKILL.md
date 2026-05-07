@@ -175,18 +175,23 @@ After all sections resolved and backup written:
 
 1. **Write merged snapshot** to `.claude/stack-skills/<name>/SKILL.md`. Write the full assembled section list in original section order (plugin's section ordering wins for added sections; otherwise preserve current order).
 
-2. **Update registry**:
-   - `last_synced` = today's date in `YYYY-MM-DD`.
-   - `synced_from_plugin_version` = `{PLUGIN_CURRENT_VERSION}` resolved in section d.
-   - `source` stays `customized` (the snapshot file still exists; even if the user picked `take-plugin` for every section, the registry source field tracks customization state — the snapshot still wins at runtime, so `customized` stays accurate).
+2. **Update registry entry for `<name>`**:
+   - `last_synced` = today (ISO date).
+   - `synced_from_plugin_version` = current plugin version (`{PLUGIN_CURRENT_VERSION}` resolved in section d).
+   - `source` stays `customized` (sync does NOT change source state — `add-tech-stack` is the only flow that flips source).
+   - `skill_path` and `agent_path` REMAIN at `.claude/...` snapshot paths (sync does not move files — it merges content in place). If a project user previously edited registry to point back at plugin paths (manual revert), `/sync-stack-skill` will refuse with `'<name>' has no project snapshot at registered path; aborted. Use /add-tech-stack to re-customize.`
    - Validate per spec §5.6 BEFORE write (regex name, uniqueness, no `..` in paths).
 
 3. **Re-sync AGENT.md prompt**:
    ```
    ❓ Re-sync AGENT.md too? [y/n]
    ```
-   - `y` → repeat sections d–j for `.claude/agents/implementer-<name>.md` vs `{PLUGIN_PATH}/<entry.agent_path>`. Same 4-pattern detection, same manual-merge sub-flow, same pre-sync backup convention.
-   - `n` → skip.
+   If `y`:
+   - Snapshot agent path = `entry.agent_path` from registry (already `.claude/...` for `customized` source).
+   - Plugin agent path = look up the plugin's original agent file by basename: take basename of `entry.agent_path` → search `{PLUGIN_PATH}/agents/<basename>.md`. (For `customized` entries, the registry's `agent_path` is the snapshot path; the plugin path is reconstructed from the basename pattern, since v5.5.0 doesn't store a separate `plugin_agent_path` field.)
+   - Repeat sections d–j for the agent file pair. Same 4-pattern detection, same manual-merge sub-flow, same pre-sync backup convention.
+
+   If `n` → skip.
 
 4. **Regenerate CLAUDE.md `<!-- stack-table -->` block** — registry's `last_synced` changed, so the table's `Source` column or any displayed sync-state must reflect the new state. If project root `CLAUDE.md` exists and contains both `<!-- stack-table:start ... -->` and `<!-- stack-table:end -->` markers, replace the entire content between markers from the registry (table format per spec §5.7). If markers missing, prompt: `❓ CLAUDE.md missing stack-table markers. Restore? [y/skip]`. Do not auto-fix without consent.
 

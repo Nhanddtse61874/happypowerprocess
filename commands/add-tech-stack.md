@@ -8,7 +8,7 @@ The skill handles two scenarios:
 - **Scenario A — existing stack** (registered in `.claude/stack-skills/registry.json`): walks each section with `[keep / override / append / skip]`. User picks file scope: SKILL only / AGENT only / both.
 - **Scenario B — new stack** (not registered): forces both SKILL.md + AGENT.md. Walks template sections with `[input / suggest / skip]`. Best-practice MINIMUM filled on explicit skip. Variable section loop for stack-specific patterns.
 
-**Architecture detection (in `suggest` action)**: opt-in heuristic scan of project structure (E3 conservative — every step requires explicit consent). Web search always opt-in via prompt; no `--use-web` flag.
+**Architecture detection**: opt-in heuristic scan of project structure. Triggered in (a) `/init-project` brownfield T1 sub-flow and (b) the `suggest` action of `/add-tech-stack` Scenario B `## Architecture` section walk. Scenario A actions (`keep / override / append / skip`) do not trigger detection. E3 conservative — every step requires explicit user consent. Web search always opt-in via prompt; no `--use-web` flag.
 
 **Snapshot model**: writes to `.claude/stack-skills/<stack>/SKILL.md` and `.claude/agents/implementer-<stack>.md`. Project snapshot wins over plugin default at runtime.
 

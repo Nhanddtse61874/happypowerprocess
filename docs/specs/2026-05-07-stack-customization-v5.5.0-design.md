@@ -126,6 +126,18 @@ project      → /add-tech-stack <X> (Scenario A) → project (edit)
              → /sync-stack-skill <X>             → project (no plugin source — sync only validates structure)
 ```
 
+**Path rewrite on source transition (added in QA round 1):**
+
+When `add-tech-stack` flips `source` `plugin → customized`, it MUST also rewrite the registry entry's `skill_path` and `agent_path` to point to the snapshot files:
+- `skill_path` becomes `.claude/stack-skills/<name>/SKILL.md`.
+- `agent_path` becomes `.claude/agents/<canonical_agent_basename>.md`, where `canonical_agent_basename` is the basename (without `.md`) of the *previous* `agent_path` value. This preserves the canonical long-form name (e.g., `implementer-dotnet-csharp.md`) so the snapshot truly overrides the plugin agent at runtime — they share the same agent name and the project snapshot wins.
+
+Without this rewrite, runtime lookup (per §5.3) falls through to the plugin default and the customization has no effect. This is load-bearing for F2 and F3.
+
+For Scenario B (new stack, `source: project`), the registry entry is created fresh at write time with paths already pointing to `.claude/...`. The canonical agent basename is `implementer-<name>` since there is no plugin source to mirror.
+
+`/sync-stack-skill` does NOT change `source` or paths — it only merges content in place at the existing snapshot path.
+
 ### 5.5 Registry schema
 
 ```json
@@ -152,8 +164,8 @@ project      → /add-tech-stack <X> (Scenario A) → project (edit)
 | `name` | yes | Canonical lowercase identifier, regex `^[a-z][a-z0-9-]*$`. |
 | `label` | yes | Display name shown in CLAUDE.md table. |
 | `description` | yes | One-line summary. |
-| `skill_path` | yes | Relative path to skill file (plugin path or `.claude/...`). |
-| `agent_path` | yes | Relative path to agent file. |
+| `skill_path` | yes | Relative path to skill file. For `source: plugin`, points to plugin install dir. For `source: customized` or `project`, points to `.claude/stack-skills/<name>/SKILL.md` (rewritten by /add-tech-stack on source flip). |
+| `agent_path` | yes | Relative path to agent file. For `source: plugin`, points to plugin install dir (canonical long-form name like `implementer-dotnet-csharp.md`). For `source: customized`, snapshot at `.claude/agents/<canonical_agent_basename>.md` (preserves long-form for true override). For `source: project`, snapshot at `.claude/agents/implementer-<name>.md`. |
 | `detection_markers` | yes (can be `[]`) | File globs for brownfield detection + T2. |
 | `source` | yes | `plugin` / `customized` / `project`. |
 | `synced_from_plugin_version` | optional | Plugin version snapshot was synced from (sync command uses this). |
