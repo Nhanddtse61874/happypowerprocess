@@ -1,0 +1,60 @@
+{
+  "version": "1",
+  "stacks": [
+    {
+      "name": "dotnet",
+      "label": ".NET / C#",
+      "description": "ASP.NET Core, EF Core, async backend",
+      "skill_path": "skills/implementer-dotnet-csharp/SKILL.md",
+      "agent_path": "agents/implementer-dotnet-csharp.md",
+      "detection_markers": ["*.csproj", "*.sln"],
+      "source": "plugin",
+      "synced_from_plugin_version": "{PLUGIN_VERSION}",
+      "last_synced": "{INIT_DATE}"
+    },
+    {
+      "name": "react",
+      "label": "React / TypeScript",
+      "description": "React web with hooks, TanStack Query, Zustand",
+      "skill_path": "skills/implementer-react-typescript/SKILL.md",
+      "agent_path": "agents/implementer-react-typescript.md",
+      "detection_markers": ["package.json"],
+      "source": "plugin",
+      "synced_from_plugin_version": "{PLUGIN_VERSION}",
+      "last_synced": "{INIT_DATE}"
+    },
+    {
+      "name": "react-native",
+      "label": "React Native / Expo",
+      "description": "Mobile with React Navigation, MMKV, TanStack Query",
+      "skill_path": "skills/implementer-react-native-typescript/SKILL.md",
+      "agent_path": "agents/implementer-react-native-typescript.md",
+      "detection_markers": ["app.json", "metro.config.js"],
+      "source": "plugin",
+      "synced_from_plugin_version": "{PLUGIN_VERSION}",
+      "last_synced": "{INIT_DATE}"
+    },
+    {
+      "name": "angular",
+      "label": "Angular / TypeScript",
+      "description": "Angular 17+ with Signals, RxJS, NgModule or standalone",
+      "skill_path": "skills/implementer-angular-typescript/SKILL.md",
+      "agent_path": "agents/implementer-angular-typescript.md",
+      "detection_markers": ["angular.json"],
+      "source": "plugin",
+      "synced_from_plugin_version": "{PLUGIN_VERSION}",
+      "last_synced": "{INIT_DATE}"
+    },
+    {
+      "name": "iot-edge",
+      "label": "IoT / MQTT / BLE",
+      "description": "Edge device connectivity with MQTT/BLE/firmware",
+      "skill_path": "skills/implementer-iot-edge/SKILL.md",
+      "agent_path": "agents/implementer-iot-edge.md",
+      "detection_markers": [],
+      "source": "plugin",
+      "synced_from_plugin_version": "{PLUGIN_VERSION}",
+      "last_synced": "{INIT_DATE}"
+    }
+  ]
+}
