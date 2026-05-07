@@ -50,6 +50,34 @@ These cases require Mode B regardless of other scores:
 - Task requires explicit architecture decision records (ADRs)
 - Task involves multiple implementer agents working in parallel
 
+## Reverse Hard Exclusion (Always Force Mode A) — v5.6.0+
+
+Beyond the Hard Exclusions above (which force Mode B), v5.6.0 adds the reverse: certain conditions force Mode A regardless of 5-criteria score.
+
+### Active harness detection
+
+Mode B requires Claude Code's Task tool with `subagent_type` + `model` + `isolation` parameters. On other harnesses, Mode B partially fails (subagent dispatch differs, model names don't transfer).
+
+Detection order:
+
+1. Read `.planning/config.json` field `active_harness`. If explicit value (not `auto`), use that.
+2. If `auto`, check environment variables:
+   - `$env:CLAUDECODE` set (Windows) / `$CLAUDECODE` (POSIX) → `claude-code`
+   - `$env:CURSOR_*` or `cursor` in process tree → `cursor`
+   - `$env:CODEX_*` or `codex` in process tree → `codex`
+   - `$env:OPENCODE_*` set → `opencode`
+   - None match → fallback `claude-code` (preserves current behavior for ambiguous cases)
+3. If detected harness != `claude-code`:
+   - Force suggested mode = Mode A
+   - Output reason in Mode Gate output: `"Mode B requires Claude Code Task tool. Detected harness: <name>. Forcing Mode A. Override with full understanding of partial-failure risk."`
+4. User can override per existing user-decision-wins rule. On override to Mode B with non-Claude harness, AI MUST prepend warning to the override confirmation:
+   ```
+   ⚠ You are forcing Mode B on <harness>. Subagent dispatch and model
+   selection may not work as designed. Proceed with manual review fallback ready.
+   ```
+
+See `docs/claude/harness-compatibility.md` for full compatibility matrix.
+
 ## Mode Selection Gate Output Format
 
 Present this to the user after scoring:

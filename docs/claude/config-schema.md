@@ -8,6 +8,7 @@ This file is the single source of truth for all fields in `.planning/config.json
 
 | Field | Type | Default | Valid values | Description | Mid-workflow impact |
 |---|---|---|---|---|---|
+| `active_harness` | enum | `auto` | `auto` / `claude-code` / `cursor` / `codex` / `opencode` | Active AI harness running this project. `auto` → detect via env vars, fallback `claude-code`. Used by Mode Selection Gate to enforce Mode B Claude-only policy (v5.6.0+). | Affects Mode Gate suggestion only; in-progress phases unaffected |
 | `mode` | enum | `interactive` | `interactive` / `yolo` | Pause for confirmation each step vs auto-approve | Affects human touchpoints only, not completed steps |
 | `granularity` | enum | `standard` | `coarse` / `standard` / `fine` | Phase count: 3-5 / 5-8 / 8-12+ | Affects unplanned phases only. Already-planned phases unchanged |
 | `parallelization` | bool | `true` | `true` / `false` | Worktree-isolated parallel execution within waves | Apply from next wave |
@@ -29,6 +30,7 @@ When `/update-config` displays the config table to the user, schema rows are gro
 
 | Index | Schema rows covered | Notes |
 |---|---|---|
+| 0 | active_harness | Single field — project-context anchor (v5.6.0+) |
 | 1 | mode | Single field |
 | 2 | granularity | Single field |
 | 3 | parallelization | Single field |
@@ -44,7 +46,7 @@ When `/update-config` displays the config table to the user, schema rows are gro
 - (a) Get its own top-level index (default for independent fields)
 - (b) Join an existing group (e.g., a new `model_defaults.review` tier joins index 8)
 
-The `/update-config` skill derives the valid index range dynamically from this grouping — do NOT hardcode `1-10` in the skill.
+The `/update-config` skill derives the valid index range dynamically from this grouping — do NOT hardcode `0-10` (or any fixed range) in the skill.
 
 ---
 

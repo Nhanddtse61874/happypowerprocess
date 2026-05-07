@@ -6,6 +6,8 @@ Project này sử dụng **happypowerprocess** workflow. Mọi task (feature, bu
 
 Mode (A solo / B team spine) **không fix cứng** ở project level — được quyết định ở **STEP 3 (Mode Selection Gate)** cho từng task dựa trên 5 scoring criteria.
 
+**Note (v5.6.0+):** Mode B is Claude Code-only. On Cursor / Codex / OpenCode, Mode Gate auto-forces Mode A regardless of complexity score (per `harness-compatibility.md` in plugin docs dir).
+
 ## Plugin References
 
 Plugin install dir (auto-detected by platform):
