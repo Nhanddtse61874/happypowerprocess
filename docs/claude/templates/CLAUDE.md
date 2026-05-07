@@ -115,15 +115,17 @@ Already covered by STEP 6 (goal-backward + `must_haves` frontmatter + `<verify>`
 
 Khi gặp task code, AI **bắt buộc** load stack skill tương ứng. AI tự phân tích task → match đúng stack — không cần khai báo trước.
 
-| Task domain | Stack skill (Mode A) | Implementer agent (Mode B) |
-|---|---|---|
-| .NET / C# / ASP.NET Core / EF Core | `happypowerprocess:dotnet` | `happypowerprocess:implementer-dotnet-csharp` |
-| React (web) / hooks / Next-style SPA | `happypowerprocess:react` | `happypowerprocess:implementer-react-typescript` |
-| React Native / Expo / mobile | `happypowerprocess:react-native` | `happypowerprocess:implementer-react-native-typescript` |
-| Angular / RxJS | — | `happypowerprocess:implementer-angular-typescript` |
-| IoT / MQTT / BLE / device firmware | — | `happypowerprocess:implementer-iot-edge` |
+<!-- stack-table:start (managed by /add-tech-stack and /sync-stack-skill — do not edit manually) -->
+| Stack | Label | Skill (Mode A) | Agent (Mode B) | Source |
+|---|---|---|---|---|
+| dotnet | .NET / C# | `skills/implementer-dotnet-csharp/SKILL.md` | `agents/implementer-dotnet-csharp.md` | plugin |
+| react | React / TypeScript | `skills/implementer-react-typescript/SKILL.md` | `agents/implementer-react-typescript.md` | plugin |
+| react-native | React Native / Expo | `skills/implementer-react-native-typescript/SKILL.md` | `agents/implementer-react-native-typescript.md` | plugin |
+| angular | Angular / TypeScript | `skills/implementer-angular-typescript/SKILL.md` | `agents/implementer-angular-typescript.md` | plugin |
+| iot-edge | IoT / MQTT / BLE | `skills/implementer-iot-edge/SKILL.md` | `agents/implementer-iot-edge.md` | plugin |
+<!-- stack-table:end -->
 
-Stack list expand được theo project — không cần update CLAUDE.md khi thêm stack mới. Reference chính: `stack-skill-rule-map.md` trong plugin docs dir.
+Stack list expand được theo project — `/add-tech-stack` tự động regenerate table này từ `.claude/stack-skills/registry.json`. Reference chính: `stack-skill-rule-map.md` trong plugin docs dir.
 
 ## Project-Specific Deviations from Plugin Defaults
 
