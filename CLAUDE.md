@@ -48,6 +48,21 @@ Both skills follow the 11-step workflow: `/init-project` produces STEP 0 artifac
 
 Schema reference: `docs/claude/config-schema.md`
 
+## Stack Customization Commands (New in v5.5.0)
+
+Two slash commands handle per-project stack skill customization and sync:
+
+- **`/add-tech-stack`**: Customize an existing plugin stack skill for the current project, or add a brand-new stack (Python, Go, Rust, etc.). Skill: `skills/add-tech-stack/SKILL.md`. Two scenarios:
+  - **Scenario A — existing stack**: registered already (default 5 or previously added). Walks each section with `[keep / override / append / skip]`. User picks file scope: SKILL only / AGENT only / both.
+  - **Scenario B — new stack**: not registered. Forces both SKILL.md + AGENT.md. Walks template sections with `[input / suggest / skip]`. Best-practice MINIMUM filled on explicit skip.
+  - Snapshot stored at `.claude/stack-skills/<stack>/SKILL.md` and `.claude/agents/implementer-<stack>.md`. Project snapshot wins over plugin default at runtime.
+
+- **`/sync-stack-skill`**: Three-way merge a customized snapshot with the latest plugin default. Skill: `skills/sync-stack-skill/SKILL.md`. Per-section conflict detection (4 patterns); manual-merge 3-pane sub-flow. Supports `--all` for batch sync.
+
+- **Architecture detection (T1)** integrates into `/init-project` brownfield flow — opt-in scan of project structure to populate the customized stack skill `## Architecture` section. E3 conservative — every step requires explicit user consent.
+
+Both skills follow the 11-step workflow and use `.claude/stack-skills/registry.json` as the runtime source of truth. Schema reference: `docs/specs/2026-05-07-stack-customization-v5.5.0-design.md`.
+
 ## Code-Level Behavioral Guidelines
 
 The 11-step workflow above defines WHAT/WHEN. This section defines HOW when actually touching code in STEP 7.
