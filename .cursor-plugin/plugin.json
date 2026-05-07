@@ -25,7 +25,11 @@
     "project-setup",
     "add-tech-stack",
     "sync-stack-skill",
-    "stack-customization"
+    "stack-customization",
+    "research-phase",
+    "wave-execution",
+    "goal-backward-planning",
+    "runtime-modes"
   ],
   "skills": "./skills/",
   "agents": "./agents/",

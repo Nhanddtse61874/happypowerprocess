@@ -13,17 +13,22 @@ Enable superpowers skills in Codex via native skill discovery. Just clone and sy
    git clone https://github.com/Nhanddtse61874/happypowerprocess.git ~/.codex/happypowerprocess
    ```
 
-2. **Create the skills symlink:**
+2. **Create the skills + agents symlinks:**
    ```bash
-   mkdir -p ~/.agents/skills
+   mkdir -p ~/.agents/skills ~/.agents/agents
    ln -s ~/.codex/happypowerprocess/skills ~/.agents/skills/happypowerprocess
+   ln -s ~/.codex/happypowerprocess/agents ~/.agents/agents/happypowerprocess
    ```
 
    **Windows (PowerShell):**
    ```powershell
    New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\skills"
+   New-Item -ItemType Directory -Force -Path "$env:USERPROFILE\.agents\agents"
    cmd /c mklink /J "$env:USERPROFILE\.agents\skills\happypowerprocess" "$env:USERPROFILE\.codex\happypowerprocess\skills"
+   cmd /c mklink /J "$env:USERPROFILE\.agents\agents\happypowerprocess" "$env:USERPROFILE\.codex\happypowerprocess\agents"
    ```
+
+   > **Note about slash commands**: Codex doesn't register `/slash-commands` like Claude Code. Invoke skills directly by name (e.g., "Run the init-project skill") instead of `/init-project`. Skill bodies still work; only the slash command shortcut is unavailable.
 
 3. **Restart Codex** (quit and relaunch the CLI) to discover the skills.
 
@@ -46,9 +51,10 @@ If you installed superpowers before native skill discovery, you need to:
 
 ```bash
 ls -la ~/.agents/skills/happypowerprocess
+ls -la ~/.agents/agents/happypowerprocess
 ```
 
-You should see a symlink (or junction on Windows) pointing to your superpowers skills directory.
+You should see two symlinks (or junctions on Windows) pointing to your superpowers skills + agents directories.
 
 ## Updating
 
@@ -62,6 +68,7 @@ Skills update instantly through the symlink.
 
 ```bash
 rm ~/.agents/skills/happypowerprocess
+rm ~/.agents/agents/happypowerprocess
 ```
 
 Optionally delete the clone: `rm -rf ~/.codex/happypowerprocess`.

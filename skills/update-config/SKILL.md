@@ -13,18 +13,28 @@ In the target project root, verify `.planning/config.json` exists.
 
 ## b. Plugin Path Detection
 
-Detect plugin install path before reading the schema doc:
-- Windows (PowerShell `$env:OS == "Windows_NT"`): `$env:USERPROFILE\.claude\plugins\marketplaces\happypowerprocess\`
-- macOS/Linux (bash `[[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]` false → POSIX): `$HOME/.claude/plugins/marketplaces/happypowerprocess/`
+The plugin is installed by different harnesses at different locations. Detect by trying these candidate dirs in priority order until one contains `docs/claude/config-schema.md`:
 
-Store result as `{PLUGIN_PATH}`.
+**Windows** (PowerShell, `$env:OS == "Windows_NT"`):
+1. Claude Code marketplace: `$env:USERPROFILE\.claude\plugins\marketplaces\happypowerprocess\`
+2. Codex (manual clone): `$env:USERPROFILE\.codex\happypowerprocess\`
+3. Cursor extension: `$env:USERPROFILE\.cursor\extensions\happypowerprocess\`
+4. OpenCode: `$env:USERPROFILE\.opencode\plugins\happypowerprocess\`
 
-**Fallback (if hardcoded path missing)**:
-If `{PLUGIN_PATH}/docs/claude/config-schema.md` does not exist, search broader:
-- Windows: Glob `$env:USERPROFILE\.claude\plugins\**\docs\claude\config-schema.md` (max depth 4)
-- macOS/Linux: Glob `$HOME/.claude/plugins/**/docs/claude/config-schema.md` (max depth 4)
-- Use the first match's grandparent dir as `{PLUGIN_PATH}`
-- If still no match → abort: `Plugin schema doc not found. Searched marketplace path and user plugin dir. Verify happypowerprocess installed: claude plugin list`
+**macOS/Linux** (POSIX shell):
+1. `$HOME/.claude/plugins/marketplaces/happypowerprocess/`
+2. `$HOME/.codex/happypowerprocess/`
+3. `$HOME/.cursor/extensions/happypowerprocess/`
+4. `$HOME/.opencode/plugins/happypowerprocess/`
+
+Store the first matching dir as `{PLUGIN_PATH}`.
+
+**Fallback (if none of the candidates contain `docs/claude/config-schema.md`)**:
+Run Glob across all 4 harness dirs in turn:
+- Windows: Glob `$env:USERPROFILE\.claude\plugins\**\docs\claude\config-schema.md`, then `.codex\**`, then `.cursor\**`, then `.opencode\**`
+- macOS/Linux: same pattern with `$HOME/.{claude,codex,cursor,opencode}/**/docs/claude/config-schema.md` (run 4 separate Globs)
+
+If still no match → abort: `Plugin schema doc not found. Searched ~/.claude/, ~/.codex/, ~/.cursor/, ~/.opencode/. Verify happypowerprocess installed for your harness.`
 
 ## c. Load Schema + Current Config
 

@@ -11,20 +11,28 @@ Authoritative spec: `docs/specs/2026-05-07-stack-customization-v5.5.0-design.md`
 
 ## a. Plugin Path Detection
 
-Detect plugin install path before reading any template:
-- Windows (PowerShell `$env:OS == "Windows_NT"`): `$env:USERPROFILE\.claude\plugins\marketplaces\happypowerprocess\`
-- macOS/Linux (bash `[[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]` false → POSIX): `$HOME/.claude/plugins/marketplaces/happypowerprocess/`
+The plugin is installed by different harnesses at different locations. Detect by trying these candidate dirs in priority order until one contains `docs/claude/templates/config.json`:
 
-Store result as `{PLUGIN_PATH}`. All template paths below are relative to `{PLUGIN_PATH}/docs/claude/templates/`.
+**Windows** (PowerShell, `$env:OS == "Windows_NT"`):
+1. Claude Code marketplace: `$env:USERPROFILE\.claude\plugins\marketplaces\happypowerprocess\`
+2. Codex (manual clone): `$env:USERPROFILE\.codex\happypowerprocess\`
+3. Cursor extension: `$env:USERPROFILE\.cursor\extensions\happypowerprocess\`
+4. OpenCode: `$env:USERPROFILE\.opencode\plugins\happypowerprocess\`
 
-If `{PLUGIN_PATH}/docs/claude/templates/` is missing or empty → abort: `Plugin templates not found at {path}. Verify happypowerprocess installed: 'claude plugin list'`.
+**macOS/Linux** (POSIX shell):
+1. `$HOME/.claude/plugins/marketplaces/happypowerprocess/`
+2. `$HOME/.codex/happypowerprocess/`
+3. `$HOME/.cursor/extensions/happypowerprocess/`
+4. `$HOME/.opencode/plugins/happypowerprocess/`
 
-**Fallback (if hardcoded path missing)**:
-If `{PLUGIN_PATH}/docs/claude/templates/registry.json` does not exist, search broader:
-- Windows: Glob `$env:USERPROFILE\.claude\plugins\**\docs\claude\templates\registry.json` (max depth 4)
-- macOS/Linux: Glob `$HOME/.claude/plugins/**/docs/claude/templates/registry.json` (max depth 4)
-- Use the first match's grandparent dir as `{PLUGIN_PATH}`
-- If still no match → abort: `Plugin templates not found. Searched marketplace path and $HOME/.claude/plugins/. Verify happypowerprocess installed: claude plugin list`
+Store the first matching dir as `{PLUGIN_PATH}`. All template paths below are relative to `{PLUGIN_PATH}/docs/claude/templates/`.
+
+**Fallback (if none of the candidates contain templates)**:
+Run Glob across all 4 harness dirs in turn. Use the first match's grandparent-of-`docs/`-dir as `{PLUGIN_PATH}`:
+- Windows: Glob in turn `$env:USERPROFILE\.claude\plugins\**\docs\claude\templates\config.json`, then `$env:USERPROFILE\.codex\**\docs\claude\templates\config.json`, then `.cursor\**`, then `.opencode\**`
+- macOS/Linux: same pattern with `$HOME/.{claude,codex,cursor,opencode}/**/docs/claude/templates/config.json` (run 4 separate Globs since brace-expansion may not work in all shells)
+
+If still no match → abort: `Plugin templates not found. Searched ~/.claude/, ~/.codex/, ~/.cursor/, ~/.opencode/. Verify happypowerprocess installed for your harness.`
 
 ## b. Argument Parsing
 
