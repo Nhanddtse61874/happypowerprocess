@@ -31,4 +31,4 @@
 
 ## Next Milestone Input
 
-{Những gì phase này tạo ra mà milestone tiếp theo cần biết}
+{What this phase produced that the next milestone needs to know}

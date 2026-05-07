@@ -1,5 +1,33 @@
 # Changelog
 
+## [5.6.1] - 2026-05-07
+
+### Policy
+
+- **English-only plugin source policy**: all plugin source content (skills, slash commands, templates, schema docs, design specs, workflow docs) must be written in English. The user-facing AI conversation language is independent and follows the user's input language. Any non-English string hard-coded into a plugin file is now treated as a defect; localization belongs in `.planning/config.json` per project, not in plugin source.
+
+### Fixed
+
+- **Skill prompts** — translated 4 mixed-language prompts to English in `skills/init-project/SKILL.md` (idempotency menu choice [1] hint, git-init missing-repo message), `skills/update-config/SKILL.md` (field-pick prompt), and `skills/add-tech-stack/SKILL.md` (AGENT identity prompt).
+
+### Changed
+
+- **State templates** — full English rewrite of `docs/claude/templates/PROJECT.md`, `REQUIREMENTS.md`, `STATE.md`, `phase-SUMMARY.md`. Prior templates contained Vietnamese placeholder hints that bled into every initialized project.
+- **`docs/claude/templates/CLAUDE.md`** — Workflow Mandate, Plugin References, Stack-Specific Rules, Project-Specific Deviations, and State Files Index sections translated to English.
+- **`docs/claude/workflow-diagram.md`** — Mermaid node labels (S0 Bootstrap, S8 UAT) and the v1-vs-v2 comparison table translated to English. Preview instruction line translated.
+- **`docs/specs/2026-05-06-init-project-skill-design.md`** — full English rewrite (Problem Statement, Goals, Architecture, Components, Data Flow, Error Handling, Testing Approach, Decisions Log).
+- **`docs/specs/2026-05-07-stack-customization-v5.5.0-design.md`** — translated 4 Vietnamese strings (CLAUDE.md marker block sample, Q-identity / Q-goal prompt examples).
+
+### Plugin manifests
+
+- All 5 manifests bumped 5.6.0 → 5.6.1: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.cursor-plugin/plugin.json`, root `marketplace.json`, `package.json`.
+- `gemini-extension.json` and pinned-version examples in `.opencode/INSTALL.md` and `README.md` bumped to 5.6.1.
+
+### Backward compatibility
+
+- Existing initialized projects (`.planning/*` already created) are unaffected — old state files with Vietnamese content remain as-is. Only newly initialized projects pick up the English templates.
+- No config schema changes. No behavior changes in skills beyond prompt wording.
+
 ## [5.6.0] - 2026-05-07
 
 ### Policy Change

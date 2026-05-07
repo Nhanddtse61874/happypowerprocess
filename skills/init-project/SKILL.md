@@ -48,7 +48,7 @@ Runs only if `.planning/STATE.md` exists.
 Display a status check (which of PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md, config.json, CLAUDE.md, .claude/settings.json exist). Then present:
 
 ```
-[1] Abort (giữ nguyên)            ← DEFAULT
+[1] Abort (keep existing)          ← DEFAULT
 [2] Update config only             → invokes /update-config then exits
 [3] Re-init missing files only     → create only missing, never overwrite
 [4] Force re-init                  → backup ALL existing state files to .planning/backup-{YYYYMMDD-HHMMSS}/ then overwrite
@@ -126,7 +126,7 @@ Create in this order. For idempotency choice [3], skip any path that already exi
 ## g. Git Init Prompt
 
 Runs only if no `.git/` was detected in section b.
-- Display: `ℹ Folder chưa có git repo.`
+- Display: `ℹ Folder is not a git repository yet.`
 - Prompt: `Init git? [y/n]`.
 - `y` → run `git init`, confirm success.
 - `n` → skip with note: `git init skipped. Run manually if needed.`

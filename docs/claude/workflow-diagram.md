@@ -1,12 +1,12 @@
 # Superpowers + GSD Unified Workflow Diagram
 
-> **Cách xem:** Mở file này trong VS Code → `Ctrl+Shift+V` để preview (cần cài extension [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid))
+> **How to view:** Open this file in VS Code → `Ctrl+Shift+V` to preview (requires the [Markdown Preview Mermaid Support](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-mermaid) extension)
 
 ---
 
 ```mermaid
 flowchart TD
-    START([Submit Request]) --> S0["STEP 0: Bootstrap\nĐọc STATE.md hoặc tạo state files mới\n→ PROJECT.md · REQUIREMENTS.md\n→ ROADMAP.md · STATE.md"]
+    START([Submit Request]) --> S0["STEP 0: Bootstrap\nRead STATE.md or create new state files\n→ PROJECT.md · REQUIREMENTS.md\n→ ROADMAP.md · STATE.md"]
 
     S0 --> HUMAN0{{"USER CONFIRMS\nProject context"}}
     HUMAN0 --> S1["STEP 1: Fast Lane Check\nfast-lane-assessment-v1"]
@@ -41,7 +41,7 @@ flowchart TD
     WAVE -- "Yes" --> S7
     WAVE -- "No" --> S8
 
-    S8["STEP 8: UAT\nAI tạo .planning/phase-UAT.md\nUser tự test feature\n→ uat-gate-v1"]
+    S8["STEP 8: UAT\nAI creates .planning/phase-UAT.md\nUser tests the feature\n→ uat-gate-v1"]
     S8 --> UATRES{"UAT\nResult?"}
     UATRES -- "Fail → fix plan" --> S7
     UATRES -- "Pass" --> S9
@@ -103,15 +103,15 @@ flowchart TD
 
 ---
 
-## Thay đổi so với v1 (Brainstorm-First)
+## Changes vs v1 (Brainstorm-First)
 
-| Khía cạnh | v1 | v2 (Unified GSD+Superpowers) |
+| Aspect | v1 | v2 (Unified GSD+Superpowers) |
 |---|---|---|
-| Session continuity | Memory files (AI-only) | **STATE.md trong repo (ai cũng đọc được)** |
-| Research before spec | Không có | **Step 4: parallel research agents** |
+| Session continuity | Memory files (AI-only) | **STATE.md in repo (anyone can read)** |
+| Research before spec | None | **Step 4: parallel research agents** |
 | Execution context | Shared context → context rot | **Fresh context per task** |
 | Parallel execution | Ad-hoc | **Wave-based: dependency-aware** |
-| Git discipline | Không enforce | **Atomic commit sau mỗi task** |
-| User verification | Không có UAT gate | **Step 8: UAT gate (human-driven)** |
-| Milestone tracking | Không có | **ROADMAP.md + SUMMARY.md per phase** |
-| Human touchpoints | Brainstorm + Mode + Spec + Plan | **9 explicit touchpoints (màu cam)** |
+| Git discipline | Not enforced | **Atomic commit per task** |
+| User verification | No UAT gate | **Step 8: UAT gate (human-driven)** |
+| Milestone tracking | None | **ROADMAP.md + SUMMARY.md per phase** |
+| Human touchpoints | Brainstorm + Mode + Spec + Plan | **9 explicit touchpoints (orange)** |

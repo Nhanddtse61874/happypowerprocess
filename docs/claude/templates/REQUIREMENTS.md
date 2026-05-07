@@ -5,15 +5,15 @@
 
 ## REQ-ID Format
 
-`[CATEGORY]-[NUMBER]` — ví dụ: `AUTH-01`, `CONT-02`, `UI-01`
+`[CATEGORY]-[NUMBER]` — e.g., `AUTH-01`, `CONT-02`, `UI-01`
 
-Mỗi requirement phải:
-- **Specific & testable**: "User can reset password via email link" (không phải "add auth")
-- **User-centric**: "User can X" (không phải "system does X")
-- **Atomic**: Một capability per requirement
+Each requirement must be:
+- **Specific & testable**: "User can reset password via email link" (not "add auth")
+- **User-centric**: "User can X" (not "system does X")
+- **Atomic**: One capability per requirement
 - **Independent**: Minimal cross-dependencies
 
-Mọi v1 requirement phải map về đúng một phase trong ROADMAP.md — 100% coverage bắt buộc.
+Every v1 requirement must map to exactly one phase in ROADMAP.md — 100% coverage required.
 
 ## v1 Requirements (Ship in initial release)
 

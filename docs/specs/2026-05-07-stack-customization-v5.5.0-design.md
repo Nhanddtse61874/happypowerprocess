@@ -190,7 +190,7 @@ For Scenario B (new stack, `source: project`), the registry entry is created fre
 ```markdown
 ## Stack-Specific Rules
 
-Khi gặp task code, AI **bắt buộc** load stack skill tương ứng. AI tự phân tích task → match đúng stack — không cần khai báo trước.
+When facing a coding task, the AI **must** load the matching stack skill. The AI analyzes the task → matches the correct stack on its own — no need to declare it upfront.
 
 <!-- stack-table:start (managed by /add-tech-stack and /sync-stack-skill — do not edit manually) -->
 | Stack | Label | Skill (Mode A) | Agent (Mode B) | Source |
@@ -202,7 +202,7 @@ Khi gặp task code, AI **bắt buộc** load stack skill tương ứng. AI tự
 | iot-edge | IoT / MQTT / BLE | `skills/implementer-iot-edge/SKILL.md` | `agents/implementer-iot-edge.md` | plugin |
 <!-- stack-table:end -->
 
-Stack list expand được theo project — `/add-tech-stack` tự động regenerate table này từ `.claude/stack-skills/registry.json`.
+The stack list can expand per project — `/add-tech-stack` automatically regenerates this table from `.claude/stack-skills/registry.json`.
 ```
 
 `/add-tech-stack` and `/sync-stack-skill` replace the entire content between `<!-- stack-table:start ... -->` and `<!-- stack-table:end -->` from the registry.
@@ -433,8 +433,8 @@ Three steps:
 
 **Step 3 — AGENT.md** (3 user touchpoints):
 
-- **Q-identity**: "Bạn (agent) là ai?" → fills `{TASK_DOMAIN}` and identity line.
-- **Q-goal**: "Focus chính?" → fills `{USER_GOAL}` (one-liner appended to identity sentence) and `{AGENT_DESCRIPTION}`.
+- **Q-identity**: "Who is this agent?" → fills `{TASK_DOMAIN}` and identity line.
+- **Q-goal**: "Primary focus?" → fills `{USER_GOAL}` (one-liner appended to identity sentence) and `{AGENT_DESCRIPTION}`.
 - **Walk `## Execution rules` section** with `[input / suggest / skip]` — fills `{EXECUTION_RULES}`.
 
 The remaining placeholders are auto-filled at generation time: `{STACK_NAME}` and `{STACK_LABEL}` from registry, `{SKILL_PATH}` from registry, `{KEY_TOPICS}` derived from the just-written SKILL.md section headers, and the Output contract is the template's 3-bullet default (no user input). AGENT.md does **not** track SKILL.md changes — `{KEY_TOPICS}` is captured at generation time only.

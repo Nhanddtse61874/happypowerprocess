@@ -2,16 +2,16 @@
 
 ## Vision
 
-{Một đoạn mô tả mục tiêu tổng thể của project. Không thay đổi theo milestone.}
+{One paragraph describing the overall goal of the project. Does not change between milestones.}
 
 ## Problem Statement
 
-{Vấn đề gì đang được giải quyết? Ai bị ảnh hưởng? Tại sao quan trọng?}
+{What problem is being solved? Who is affected? Why does it matter?}
 
 ## Success Criteria
 
-- {Criterion 1 — đo lường được}
-- {Criterion 2 — đo lường được}
+- {Criterion 1 — measurable}
+- {Criterion 2 — measurable}
 
 ## Constraints
 

@@ -2,70 +2,70 @@
 
 **Date:** 2026-05-06
 **Status:** Approved (Section 1-5)
-**Author:** Brainstorm session với user
-**Implements:** New slash commands `/init-project` + `/update-config` cho happypowerprocess plugin
+**Author:** Brainstorm session with user
+**Implements:** New slash commands `/init-project` + `/update-config` for the happypowerprocess plugin
 
 ## Problem Statement
 
-Plugin `happypowerprocess` hiện không có cơ chế tự động bootstrap project mới khi user cài đặt. User phải:
-- Tạo thủ công các state files (PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md)
-- Tạo `.planning/config.json` với 9 config fields
-- Tạo CLAUDE.md project-level
-- Setup `.claude/settings.json` permissions
-- Setup `.gitignore` cho `.worktrees/` và optional `.planning/`
-- Init git, first commit
+The `happypowerprocess` plugin currently has no automatic mechanism to bootstrap a new project when the user installs it. The user must manually:
+- Create the state files (PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md)
+- Create `.planning/config.json` with all 9 config fields
+- Create the project-level CLAUDE.md
+- Set up `.claude/settings.json` permissions
+- Set up `.gitignore` for `.worktrees/` and the optional `.planning/`
+- Initialize git, make a first commit
 
-→ User mới khó onboard, dễ miss files cần thiết, dễ mismatch với workflow expectations.
+→ New users have a hard time onboarding, easily miss required files, and easily mismatch the workflow expectations.
 
-Đồng thời, sau khi init, user cần command tiện lợi để update config (mode, granularity, model_profile, commit strategy...) bất kỳ lúc nào — không phải edit JSON thủ công.
+At the same time, after init, users need a convenient command to update config (mode, granularity, model_profile, commit strategy, etc.) at any time — without manually editing JSON.
 
 ## Goals
 
-1. **Skill `/init-project`**: bootstrap project mới (greenfield + brownfield) trong <30 giây với 2 prompts tối thiểu
-2. **Skill `/update-config`**: interactive update config với validation + mid-workflow impact warnings
-3. **Single source of truth** cho config schema (extensible khi thêm field mới)
-4. **Idempotency**: re-run safe, có 4 lựa chọn xử lý khi project đã init
-5. **Cross-platform**: Windows + macOS/Linux qua env vars
+1. **Skill `/init-project`**: bootstrap a new project (greenfield + brownfield) in <30 seconds with 2 minimal prompts
+2. **Skill `/update-config`**: interactive config update with validation + mid-workflow impact warnings
+3. **Single source of truth** for the config schema (extensible when new fields are added)
+4. **Idempotency**: re-run safe, with 4 choices when the project is already initialized
+5. **Cross-platform**: Windows + macOS/Linux via env vars
 
 ## Non-Goals
 
-- Không brainstorm/deep questioning về vision (defer to STEP 2 brainstorming khi user start first feature)
-- Không full architecture mapping cho brownfield (lightweight stack detection only)
-- Không implement undo/rollback ngoài backup folder
-- Không support multi-user concurrent edit
-- Không migration từ old config schema (first version)
+- No vision brainstorming / deep questioning (defer to STEP 2 brainstorming when the user starts the first feature)
+- No full architecture mapping for brownfield (lightweight stack detection only)
+- No undo/rollback beyond the backup folder
+- No multi-user concurrent edit support
+- No migration from old config schemas (this is the first version)
 
 ## Success Criteria
 
-- User cài plugin → run `/init-project` → có working state trong <30 giây
-- Config schema thay đổi → chỉ cần update 1 file (`config-schema.md`)
-- Re-run `/init-project` không destroy work
-- `/update-config` validate input, warn về mid-workflow impact, không break config
+- User installs the plugin → runs `/init-project` → has working state in <30 seconds
+- Config schema changes → only one file (`config-schema.md`) needs updating
+- Re-running `/init-project` does not destroy work
+- `/update-config` validates input, warns about mid-workflow impact, never breaks the config
 
 ---
 
 ## Architecture
 
-### File structure mới
+### New file structure
 
 ```
 {plugin-root}/
 ├── skills/
 │   ├── init-project/
-│   │   └── SKILL.md              ← MỚI (~120 dòng)
+│   │   └── SKILL.md              ← NEW (~120 lines)
 │   └── update-config/
-│       └── SKILL.md              ← MỚI (~70 dòng)
+│       └── SKILL.md              ← NEW (~70 lines)
 └── docs/claude/
-    ├── config-schema.md          ← MỚI (~80 dòng) — single source of truth
+    ├── config-schema.md          ← NEW (~80 lines) — single source of truth
     ├── templates/
-    │   ├── CLAUDE.md             ← Đã tạo
-    │   ├── PROJECT.md            ← Đã có
-    │   ├── REQUIREMENTS.md       ← Đã có
-    │   ├── ROADMAP.md            ← Đã có
-    │   ├── STATE.md              ← Đã có
-    │   ├── config.json           ← Đã có
-    │   ├── settings.json         ← MỚI (~15 dòng)
-    │   └── gitignore             ← MỚI (~5 dòng)
+    │   ├── CLAUDE.md             ← Newly created
+    │   ├── PROJECT.md            ← Existing
+    │   ├── REQUIREMENTS.md       ← Existing
+    │   ├── ROADMAP.md            ← Existing
+    │   ├── STATE.md              ← Existing
+    │   ├── config.json           ← Existing
+    │   ├── settings.json         ← NEW (~15 lines)
+    │   └── gitignore             ← NEW (~5 lines)
     └── ...
 ```
 
@@ -92,11 +92,11 @@ Plugin `happypowerprocess` hiện không có cơ chế tự động bootstrap pr
 
 ### Plugin path detection (cross-platform)
 
-Skills detect platform qua env vars:
+Skills detect the platform via env vars:
 - **Windows**: `%USERPROFILE%\.claude\plugins\marketplaces\happypowerprocess\`
 - **macOS/Linux**: `$HOME/.claude/plugins/marketplaces/happypowerprocess/`
 
-Detection logic trong skill: check `$env:OS == "Windows_NT"` (PowerShell) hoặc `[[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]` (bash).
+Detection logic in the skill: check `$env:OS == "Windows_NT"` (PowerShell) or `[[ "$OSTYPE" == "msys" || "$OSTYPE" == "cygwin" ]]` (bash).
 
 ---
 
@@ -104,22 +104,22 @@ Detection logic trong skill: check `$env:OS == "Windows_NT"` (PowerShell) hoặc
 
 ### 1. `docs/claude/config-schema.md` (single source of truth)
 
-Bảng định nghĩa 9 fields với 6 cột:
+Table defining 9 fields with 6 columns:
 
 | Field | Type | Default | Valid values | Description | Mid-workflow impact |
 |---|---|---|---|---|---|
 | `mode` | enum | `interactive` | `interactive` / `yolo` | Pause for confirm vs auto-approve | Affects human touchpoints only |
 | `granularity` | enum | `standard` | `coarse` / `standard` / `fine` | Phase count: 3-5 / 5-8 / 8-12+ | Affects unplanned phases only |
 | `parallelization` | bool | `true` | `true` / `false` | Worktree-isolated parallel execution | Apply from next wave |
-| `commit_docs.state_files` | bool | `true` | `true` / `false` | Commit STATE.md, PROJECT.md... | Apply from next commit |
+| `commit_docs.state_files` | bool | `true` | `true` / `false` | Commit STATE.md, PROJECT.md, etc. | Apply from next commit |
 | `commit_docs.planning_artifacts` | bool | `true` | `true` / `false` | Commit `.planning/` files. **`false` → auto add to .gitignore** | Apply from next commit + update .gitignore |
 | `commit_atomic` | bool | `true` | `true` / `false` | Commit per task vs batch per wave | Apply from next task |
-| `model_profile` | enum | `balanced` | `balanced` / `quality` / `budget` | Shifts tier mapping. `budget` = down 1, `quality` = up 1 (clamped) | Unexecuted tasks dùng new model |
-| `model_defaults` | object | `{mechanical:"haiku",standard:"sonnet",complex:"opus"}` | model name strings | Per-task model assignment | Unexecuted tasks dùng new model |
+| `model_profile` | enum | `balanced` | `balanced` / `quality` / `budget` | Shifts tier mapping. `budget` = down 1, `quality` = up 1 (clamped) | Unexecuted tasks use the new model |
+| `model_defaults` | object | `{mechanical:"haiku",standard:"sonnet",complex:"opus"}` | model name strings | Per-task model assignment | Unexecuted tasks use the new model |
 | `workflow.research` | bool | `true` | `true` / `false` | Enable research phase (Step 4) | Apply from next step |
 | `workflow.plan_check` | bool | `true` | `true` / `false` | Enable Plan Checker (11 dimensions) | Apply from next plan |
 
-Cộng thêm section "How to use this schema" cho 2 skills tham chiếu.
+Plus a "How to use this schema" section that the 2 skills reference.
 
 ### 2. `skills/init-project/SKILL.md`
 
@@ -133,7 +133,7 @@ description: Bootstrap project state files, config, CLAUDE.md, permissions, and 
 
 Body sections:
 1. Detection phase — check `.planning/STATE.md`, `.git`, codebase markers
-2. Idempotency gate — 4 choices nếu đã init
+2. Idempotency gate — 4 choices when already initialized
 3. Brownfield stack detection — Glob markers
 4. Interactive prompts — 2 questions: project name, primary stack
 5. File creation — copy templates, fill placeholders ({PROJECT_NAME}, {INIT_DATE})
@@ -153,12 +153,12 @@ description: Display current .planning/config.json and let user update specific 
 
 Body sections:
 1. Pre-check — verify `.planning/config.json` exists
-2. Display current config với indices
-3. User picks fields — comma-separated indices hoặc `all`
+2. Display current config with indices
+3. User picks fields — comma-separated indices or `all`
 4. Per-field interactive update — read schema doc → validate input
-5. Summary diff — show before/after, ask apply
+5. Summary diff — show before/after, ask to apply
 6. Write config + warnings — mid-workflow impact per field
-7. Side-effects — update `.gitignore` nếu `commit_docs.planning_artifacts` đổi
+7. Side-effects — update `.gitignore` when `commit_docs.planning_artifacts` changes
 
 ### 4. `docs/claude/templates/settings.json` (Option C — workflow-aware defaults)
 
@@ -201,7 +201,7 @@ Plus `.claude/settings.local.json`:
 # .planning/
 ```
 
-Skill **append** vào project's `.gitignore` (idempotent — skip if entry exists). If `.gitignore` không tồn tại → create new với template entries.
+The skill **appends** entries to the project's `.gitignore` (idempotent — skip if entry already exists). If `.gitignore` does not exist → create new from template entries.
 
 ---
 
@@ -236,7 +236,7 @@ User: /init-project
 
 ### Init flow (Brownfield)
 
-Khác greenfield:
+Differs from greenfield:
 - Glob detect markers (`*.csproj`, `*.sln`, `package.json`, `Cargo.toml`, `pom.xml`, `pubspec.yaml`)
 - Display: "📦 Brownfield detected: {stacks}"
 - Prompt 2 SKIP (stack auto-filled, optional confirm)
@@ -254,15 +254,15 @@ Khác greenfield:
 └─ Branch logic per choice
 ```
 
-`--force` flag: skip menu, jump to choice 4 với 1 confirmation.
+`--force` flag: skip menu, jump to choice 4 with 1 confirmation.
 
 ### Update-config flow
 
 ```
 ├─ Pre-check: config.json exists?
 ├─ Load schema + current config
-├─ Display table với 10 numbered entries (commit_docs split into 2 lines, model_defaults split into 3)
-├─ Prompt: "Which fields to change?" (comma-separated indices hoặc 'all')
+├─ Display table with 10 numbered entries (commit_docs split into 2 lines, model_defaults split into 3)
+├─ Prompt: "Which fields to change?" (comma-separated indices or 'all')
 ├─ Per-field loop:
 │   ├─ Display current + valid values
 │   ├─ Prompt new value
@@ -279,8 +279,8 @@ Khác greenfield:
 ### Cross-skill interaction
 
 - `/init-project` choice [2] invokes `/update-config` (chain)
-- Both skills read same `config-schema.md` → consistent validation
-- Both skills update STATE.md "Notes" section với audit trail
+- Both skills read the same `config-schema.md` → consistent validation
+- Both skills update the STATE.md "Notes" section with an audit trail
 
 ---
 
@@ -290,26 +290,26 @@ Khác greenfield:
 
 | Scenario | Behavior |
 |---|---|
-| Plugin path không tồn tại | Abort: "Plugin templates not found at {path}" |
-| Permission denied tạo file | Abort + roll back partial files |
-| User Ctrl+C giữa flow | Cleanup partial files, exit clean |
-| Project name có ký tự lạ | Re-prompt với hint (regex `[a-zA-Z0-9_\- ]+`) |
-| Stack input không hợp lệ | Re-prompt với valid options |
-| `.git` exists nhưng broken | Skip git init, warn |
+| Plugin path does not exist | Abort: "Plugin templates not found at {path}" |
+| Permission denied creating file | Abort + roll back partial files |
+| User Ctrl+C mid-flow | Cleanup partial files, exit clean |
+| Project name has invalid characters | Re-prompt with hint (regex `[a-zA-Z0-9_\- ]+`) |
+| Stack input not valid | Re-prompt with valid options |
+| `.git` exists but broken | Skip git init, warn |
 | Auto-commit fails (pre-commit hook) | Show stderr, files staged, no abort |
 | Disk full | Abort + cleanup partial files |
-| Brownfield ambiguous (monorepo) | Display detected, ask user confirm |
+| Brownfield ambiguous (monorepo) | Display detected, ask user to confirm |
 
 ### Update-config errors
 
 | Scenario | Behavior |
 |---|---|
-| `.planning/config.json` không tồn tại | Abort: "Run /init-project first" |
+| `.planning/config.json` does not exist | Abort: "Run /init-project first" |
 | Malformed JSON | Abort + show line error, suggest restore |
 | Invalid index | Re-prompt valid range |
 | Invalid value (max 3 retries) | Skip current field, continue |
 | Schema doc missing | Abort: "Plugin may be corrupted" |
-| `.gitignore` update fails | Warn but don't abort |
+| `.gitignore` update fails | Warn but do not abort |
 | Concurrent edit detected (mtime) | Abort, instruct re-run |
 
 ### Backup behavior (force re-init)
@@ -323,7 +323,7 @@ Khác greenfield:
 ```
 input → trim → match regex → check valid values → store
                   ↓ fail
-             Re-prompt với hint (max 3 retries)
+             Re-prompt with hint (max 3 retries)
                   ↓ fail
              Abort current, return to previous step
 ```
@@ -353,7 +353,7 @@ input → trim → match regex → check valid values → store
 | T7 | Choice [3] missing files | Create missing only |
 | T8 | Choice [4] force | Backup + overwrite |
 | T9 | `--force` flag | Skip menu, jump to choice 4 |
-| T10 | Invalid project name | Re-prompt với hint |
+| T10 | Invalid project name | Re-prompt with hint |
 | T11 | Permission denied | Abort with clear error |
 | T12 | Auto-commit fail | Show stderr, no abort |
 
@@ -393,12 +393,12 @@ grep -q "{PROJECT_NAME}" CLAUDE.md && exit 1  # placeholders should be filled
 
 ### Schema validation
 
-Skill = markdown instructions cho AI. AI reads `config-schema.md` (not programmatic parse) và verify khi load:
-- All 9 fields có đầy đủ 6 cột (visual check)
+Skills are markdown instructions for the AI. The AI reads `config-schema.md` (no programmatic parse) and verifies on load:
+- All 9 fields have all 6 columns (visual check)
 - Defaults match `templates/config.json` (cross-reference)
 - No duplicate field names (visual check)
 
-Nếu schema thiếu / corrupt → AI abort: "Plugin schema doc malformed. Reinstall plugin."
+If the schema is missing / corrupt → AI aborts: "Plugin schema doc malformed. Reinstall plugin."
 
 ---
 
@@ -410,7 +410,7 @@ Nếu schema thiếu / corrupt → AI abort: "Plugin schema doc malformed. Reins
 | 2 | Option B: walk subset of fields | Speed when only changing 1-2 fields, validate per-field | A (walk all), C (open editor) |
 | 3 | Option B: 4-choice menu on re-run | Cover all idempotency scenarios safely | A (hard abort), C (smart merge auto) |
 | 4 | Option B: stack detection only | Avoid overlap with brainstorm; full architecture mapping is premature | A (greenfield always), C (full mapping) |
-| 5 | A2+B3: ask both git init and commit | Explicit before side-effects; user mới hiểu rõ | A1+B1 (auto silent) |
+| 5 | A2+B3: ask both git init and commit | Explicit before side-effects; new users understand clearly | A1+B1 (auto silent) |
 | 6 | Option C: workflow-aware defaults | Smooth read-heavy ops, still safe for write/destructive | A (empty), B (minimal), D (per-stack) |
 | 7 | Approach 2: shared schema doc | Single source of truth, future-proof | A1 (independent skills), A3 (single composite) |
 

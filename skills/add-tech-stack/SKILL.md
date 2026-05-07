@@ -172,7 +172,7 @@ For each fixed section (Required Rules / Quality Gates / Architecture / Anti-Pat
 
 **Step f.4 — AGENT.md walk.** Read template from `{PLUGIN_PATH}/docs/claude/templates/stack-agent-template.md`.
 
-- `❓ Identity: who is this agent? (vai trò + scope, vd "Python backend engineer specialized in FastAPI"):` → fills `{TASK_DOMAIN}` (infer from stack name + identity, e.g., "backend" / "frontend" / "mobile") and the identity sentence.
+- `❓ Identity: who is this agent? (role + scope, e.g. "Python backend engineer specialized in FastAPI"):` → fills `{TASK_DOMAIN}` (infer from stack name + identity, e.g., "backend" / "frontend" / "mobile") and the identity sentence.
 - `❓ Goal/focus (1 line):` → fills `{USER_GOAL}` and contributes to `{AGENT_DESCRIPTION}` (format: `"Use for implementing {STACK_LABEL} tasks with {USER_GOAL keywords}"`).
 - Walk `## Execution rules` section with `[input / suggest / skip]` (same semantics as Step f.3) → fills `{EXECUTION_RULES}`.
 

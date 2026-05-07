@@ -67,7 +67,7 @@ Index 8 covers all 3 `model_defaults` sub-fields together — when picked, walk 
 
 ## e. User Picks Fields
 
-- Prompt: `Which fields to change? (số, comma-separated, hoặc 'all')`
+- Prompt: `Which fields to change? (numbers, comma-separated, or 'all')`
 - Validate: comma-separated indices within the range of entries rendered in section d (do not hardcode — derive the valid range from the count of numbered rows actually displayed), or literal `all`.
 - Invalid → re-prompt up to 3 times, then abort.
 - Empty input or all "keep" → exit cleanly with `No changes made.`

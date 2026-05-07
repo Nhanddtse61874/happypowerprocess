@@ -2,27 +2,27 @@
 
 ## Current Position
 
-**Phase:** {Step N — tên step}
+**Phase:** {Step N — step name}
 **Status:** {in_progress | blocked | waiting_for_user}
 **Last updated:** {YYYY-MM-DD}
 
 ## Current Milestone
 
-**Milestone:** {tên milestone, ví dụ: "M1 — Auth System"}
+**Milestone:** {milestone name, e.g., "M1 — Auth System"}
 **Started:** {YYYY-MM-DD}
-**Target:** {YYYY-MM-DD hoặc "no deadline"}
+**Target:** {YYYY-MM-DD or "no deadline"}
 
 ## Next Action
 
-{Một câu mô tả chính xác việc phải làm tiếp theo. Đủ để session mới biết bắt đầu từ đâu.}
+{One sentence describing exactly what to do next. Specific enough that a fresh session knows where to resume.}
 
 ## Open Blockers
 
-- {Blocker 1: mô tả + owner}
+- {Blocker 1: description + owner}
 
 ## Key Decisions Made
 
-- {YYYY-MM-DD}: {Quyết định gì} — {Lý do}
+- {YYYY-MM-DD}: {What was decided} — {Reason}
 
 ## Approved Mode
 
@@ -30,8 +30,8 @@
 
 ## Config
 
-Xem `.planning/config.json` cho granularity, parallelization, git tracking settings.
+See `.planning/config.json` for granularity, parallelization, git tracking settings.
 
 ## Notes
 
-{Bất kỳ context quan trọng nào khác. Nếu context bị mất, file này phải đủ để resume.}
+{Any other important context. If context is lost, this file must be enough to resume.}

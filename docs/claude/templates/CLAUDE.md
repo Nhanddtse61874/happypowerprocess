@@ -2,9 +2,9 @@
 
 ## Workflow Mandate
 
-Project này sử dụng **happypowerprocess** workflow. Mọi task (feature, bugfix, refactor, hotfix) **bắt buộc** đi qua 11-step workflow định nghĩa dưới đây.
+This project uses the **happypowerprocess** workflow. Every task (feature, bugfix, refactor, hotfix) **must** go through the 11-step workflow defined below.
 
-Mode (A solo / B team spine) **không fix cứng** ở project level — được quyết định ở **STEP 3 (Mode Selection Gate)** cho từng task dựa trên 5 scoring criteria.
+Mode (A solo / B team spine) is **not pinned** at the project level — it is decided at **STEP 3 (Mode Selection Gate)** for each task based on 5 scoring criteria.
 
 **Note (v5.6.0+):** Mode B is Claude Code-only. On Cursor / Codex / OpenCode, Mode Gate auto-forces Mode A regardless of complexity score (per `harness-compatibility.md` in plugin docs dir).
 
@@ -14,12 +14,12 @@ Plugin install dir (auto-detected by platform):
 - **Windows**: `%USERPROFILE%\.claude\plugins\marketplaces\happypowerprocess\docs\claude\`
 - **macOS/Linux**: `$HOME/.claude/plugins/marketplaces/happypowerprocess/docs/claude/`
 
-Tài liệu chính (relative path từ plugin docs dir):
+Primary documents (relative path from plugin docs dir):
 - `current-process-workflow.md` — 11-step unified workflow (primary reference)
 - `state-files-guide.md` — state files guide (PROJECT, STATE, REQUIREMENTS, ROADMAP)
 - `templates/` — templates for state and phase output files
 - `research-phase-guide.md` — research agents and outputs
-- `mode-selection-criteria.md` — Mode A vs B scoring (chạy ở STEP 3)
+- `mode-selection-criteria.md` — Mode A vs B scoring (runs at STEP 3)
 - `master-dispatcher-prompt.md` — task routing
 - `agent-output-templates.md` — output template contracts (Mode B)
 - `runtime-modes.md` — Mode A and B details
@@ -115,7 +115,7 @@ Already covered by STEP 6 (goal-backward + `must_haves` frontmatter + `<verify>`
 
 ## Stack-Specific Rules
 
-Khi gặp task code, AI **bắt buộc** load stack skill tương ứng. AI tự phân tích task → match đúng stack — không cần khai báo trước.
+When facing a coding task, the AI **must** load the matching stack skill. The AI analyzes the task → matches the correct stack on its own — no need to declare it upfront.
 
 <!-- stack-table:start (managed by /add-tech-stack and /sync-stack-skill — do not edit manually) -->
 | Stack | Label | Skill (Mode A) | Agent (Mode B) | Source |
@@ -127,15 +127,15 @@ Khi gặp task code, AI **bắt buộc** load stack skill tương ứng. AI tự
 | iot-edge | IoT / MQTT / BLE | `skills/implementer-iot-edge/SKILL.md` | `agents/implementer-iot-edge.md` | plugin |
 <!-- stack-table:end -->
 
-Stack list expand được theo project — `/add-tech-stack` tự động regenerate table này từ `.claude/stack-skills/registry.json`. Reference chính: `stack-skill-rule-map.md` trong plugin docs dir.
+The stack list can expand per project — `/add-tech-stack` automatically regenerates this table from `.claude/stack-skills/registry.json`. Primary reference: `stack-skill-rule-map.md` in the plugin docs dir.
 
 ## Project-Specific Deviations from Plugin Defaults
 
-Ghi lại mọi quyết định lệch chuẩn so với plugin workflow (vd: dùng format khác, skip step, override config).
+Record every decision that deviates from the plugin workflow (e.g., using a different format, skipping a step, overriding config).
 
 | Deviation | Rationale | Date |
 |-----------|-----------|------|
-<!-- Example row (xóa comment khi điền entry thật):
+<!-- Example row (delete this comment when adding a real entry):
 | Plan X uses Markdown checkbox instead of XML contract | Already authored before deviation discovered | YYYY-MM-DD |
 | `workflow.research: false` for Phase 0 | Foundation phase has no domain research need | YYYY-MM-DD |
 -->
@@ -145,9 +145,9 @@ Ghi lại mọi quyết định lệch chuẩn so với plugin workflow (vd: dù
 | Path | Purpose | Created at |
 |---|---|---|
 | `.planning/PROJECT.md` | Project vision, stack, constraints | STEP 0 |
-| `.planning/REQUIREMENTS.md` | REQ-IDs với phase mapping | STEP 0 / Updated STEP 2 |
+| `.planning/REQUIREMENTS.md` | REQ-IDs with phase mapping | STEP 0 / Updated STEP 2 |
 | `.planning/ROADMAP.md` | Milestones & sub-milestones | STEP 0 / Updated STEP 11 |
-| `.planning/STATE.md` | Current position, next action, key decisions | STEP 0 / Updated mỗi step |
+| `.planning/STATE.md` | Current position, next action, key decisions | STEP 0 / Updated every step |
 | `.planning/config.json` | Workflow config (mode, granularity, model defaults) | STEP 0 |
 | `.planning/research/` | Research output dir (Mode B) | STEP 4 |
 | `.planning/{phase}-RESEARCH.md` | Research output per phase (Mode A) | STEP 4 |
