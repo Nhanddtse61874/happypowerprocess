@@ -56,6 +56,36 @@ Runs only if `{DETECTED_STACKS}` is non-empty.
 - Skip stack prompt in section e — auto-fill `{STACK}` from `{DETECTED_STACKS}`.
 - If multiple stacks detected and ambiguous (monorepo): prompt `Detected {N} stacks. Use all? [y/n] (else specify primary)` and resolve before proceeding.
 
+## d2. Architecture Detection (T1 trigger)
+
+Runs only if section d found brownfield markers (`{DETECTED_STACKS}` non-empty). E3 conservative — every step requires explicit consent.
+
+1. Display: `❓ Scan architecture for detected stack(s) too? [y/n]`. Default `n` on enter.
+2. If user answers `n`: skip entire section d2. Proceed to section e. Architecture sections in stack skills will use plugin defaults.
+3. If user answers `y`: for each stack in `{DETECTED_STACKS}`:
+   a. Display: `── Architecture detection for '<stack>' ──`
+   b. Prompt: `❓ Use web search to verify against current best practice? [y/n]`. Default `n`.
+   c. Run heuristic detection:
+      - Glob folder structure relative to project root.
+      - Read 2-3 representative files (e.g., for `dotnet`: `Program.cs`, `*.csproj`, `Startup.cs`; for `react`: `package.json`, `src/App.tsx`).
+      - Match against known patterns: Clean Architecture (Domain/Application/Infrastructure layout), Vertical Slices (Features/<feature>/), N-Tier (Controllers/Services/Repositories/), Feature-folders (features/<name>/), Atomic Design (atoms/molecules/organisms/).
+      - Compute confidence: HIGH (3+ markers), MEDIUM (2 markers), LOW (<2 markers — fall back to "unknown").
+   d. If web search opted in: WebSearch best-practice patterns for `<stack>` stack at current versions; cross-reference with heuristic detection.
+   e. Display: `Detected pattern: <pattern> (confidence: <level>)`. Show evidence list (folders found, files inspected).
+   f. Prompt: `❓ Save this detection to .claude/stack-skills/<stack>/SKILL.md ## Architecture section? [y / edit / skip]`.
+      - `y`: create snapshot directory `.claude/stack-skills/<stack>/`, copy plugin default `{PLUGIN_PATH}/skills/implementer-<stack>/SKILL.md` to `.claude/stack-skills/<stack>/SKILL.md`, replace `## Architecture` section content with detected pattern + evidence summary. Update registry: `source` flips `plugin` → `customized`.
+      - `edit`: prompt user to provide content (multi-line); same write flow.
+      - `skip`: do nothing, plugin default remains in effect.
+4. After all detected stacks processed, regenerate CLAUDE.md `<!-- stack-table -->` block from registry (sources may have flipped).
+
+**Greenfield (`{DETECTED_STACKS}` empty)**: section d2 is skipped entirely. No prompt.
+
+**Edge cases (per spec §8.6):**
+- 0 patterns matched: `❓ No architecture markers found. Skip detection? [y/manual-input]`.
+- Conflicting patterns: `❓ Multiple patterns detected: [<list>]. Pick primary or describe own:`.
+- Web search fail: fallback to heuristic-only with warning.
+- Confidence LOW: show + warn; always prompt user explicitly.
+
 ## e. Interactive Prompts
 
 Greenfield only (or override of brownfield auto-fill).
@@ -69,7 +99,7 @@ Greenfield only (or override of brownfield auto-fill).
 
 Create in this order. For idempotency choice [3], skip any path that already exists. Track every file actually created in a creation list (used for rollback on error).
 
-1. `mkdir .planning/`, `mkdir .planning/research/`, `mkdir docs/specs/` (no-op if present). Then create `.planning/research/.gitkeep` and `docs/specs/.gitkeep` (empty files — forces git to track these dirs; `.gitkeep` is a convention).
+1. `mkdir .planning/`, `mkdir .planning/research/`, `mkdir docs/specs/`, `mkdir .claude/stack-skills/` (no-op if present). Then create `.planning/research/.gitkeep` and `docs/specs/.gitkeep` (empty files — forces git to track these dirs; `.gitkeep` is a convention).
 2. Copy templates from `{PLUGIN_PATH}/docs/claude/templates/` and fill placeholders:
    - `PROJECT.md` → `.planning/PROJECT.md` — fill `{PROJECT_NAME}`, `{STACK}`, `{INIT_DATE}` (Created field).
    - `REQUIREMENTS.md` → `.planning/REQUIREMENTS.md` — copy as-is.
@@ -78,6 +108,7 @@ Create in this order. For idempotency choice [3], skip any path that already exi
    - `config.json` → `.planning/config.json` — copy as-is (defaults already correct).
    - `CLAUDE.md` → `CLAUDE.md` (project root) — fill `{PROJECT_NAME}` and `{INIT_DATE}`.
    - `settings.json` → `.claude/settings.json` — copy as-is.
+   - `registry.json` → `.claude/stack-skills/registry.json` — fill `{PLUGIN_VERSION}` (read from `.claude-plugin/plugin.json` `version` field at runtime) and `{INIT_DATE}` (today's date).
 3. Create `.claude/settings.local.json` inline with content `{"permissions":{"allow":[]}}`.
 4. Append `gitignore` template entries to project's `.gitignore`:
    - If `.gitignore` doesn't exist → create new with template content.
