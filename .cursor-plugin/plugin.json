@@ -2,7 +2,7 @@
   "name": "happypowerprocess",
   "displayName": "Happy Power Process",
   "description": "Unified 11-step AI workflow: Superpowers execution skills + GSD state persistence + optional AI Team orchestration.",
-  "version": "5.4.0",
+  "version": "5.5.0",
   "author": {
     "name": "Nhan"
   },
@@ -22,7 +22,10 @@
     "init-project",
     "bootstrap",
     "config-management",
-    "project-setup"
+    "project-setup",
+    "add-tech-stack",
+    "sync-stack-skill",
+    "stack-customization"
   ],
   "skills": "./skills/",
   "agents": "./agents/",
