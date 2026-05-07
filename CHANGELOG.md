@@ -1,5 +1,33 @@
 # Changelog
 
+## [5.6.0] - 2026-05-07
+
+### Policy Change
+
+- **Mode B (Team Spine) is now officially Claude Code-only**. On Cursor / Codex / OpenCode, Mode Selection Gate auto-forces Mode A regardless of task complexity score. Rationale: Mode B requires Claude-specific Task tool features (subagent dispatch with `subagent_type` + `model` + `isolation` parameters; Claude model names like `haiku` / `sonnet` / `opus`; worktree-isolated parallel execution). Previously Mode B would partial-fail on non-Claude harnesses.
+
+### Added
+
+- **`active_harness` config field** (enum: `auto` / `claude-code` / `cursor` / `codex` / `opencode`, default `auto`). Detected via env vars at workflow time; fallback `claude-code` preserves existing behavior.
+- **`docs/claude/harness-compatibility.md`** — comprehensive matrix (4 harnesses × 2 modes), rationale, workaround guidance for non-Claude users, detection mechanism, user-override semantics.
+
+### Changed
+
+- **`docs/claude/mode-selection-criteria.md`** — adds Reverse Hard Exclusion section: non-Claude harness → force Mode A. User can still override per existing user-decision-wins rule, with hard warning displayed.
+- **`docs/claude/templates/CLAUDE.md`** — adds 1-line Mode B Claude-only note in Workflow Mandate section.
+- **`docs/claude/templates/config.json`** — adds `active_harness: "auto"` as first field.
+- **`docs/claude/config-schema.md`** — adds `active_harness` row + index 0 in Display Grouping.
+
+### Backward compatibility
+
+- v5.5.x projects continue to work unchanged. `active_harness` auto-resolves via env detection at next Mode Gate; explicit field added at next `/update-config` invocation.
+- Existing plans, snapshots, registry — no changes required.
+- Power users on non-Claude harnesses can still override Mode Gate decision (consistent with project's user-decision-wins principle).
+
+### Strategy
+
+Chose **Strategy α (Runtime enforcement)** over **Strategy β (Per-marketplace bundles)**: 10x cheaper, single source of truth, eliminates drift class of bugs (v5.4.0 marketplace.json drift case). β rejected as over-engineering for project size.
+
 ## [5.5.1] - 2026-05-07
 
 ### Fixed

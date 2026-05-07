@@ -1,5 +1,33 @@
 # Release Notes — happypowerprocess
 
+## v5.6.0 (2026-05-07)
+
+### Mode B Claude-only Policy
+
+Mode B (Team Spine) is now officially **Claude Code only**. On Cursor / Codex / OpenCode, Mode Selection Gate auto-forces Mode A regardless of task complexity. Rationale: Mode B requires Claude-specific Task tool features that don't translate to other harnesses.
+
+Mode A continues to work cross-platform on all 4 harnesses (Claude Code, Cursor, Codex, OpenCode).
+
+### Detection
+
+Mode Gate detects active harness via:
+1. `.planning/config.json` field `active_harness` (explicit user override; default `auto`)
+2. Environment variables (`CLAUDECODE`, `CURSOR_*`, `CODEX_*`, `OPENCODE_*`)
+3. Fallback `claude-code` (preserves current behavior in ambiguous cases)
+
+If detected != `claude-code` → Mode Gate forces Mode A. User can override per existing user-decision-wins rule, with hard warning shown.
+
+### New artifacts
+
+- **`docs/claude/harness-compatibility.md`** — full compatibility matrix + rationale + workaround guidance.
+- **`active_harness` config field** added to schema + template.
+
+### Backward compatibility
+
+100% — v5.5.x projects continue to work. `active_harness` auto-resolves via env detection.
+
+---
+
 ## v5.5.1 (2026-05-07)
 
 ### Cross-Platform Fixes
