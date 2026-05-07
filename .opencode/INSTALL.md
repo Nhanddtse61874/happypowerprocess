@@ -52,7 +52,7 @@ To pin a specific version:
 
 ```json
 {
-  "plugin": ["happypowerprocess@git+https://github.com/Nhanddtse61874/happypowerprocess.git#v5.5.0"]
+  "plugin": ["happypowerprocess@git+https://github.com/Nhanddtse61874/happypowerprocess.git#v5.5.1"]
 }
 ```
 

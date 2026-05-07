@@ -2,7 +2,7 @@
 
 > AI workflow plugin: structured brainstorming, wave-based execution, persistent state, and 10 human checkpoints — all in your coding agent.
 
-![Version](https://img.shields.io/badge/version-5.5.0-blue)
+![Version](https://img.shields.io/badge/version-5.5.1-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Claude%20Code%20|%20Codex%20|%20Cursor%20|%20OpenCode-purple)
 
@@ -185,7 +185,7 @@ happypowerprocess/
 ├── CLAUDE.md                  — Contributor guidelines + workspace execution rules
 ├── CHANGELOG.md               — Full version history (all releases)
 ├── RELEASE-NOTES.md           — Latest release highlights
-├── package.json               — Version source of truth (5.5.0)
+├── package.json               — Version source of truth (5.5.1)
 └── marketplace.json           — Plugin marketplace metadata
 ```
 

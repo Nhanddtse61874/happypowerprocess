@@ -1,5 +1,19 @@
 # Release Notes — happypowerprocess
 
+## v5.5.1 (2026-05-07)
+
+### Cross-Platform Fixes
+
+- **Plugin path detection** — `/init-project`, `/update-config`, `/add-tech-stack`, `/sync-stack-skill` now work on Codex / Cursor / OpenCode in addition to Claude Code. Skill bodies try 4 candidate dirs in priority order with multi-harness Glob fallback.
+- **Codex INSTALL.md** — adds `agents/` symlink for Mode B users + note that Codex doesn't register slash commands (invoke skills by name).
+- **Cursor plugin.json** — keyword drift fixed (synced with Claude plugin.json: +4 keywords).
+
+### Patch nature
+
+This is a non-breaking patch on top of v5.5.0. No new features, no API changes, no schema changes. Existing v5.5.0 customizations and snapshots continue to work unchanged.
+
+---
+
 ## v5.5.0 (2026-05-07)
 
 ### Stack Customization Commands

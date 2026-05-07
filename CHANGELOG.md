@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.5.1] - 2026-05-07
+
+### Fixed
+
+- **Cross-platform plugin path detection** — `/init-project`, `/update-config`, `/add-tech-stack`, `/sync-stack-skill` now work on Codex / Cursor / OpenCode (not just Claude Code). Skill bodies try 4 candidate dirs in priority order: `~/.claude/plugins/marketplaces/`, `~/.codex/`, `~/.cursor/extensions/`, `~/.opencode/plugins/`, with multi-harness Glob fallback.
+- **Codex INSTALL.md** — install steps now also symlink `agents/` (for Mode B users) plus note that Codex doesn't register slash commands — invoke skills by name instead.
+- **Cursor plugin.json keyword drift** — synced with Claude plugin.json (added 4 missing: `research-phase`, `wave-execution`, `goal-backward-planning`, `runtime-modes`).
+
+### Plugin manifests
+
+- All 6 manifests bumped 5.5.0 → 5.5.1.
+
 ## [5.5.0] - 2026-05-07
 
 ### Added
