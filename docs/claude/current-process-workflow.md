@@ -64,6 +64,8 @@ Reference files:
 
 ### Resuming session
 
+**FIRST: Run `skills/validate-state/SKILL.md`** — mandatory safety net before reading state files. Reports any drift, schema errors, or freshness gaps. On `FAIL`, must fix before continuing. On `WARN`, present report and let user choose `accept_drift / fix_now / cancel`. On `CLEAN`, continue immediately.
+
 - Read `STATE.md` → know current step, next action, blockers
 - Read `.planning/config.json` → display current config to user:
 

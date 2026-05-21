@@ -281,6 +281,22 @@ Done!
 - Dispatch fix subagent with specific instructions
 - Don't try to fix manually (context pollution)
 
+## Update STATE.md (mandatory after each task)
+
+After each task completes (passes both spec + code-quality review), update `STATE.md`:
+
+- **Current Position → Phase:** `Step 7 — Execute (task <id> complete, <N>/<total> done)`
+- **Status:** `in_progress` while tasks remain; `complete` when all done
+- **Last updated:** today's date in `YYYY-MM-DD`
+- **Next Action:** `Dispatch task <id+1>` or `Run STEP 8 UAT` if last task
+- **Open Blockers:** if BLOCKED on a task and stuck after escalation, record it here
+
+This update happens between tasks, NOT after every subagent dispatch. It's part of the controller loop, not the implementer subagent's job.
+
+**Continuous execution exception:** even though "Continuous execution" rule above says no progress summaries to user between tasks, the STATE.md write is still required — it's a file write, not a user prompt. It does not pause execution.
+
+If `commit_atomic: true` in config.json, commit STATE.md with each task. If `commit_atomic: false`, commit at end of wave.
+
 ## Integration
 
 **Required workflow skills:**
@@ -288,6 +304,7 @@ Done!
 - **superpowers:writing-plans** - Creates the plan this skill executes
 - **superpowers:requesting-code-review** - Code review template for reviewer subagents
 - **superpowers:finishing-a-development-branch** - Complete development after all tasks
+- **superpowers:validate-state** - Run before first task to confirm STATE.md fresh
 
 **Subagents should use:**
 - **superpowers:test-driven-development** - Subagents follow TDD for each task

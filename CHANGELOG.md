@@ -1,5 +1,60 @@
 # Changelog
 
+## [5.8.0] - 2026-05-21
+
+### Added
+
+- **`skills/validate-state/SKILL.md`** (NEW) — safety-net skill that runs at STEP 0 of every session resume (and on-demand). Performs 4 categories of checks against state files:
+  - **Category 1 — Existence**: PROJECT.md, STATE.md, REQUIREMENTS.md, ROADMAP.md, `.planning/config.json` all present.
+  - **Category 2 — Schema**: STATE.md sections + status enum (`in_progress | blocked | waiting_for_user | complete`) + date format (`YYYY-MM-DD`); REQUIREMENTS.md REQ-ID pattern (`^[A-Z]{2,8}-\d{2,4}$`) + Phase assignment + no duplicates; ROADMAP.md + PROJECT.md required sections.
+  - **Category 3 — Freshness**: STATE.md `last_updated` vs latest `.planning/` artifact mtime + latest non-state-file commit; WARN if ≥1 day stale.
+  - **Category 4 — Drift**: cross-reference STATE.md current_step against artifact existence (PLAN.md, SUMMARY.md); REQ-ID phase coverage; ROADMAP/STATE milestone alignment; Mode consistency.
+- Verdict semantics: **CLEAN** (continue), **WARN** (display report, user picks `accept_drift / fix_now / cancel`), **FAIL** (block until fixed).
+- Cross-platform: skill describes logic only, AI translates to available tools per harness (no hardcoded shell).
+
+### Changed (Layer 1 — preventive updates)
+
+- **`skills/brainstorming/SKILL.md`** — added "Update STATE.md (mandatory at end)" section. Updates Phase, Status, Last updated, Next Action, Approved Mode, Key Decisions. Also refreshes REQUIREMENTS.md if drift detected at STEP 0.
+- **`skills/writing-plans/SKILL.md`** — added "Update STATE.md (mandatory at end)" section. Updates STATE.md after plan written + ROADMAP.md milestone entry.
+- **`skills/executing-plans/SKILL.md`** — added "Update STATE.md (mandatory after each wave/batch)" section. STATE.md `Last updated` is the trigger validate-state freshness check looks for.
+- **`skills/subagent-driven-development/SKILL.md`** — added "Update STATE.md (mandatory after each task)" section. Continuous execution exception explicitly noted (file write does not pause execution).
+- **`skills/finishing-a-development-branch/SKILL.md`** — added "Update STATE.md + ROADMAP.md + SUMMARY (mandatory at end)" section. Closes the work cycle by finalizing all 3 state files.
+
+### Changed (Layer 3 — workflow integration)
+
+- **`CLAUDE.md`** STEP 0 — now mandates `validate-state` skill BEFORE reading STATE.md on resume.
+- **`docs/claude/current-process-workflow.md`** STEP 0 "Resuming session" — explicit `validate-state` invocation as first action.
+- **`docs/claude/state-files-guide.md`** — added "STATE.md update chain (Layer 1)" table mapping each skill to STATE.md fields it owns; added "Validation (Layer 2)" + "Cross-platform safety net (Layer 3)" sections.
+- **`hooks/session-start`** — detects `STATE.md` in cwd; injects `<project-state-reminder>` block instructing AI to run validate-state before any work. Works on Claude Code + Cursor + Copilot CLI. Codex falls back to CLAUDE.md directive (no hook support).
+
+### Verification
+
+- E2E tested in `C:\temp\hppp-validate-test-2026-05-21\` (cleaned up after) across 4 scenarios:
+  - **Scenario A (clean baseline)**: all 4 categories PASS → verdict CLEAN
+  - **Scenario B (schema error)**: Status `inprogress` (typo) + date `2026/5/21` (wrong format) → verdict FAIL, 2 specific fixes suggested
+  - **Scenario C (freshness drift)**: STATE.md `last_updated` 2026-05-10 vs code commit 2026-05-21 (11-day gap) → verdict WARN with drift detail
+  - **Scenario D (cross-ref drift)**: STATE.md says Step 5 but `M1-SUMMARY.md` exists; ROADMAP says in_progress but SUMMARY claims complete → verdict WARN with 2 contradictions
+
+### Why
+
+Resolves Weakness #4 from the v5.7.0 retrospective: "State files cần maintain bằng tay — không có skill auto-update STATE.md/ROADMAP.md sau mỗi wave". 4-layer defense in depth:
+- **Layer 1 (prevention)**: every major skill now updates STATE.md before exit
+- **Layer 2 (detection)**: validate-state runs at STEP 0 to catch any update that was missed
+- **Layer 3 (safety net)**: SessionStart hook + CLAUDE.md directive ensure Layer 2 fires on every session resume
+- **Layer 4 (schema enforcement)**: DEFERRED to v5.9+ (YAML frontmatter in STATE.md)
+
+### Plugin manifests
+
+- All 6 declared files bumped 5.7.0 → 5.8.0.
+- README.md + `.opencode/INSTALL.md` updated.
+
+### Backward compatibility
+
+- No breaking change. Existing projects with stale STATE.md will get WARN on next session resume → user chooses `accept_drift / fix_now`. No state file is modified without user consent.
+- New skill is opt-in via STEP 0; projects that don't run validate-state continue to work as before.
+- Skills with new "Update STATE.md" sub-step still work if STATE.md is absent (no-op).
+- Hook gracefully no-ops if STATE.md not in cwd.
+
 ## [5.7.0] - 2026-05-21
 
 ### Added

@@ -62,9 +62,24 @@ After all tasks complete and verified:
 - Stop when blocked, don't guess
 - Never start implementation on main/master branch without explicit user consent
 
+## Update STATE.md (mandatory after each wave/batch)
+
+After completing each wave (or batch of tasks if no wave structure), update `STATE.md`:
+
+- **Current Position → Phase:** `Step 7 — Execute (wave <N> complete)` or `(wave <N> in_progress)` if still running
+- **Status:** `complete` between waves; `in_progress` during a wave
+- **Last updated:** today's date in `YYYY-MM-DD`
+- **Next Action:** `Execute wave <N+1>` or `Run STEP 8 UAT` if last wave done
+- **Open Blockers:** add any blocker discovered during the wave
+
+After every commit affecting code (not just state files), the AI must update STATE.md `Last updated` field. This is the trigger validate-state freshness check looks for.
+
+If `commit_docs.state_files: true`, include STATE.md in the wave's commit (or commit it separately if `commit_atomic: true`).
+
 ## Integration
 
 **Required workflow skills:**
 - **superpowers:using-git-worktrees** - REQUIRED: Set up isolated workspace before starting
 - **superpowers:writing-plans** - Creates the plan this skill executes
 - **superpowers:finishing-a-development-branch** - Complete development after all tasks
+- **superpowers:validate-state** - Run before first wave to confirm STATE.md fresh

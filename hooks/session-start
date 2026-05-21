@@ -32,7 +32,19 @@ escape_for_json() {
 
 using_superpowers_escaped=$(escape_for_json "$using_superpowers_content")
 warning_escaped=$(escape_for_json "$warning_message")
-session_context="<EXTREMELY_IMPORTANT>\nYou have superpowers.\n\n**Below is the full content of your 'superpowers:using-superpowers' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${using_superpowers_escaped}\n\n${warning_escaped}\n</EXTREMELY_IMPORTANT>"
+
+# Project-aware reminder: if STATE.md exists in current working directory,
+# this is an existing project — remind AI to validate state before resuming.
+# This is the cross-platform safety net for state file freshness/drift.
+# Logic stays in the hook so Claude Code + Cursor + Copilot get it; Codex
+# (no hooks) falls back to CLAUDE.md STEP 0 directive.
+state_reminder=""
+if [ -f "STATE.md" ] || [ -f "./STATE.md" ]; then
+    state_reminder="\n\n<project-state-reminder>\nThis project has a STATE.md — it appears to be an existing happypowerprocess project. Before doing ANY work in this session, you MUST invoke the 'validate-state' skill (via Skill tool) to check for drift, schema errors, and freshness gaps in state files. This is STEP 0 of the workflow and is non-negotiable. The validate-state report tells you whether the project is CLEAN, WARN, or FAIL — you cannot proceed past the result without addressing what it reports.\n</project-state-reminder>"
+fi
+state_reminder_escaped=$(escape_for_json "$state_reminder")
+
+session_context="<EXTREMELY_IMPORTANT>\nYou have superpowers.\n\n**Below is the full content of your 'superpowers:using-superpowers' skill - your introduction to using skills. For all other skills, use the 'Skill' tool:**\n\n${using_superpowers_escaped}\n\n${warning_escaped}${state_reminder_escaped}\n</EXTREMELY_IMPORTANT>"
 
 # Output context injection as JSON.
 # Cursor hooks expect additional_context (snake_case).

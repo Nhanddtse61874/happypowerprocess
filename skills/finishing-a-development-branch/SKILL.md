@@ -250,6 +250,28 @@ git worktree prune  # Self-healing: clean up any stale registrations
 - `cd` to main repo root before worktree removal
 - Run `git worktree prune` after removal
 
+## Update STATE.md + ROADMAP.md + SUMMARY (mandatory at end)
+
+Before exiting this skill, finalize all state files for the completed work cycle:
+
+**STATE.md:**
+- **Current Position → Phase:** `Step 11 — Ship (complete)` or `Step 11 (waiting for merge)` if Option 2 (PR) chosen
+- **Status:** `complete` if Option 1 (merge locally) or Option 4 (discard); `waiting_for_user` if Option 2 (PR pending)
+- **Last updated:** today's date in `YYYY-MM-DD`
+- **Next Action:** for Option 1/4: `Ready for next milestone — pick from ROADMAP.md`; for Option 2: `Address PR review feedback`
+- **Current Milestone:** clear if milestone complete; else update progress
+
+**ROADMAP.md:**
+- Move completed milestone from `Active Milestone` to `Completed Milestones` table (Options 1)
+- Update `Last updated` field
+
+**`.planning/{phase}-SUMMARY.md`:**
+- Write phase summary using template `phase-summary-v1` from `docs/claude/agent-output-templates.md`
+- Include: step-by-step status table, key decisions, deviations from plan, REQ-ID coverage
+
+If `commit_docs.state_files: true`, commit STATE.md + ROADMAP.md.
+If `commit_docs.planning_artifacts: true`, commit `.planning/*-SUMMARY.md`.
+
 ## Integration
 
 **Called by:**
@@ -258,3 +280,4 @@ git worktree prune  # Self-healing: clean up any stale registrations
 
 **Pairs with:**
 - **using-git-worktrees** - Cleans up worktree created by that skill
+- **validate-state** - Verify STATE.md + ROADMAP.md updated cleanly before exit

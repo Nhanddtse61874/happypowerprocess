@@ -152,3 +152,19 @@ After saving the plan, offer execution choice:
 **If Inline Execution chosen:**
 - **REQUIRED SUB-SKILL:** Use superpowers:executing-plans
 - Batch execution with checkpoints for review
+
+## Update STATE.md (mandatory at end)
+
+Before exiting this skill, update `STATE.md`:
+
+- **Current Position → Phase:** `Step 6 — Plan (complete)`
+- **Status:** `waiting_for_user` until user approves plan, then `complete`
+- **Last updated:** today's date in `YYYY-MM-DD`
+- **Next Action:** `Run executing-plans (Inline) or subagent-driven-development (Subagent-Driven) per user choice`
+- **Key Decisions Made:** append plan location + execution mode choice (one bullet)
+
+Also update `ROADMAP.md`:
+- If a new milestone is starting with this plan, add an entry under `Planned Milestones` or move existing one to `Active Milestone`
+- Update `Last updated` field
+
+If `commit_docs.state_files: true`, commit STATE.md + ROADMAP.md with message `docs: update STATE.md + ROADMAP.md after plan written`.

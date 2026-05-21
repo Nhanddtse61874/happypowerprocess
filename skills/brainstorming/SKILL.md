@@ -163,6 +163,21 @@ This gate runs at the end of every brainstorm session (step 9 of the checklist),
 
 **Fast Lane exception:** If this session started via Fast Lane (brainstorm was skipped), run the gate using the Fast Lane output (`fast-lane-assessment-v1`) as input instead of brainstorm output.
 
+## Update STATE.md (mandatory at end)
+
+Before exiting this skill, update `STATE.md` to reflect that brainstorm + mode gate are complete:
+
+- **Current Position → Phase:** `Step 2 — Brainstorm (complete)` or `Step 3 — Mode Gate (complete)` depending on where you stopped
+- **Status:** `complete` (if proceeding to next step) or `waiting_for_user` (if at user approval gate)
+- **Last updated:** today's date in `YYYY-MM-DD`
+- **Next Action:** one sentence on the next step (e.g., "Run writing-plans skill to draft implementation plan")
+- **Approved Mode:** Mode A or Mode B per gate output
+- **Key Decisions Made:** append the design decisions made during brainstorm (one bullet per major decision)
+
+If `commit_docs.state_files: true`, commit STATE.md with message `docs: update STATE.md after brainstorm + mode gate`.
+
+If validate-state ran at STEP 0 and reported drift in REQUIREMENTS.md, also refresh that file now with any new REQ-IDs from the brainstorm output.
+
 ## Visual Companion
 
 A browser-based companion for showing mockups, diagrams, and visual options during brainstorming. Available as a tool - not a mode. Accepting the companion means it's available for questions that benefit from visual treatment; it does NOT mean every question goes through the browser.
