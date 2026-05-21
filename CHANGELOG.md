@@ -1,5 +1,43 @@
 # Changelog
 
+## [5.7.0] - 2026-05-21
+
+### Added
+
+- **`skills/fast-lane-assessment-v1/SKILL.md`** — new runnable skill that fills the gate referenced by STEP 1 of CLAUDE.md. Previously, the workflow named `fast-lane-assessment-v1` as a check to run before brainstorming but no SKILL.md existed, so the gate was ad-hoc per session. The new skill references existing sources of truth without duplication: criteria live in `docs/claude/current-process-workflow.md` STEP 1, output schema lives in `docs/claude/agent-output-templates.md` T6. The skill orchestrates: score five criteria + hard exclusions → emit JSON → user confirmation.
+
+### Changed
+
+- **`skills/using-git-worktrees/SKILL.md`** — synced upstream improvements while preserving the fork's `## Integration` block. New: Step 0 isolation detection (`GIT_DIR` vs `GIT_COMMON` with submodule guard via `--show-superproject-working-tree`), Step 1a native-tool preference (e.g., `EnterWorktree` over `git worktree add`), Step 1b git fallback, sandbox-permission fallback. Expanded Quick Reference (13 rows), new Common Mistakes (Fighting the harness, Skipping detection), new Red Flags (creating a worktree when already isolated, using `git worktree add` when a native tool exists).
+- **`skills/finishing-a-development-branch/SKILL.md`** — synced upstream improvements while preserving the fork's `## Integration` block. New: Step 2 environment detection (normal repo / named-branch worktree / detached HEAD), detached-HEAD 3-option menu (no merge), Step 5 CWD safety (`cd MAIN_ROOT` before merge/discard), Step 6 provenance-based cleanup (only remove worktrees under `.worktrees/`, `worktrees/`, `~/.config/superpowers/worktrees/` — harness-owned workspaces left alone). New Common Mistakes (deleting branch before worktree removal, running `git worktree remove` from inside the worktree, cleaning up harness-owned worktrees) and Red Flags (#1: remove a worktree before confirming merge success).
+- **`skills/subagent-driven-development/SKILL.md`** — ported upstream's `## Continuous execution` paragraph: do not pause between tasks for "should I continue?" prompts. The fork's Pre-Task Confirmation, `<model>` XML tag dispatch rule, `.planning/config.json` `model_defaults` fallback, and BLOCKED escalation tiers are preserved; an explicit exception clause notes that Pre-Task Confirmation still runs unless `mode: yolo` is set in `.planning/config.json`.
+
+### Verified upstream-identical (no action)
+
+- `using-superpowers`, `writing-skills`, `dispatching-parallel-agents`, `systematic-debugging`, `test-driven-development`, `verification-before-completion`, `receiving-code-review` — diff-confirmed byte-identical to `obra/superpowers` main.
+
+### Verified fork-ahead (intentionally retained, no upstream sync)
+
+- `brainstorming` — keeps Mode Selection Gate section + HARD-GATE block + checklist item 9 (Mode B integration).
+- `writing-plans` — keeps Mode B path callout (phase-discovery-lead / phase-architecture-lead / phase-implementation-lead routing).
+- `executing-plans` — keeps stricter "REQUIRED: Set up isolated workspace before starting" wording (matches STEP 7 worktree enforcement).
+- `requesting-code-review` — keeps `superpowers:code-reviewer` agent type reference (fork agent at `agents/code-reviewer.md`); upstream switched to `general-purpose` but our agent is real.
+
+### Verification
+
+- E2E tested on a mock `todo-cli` project in `C:\temp\hppp-mock-test-2026-05-21\` (cleaned up after): Fast Lane eligible scenario → ELIGIBLE verdict, non-eligible scenario → NOT ELIGIBLE verdict, Step 0 detection in normal repo + from inside linked worktree, real CRUD implementation (9/9 tests pass), Step 2 environment detection identifies named-branch worktree, Option 4 provenance cleanup removes worktree and branch without touching anything outside known paths.
+
+### Plugin manifests
+
+- All 6 declared files bumped 5.6.1 → 5.7.0: `package.json`, `.claude-plugin/plugin.json`, `.cursor-plugin/plugin.json`, `.claude-plugin/marketplace.json`, root `marketplace.json`, `gemini-extension.json`.
+- `README.md` version badge + structure note, and `.opencode/INSTALL.md` pinned-version example, bumped to 5.7.0.
+
+### Backward compatibility
+
+- No config schema changes. Existing `.planning/config.json` files continue to work as-is.
+- No breaking changes to Mode A or Mode B. The 11-step workflow contract is preserved; STEP 1 now resolves to a real skill instead of a missing reference.
+- Worktree skill changes are additive — projects already using `.worktrees/` continue to work; the new Step 0 detection short-circuits creation when already isolated rather than erroring.
+
 ## [5.6.1] - 2026-05-07
 
 ### Policy
