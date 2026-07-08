@@ -19,7 +19,7 @@ flowchart TD
     S2 --> HUMAN2{{"USER APPROVES\nDesign direction"}}
     HUMAN2 --> S3
 
-    S3["STEP 3: Mode Selection Gate\nmode-selection-criteria.md\n→ Score 5 criteria\n→ Suggest Mode A or B"]
+    S3["STEP 3: Mode Selection Gate\nmodes.md\n→ Score 5 criteria\n→ Suggest Mode A or B"]
     S3 --> HUMAN3{{"USER APPROVES\nMode A or B"}}
     HUMAN3 --> S4
 
@@ -101,17 +101,3 @@ flowchart TD
     style ESCOUT fill:#1976D2,color:#fff,stroke:none
 ```
 
----
-
-## Changes vs v1 (Brainstorm-First)
-
-| Aspect | v1 | v2 (Unified GSD+Superpowers) |
-|---|---|---|
-| Session continuity | Memory files (AI-only) | **STATE.md in repo (anyone can read)** |
-| Research before spec | None | **Step 4: parallel research agents** |
-| Execution context | Shared context → context rot | **Fresh context per task** |
-| Parallel execution | Ad-hoc | **Wave-based: dependency-aware** |
-| Git discipline | Not enforced | **Atomic commit per task** |
-| User verification | No UAT gate | **Step 8: UAT gate (human-driven)** |
-| Milestone tracking | None | **ROADMAP.md + SUMMARY.md per phase** |
-| Human touchpoints | Brainstorm + Mode + Spec + Plan | **9 explicit touchpoints (orange)** |

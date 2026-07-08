@@ -68,20 +68,9 @@ The plugin's SessionStart hook (Claude Code + Cursor + Copilot CLI) detects when
 
 See `docs/claude/templates/` for each file's template.
 
-## Commit Behavior (`commit_docs` config)
+## Commit Behavior
 
-`commit_docs` in `.planning/config.json` controls what gets committed to git:
-
-| Setting | Default | Scope |
-|---|---|---|
-| `state_files` | `true` | PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md |
-| `planning_artifacts` | `true` | `.planning/` — research, plans, UAT, summaries, verification |
-
-When `planning_artifacts: false`:
-- `.planning/` is still created on disk (artifact persistence preserved)
-- `.planning/` is auto-added to `.gitignore`
-- State files (PROJECT.md, REQUIREMENTS.md, ROADMAP.md, STATE.md) still committed normally
-- Resume still works because STATE.md remains in git
+What gets committed is controlled by `commit_docs` in `.planning/config.json` — see `config-schema.md` for the flags. Key point for state files: even with `planning_artifacts: false` (which gitignores `.planning/`), the state files (PROJECT / REQUIREMENTS / ROADMAP / STATE.md) are still committed — so **resume always works**, because STATE.md stays in git.
 
 ## Principles
 
