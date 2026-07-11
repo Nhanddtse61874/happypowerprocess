@@ -228,11 +228,24 @@ Template ID: `phase-summary-v1`
     }
   ],
   "commits": ["..."],
+  "telemetry": [
+    {
+      "task_id": "...",
+      "req_ids": ["..."],
+      "model": "haiku|sonnet|opus",
+      "wall_clock": "...",
+      "escalation": "haiku->sonnet|none",
+      "result": "done|blocked|skipped",
+      "tokens": 0
+    }
+  ],
   "lessons": ["..."],
   "residual_risks": ["..."],
   "next_milestone_input": "..."
 }
 ```
+
+`telemetry` is present only when `workflow.telemetry` is on and `.planning/{phase}-telemetry.jsonl` has rows; otherwise omit it (or use an empty list). `tokens` appears per row only when the harness exposed a token count — never fabricated.
 
 ## Minimal Human-Readable Block (Fallback)
 If JSON is not possible, return this block:

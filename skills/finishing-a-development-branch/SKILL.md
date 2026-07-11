@@ -268,6 +268,12 @@ Before exiting this skill, finalize all state files for the completed work cycle
 **`.planning/{phase}-SUMMARY.md`:**
 - Write phase summary using template `phase-summary-v1` from `docs/claude/agent-output-templates.md`
 - Include: step-by-step status table, key decisions, deviations from plan, REQ-ID coverage
+- **Telemetry (gated by `workflow.telemetry`):** if `workflow.telemetry` is on, read `.planning/{phase}-telemetry.jsonl`
+  (one JSON object per line, fields `task_id`, `req_ids`, `model`, `wall_clock`, `escalation`, `result`, and optional `tokens`).
+  Render the `## Telemetry` section of the SUMMARY template — one table row per line, columns `task | model | wall_clock | escalation | tokens`.
+  Include the `tokens` column only when at least one row carries a `tokens` value; drop it otherwise.
+  Also populate the `telemetry` key of the `phase-summary-v1` contract from the same rows.
+  **No-op** (omit the section entirely) when `workflow.telemetry` is off or the `.jsonl` file is absent/empty.
 
 If `commit_docs.state_files: true`, commit STATE.md + ROADMAP.md.
 If `commit_docs.planning_artifacts: true`, commit `.planning/*-SUMMARY.md`.
