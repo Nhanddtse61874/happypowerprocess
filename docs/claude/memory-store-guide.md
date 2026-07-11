@@ -2,7 +2,7 @@
 
 Process-memory is the workflow's long-term memory of **how we worked** — model escalations, plan misfires, config choices, and workflow gotchas. It lives in the repo, is readable by both AI and humans, and persists across context resets and machines.
 
-> This is the **schema / contract** doc for the process-memory store. It defines *where memory lives, its file format, and its boundary* — not the recall or capture logic. Source of truth: `docs/specs/2026-07-11-process-2.0-memory-observability-design.md` (D1, D2, D6). Recall (MEM-04) is a STEP 0 agent step; capture (MEM-01) is a STEP 11 write-back; both are documented in the workflow, not here.
+> This is the **schema / contract** doc for the process-memory store. It defines *where memory lives, its file format, and its boundary* — not the recall or capture logic. Source of truth: `docs/specs/2026-07-11-process-2.0-memory-observability-design.md` (D1, D2, D6). Recall (MEM-01/04) is a STEP-0 agent step; capture/write-back is a STEP-11 step that feeds recall and has no separate v1 REQ-ID; both are documented in the workflow, not here.
 
 ## Location
 

@@ -63,6 +63,7 @@ Primary documents (relative path from plugin docs dir):
   - Commit behavior per `commit_docs` + `commit_atomic` config.
   - **Stack skill mandatory** — match task domain → load skill from `stack-skill-rule-map.md`.
   - **Failure recovery**: retry / skip / abort per plan; partial progress recorded in STATE.md for resume. Hook: on BLOCKED, consult `<project>-debugging-playbook` (if present) before escalating model.
+  - **Telemetry** (OBS-01, gated by `workflow.telemetry`): capture per-task metrics (tokens, wall-clock, model used, escalations) to `.planning/{phase}-telemetry.jsonl`. No-op when the flag is off.
 
 - **STEP 8 — UAT + Verification**:
   - **8a UAT**: User tests, AI does **not** claim done. AI creates `.planning/{phase}-UAT.md`, shows expected behavior, asks user to confirm or describe differences. AI infers severity from user description.
@@ -76,8 +77,9 @@ Primary documents (relative path from plugin docs dir):
 - **STEP 10 — Release/DevOps**: Mode A → `finishing-a-development-branch` skill. Mode B → `phase-release-devops-lead` + `devops-cicd-assistant`. Skip in Mode A if no formal release gate needed.
 
 - **STEP 11 — Ship**: PR/merge + `.planning/{phase}-SUMMARY.md` + update `.planning/ROADMAP.md` + update `.planning/STATE.md`. Escalation if unresolved risk/conflict (present 2-3 options for user to decide). Knowledge Sync hook (if a `<project>-*` library exists): write lessons back — new bug → `failure-archaeology` + `debugging-playbook`; new config → `config-and-flags`; new decision → `architecture-contract`.
-  - **Process-Memory Write-Back** (MEM-01, gated by `workflow.memory_recall`): capture process/workflow lessons — model escalations, plan misfires, config choices, workflow gotchas — into the `.claude/memory/` store (English-normalized, per `memory-store-guide.md`). Boundary: this is DISTINCT from Knowledge Sync — a lesson about *how we worked* → `.claude/memory/`; a fact about *what the code is* → `.claude/skills/<project>-*`. Exactly one home per fact; process-memory never writes into `.claude/skills/<project>-*`.
+  - **Process-Memory Write-Back** (feeds MEM-01/04 recall, gated by `workflow.memory_recall`): capture process/workflow lessons — model escalations, plan misfires, config choices, workflow gotchas — into the `.claude/memory/` store (English-normalized, per `memory-store-guide.md`). Boundary: this is DISTINCT from Knowledge Sync — a lesson about *how we worked* → `.claude/memory/`; a fact about *what the code is* → `.claude/skills/<project>-*`. Exactly one home per fact; process-memory never writes into `.claude/skills/<project>-*`.
   - **MEM-03 flag-and-report** (gated by `workflow.memory_recall`): run the `memory-maintenance` skill (also `/memory-clean`) as an inline scan-and-report pass — FLAGS duplicate/stale/superseded/contradictory lessons only; the human approves each removal (never auto-deletes).
+  - **Telemetry table** (OBS-02, gated by `workflow.telemetry`): the `{phase}-SUMMARY.md` includes an aggregated telemetry table built from the captured per-task metrics. No-op when the flag is off.
 
 - **Never auto-advance**: Stop after each step, wait for user confirmation.
 

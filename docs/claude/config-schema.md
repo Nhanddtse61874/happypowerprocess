@@ -21,9 +21,9 @@ This file is the single source of truth for all fields in `.planning/config.json
 | `model_defaults.complex` | string | `opus` | model name | Model for complex tasks (architecture, design judgment) | Unexecuted tasks use new model |
 | `workflow.research` | bool | `true` | `true` / `false` | Enable research phase (STEP 4 of workflow) | Apply from next step |
 | `workflow.plan_check` | bool | `true` | `true` / `false` | Enable Plan Checker (validates 11 dimensions, max 3 revision loops) | Apply from next plan |
-| `workflow.memory_recall` | bool | `false` | `true` / `false` | Enable process-memory recall at STEP 0 (grep/glob top-K lessons before "keep or edit?") | Apply from next STEP 0 / resume |
+| `workflow.memory_recall` | bool | `false` | `true` / `false` | Gates the full process-memory lifecycle: STEP-0 recall (grep/glob top-K lessons before "keep or edit?") + STEP-11 write-back capture + MEM-03 maintenance. Turning it off also disables capture and maintenance, not just recall. No-op when off or `.claude/memory/` is absent | Apply from next STEP 0 / resume |
 | `workflow.telemetry` | bool | `false` | `true` / `false` | Enable per-task telemetry capture at STEP 7 and the SUMMARY telemetry table at STEP 11 | Apply from next task |
-| `workflow.sandbox_verify` | bool | `false` | `true` / `false` | Enable bounded sandbox execute→observe→fix verification at STEP 8 (evidence-only, UAT preserved) | Apply from next STEP 8 |
+| `workflow.sandbox_verify` | bool | `false` | `true` / `false` | Enable bounded sandbox execute→observe→fix verification at STEP 8 (evidence-only, UAT preserved). No-op when off | Apply from next STEP 8 |
 
 ---
 

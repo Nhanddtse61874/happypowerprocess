@@ -1,6 +1,6 @@
 ---
 name: memory-maintenance
-description: Use when the process-memory store (.claude/memory/) needs cleaning — duplicate, stale, superseded, or contradictory lessons are cluttering recall — or at STEP 11 Ship to flag removal candidates. Triggered by /memory-clean, "clean memory", "prune process memory", "memory is noisy / has dupes", or the inline STEP-11 flag-and-report pass.
+description: Use when the process-memory store (.claude/memory/) needs cleaning — duplicate, stale, superseded, or contradictory lessons are cluttering recall — or at STEP 11 Ship to flag removal candidates. Triggered by /memory-clean, "clean memory", "prune process-memory", "memory is noisy / has dupes", or the inline STEP-11 flag-and-report pass.
 ---
 
 # Memory Maintenance
@@ -22,7 +22,7 @@ Store schema, location, and boundary rules: `docs/claude/memory-store-guide.md` 
 ## When NOT to use
 
 - **The store is absent or tiny.** No `.claude/memory/` → no-op (say so and stop). A handful of clean lessons needs no maintenance.
-- **You want to ADD a lesson.** That's the STEP 11 capture write-back (MEM-01), not this skill. This skill only prunes.
+- **You want to ADD a lesson.** That's the STEP 11 capture write-back (feeds MEM-01/04 recall), not this skill. This skill only prunes.
 - **You want to clean the knowledge library** (`.claude/skills/<project>-*`). Out of bounds — that store is curated and human-gated by `mining-project-knowledge`; this skill writes nothing there. See the boundary rule in `memory-store-guide.md`.
 - **You want to change what recall returns without removing anything.** Tune the recall query (MEM-04), don't delete lessons.
 
@@ -67,7 +67,7 @@ The user runs the `/memory-clean` slash command whenever they want a cleanup pas
 
 ### (b) Inline at STEP 11 Ship — flag-and-report pass
 
-At **STEP 11 (Ship)**, a lightweight flag-and-report pass fires: it runs the **scan + report** (steps 1–4) and surfaces any removal candidates for the user to approve as part of Ship — so memory gets tended on the same cadence lessons are captured (MEM-01), without a separate chore. It **never auto-deletes**; if the user doesn't approve during Ship, the candidates simply carry forward to the next pass.
+At **STEP 11 (Ship)**, a lightweight flag-and-report pass fires: it runs the **scan + report** (steps 1–4) and surfaces any removal candidates for the user to approve as part of Ship — so memory gets tended on the same cadence lessons are captured (feeds MEM-01/04 recall), without a separate chore. It **never auto-deletes**; if the user doesn't approve during Ship, the candidates simply carry forward to the next pass.
 
 > The STEP-11 *wiring* (the call site in the workflow/CLAUDE.md STEP 11) is added separately (plan 03). This skill only *provides* the behavior the STEP-11 pass invokes — a scan-and-report that returns flagged candidates for approval.
 
