@@ -314,13 +314,13 @@ Each line is a JSON object with these fields:
 | `model` | the model that produced the accepted result (final model if escalated) |
 | `wall_clock` | elapsed time for the task (e.g. seconds, or `"m:ss"`) |
 | `escalation` | escalation path if any, e.g. `"haiku->sonnet"`; omit or `null` when none |
-| `result` | task outcome, e.g. `"DONE"` / `"DONE_WITH_CONCERNS"` |
+| `result` | task outcome — one of `done` / `done_with_concerns` / `blocked` / `skipped` (matches the `phase-summary-v1` contract) |
 | `tokens` | **optional** — include **only when the harness exposes a real token count**. Never fabricate a token count; omit the key entirely when unavailable. |
 
 Example (one line):
 
 ```jsonl
-{"task_id":"OBS-01","req_ids":["OBS-01"],"model":"opus","wall_clock":"1:42","escalation":null,"result":"DONE"}
+{"task_id":"OBS-01","req_ids":["OBS-01"],"model":"opus","wall_clock":"1:42","escalation":null,"result":"done"}
 ```
 
 Like the STATE.md write, this is a file append, not a user prompt — it does not pause continuous execution. Follow the same commit rule: with `commit_atomic: true` the JSONL is committed per task; with `commit_atomic: false`, at end of wave. STEP 11 (`finishing-a-development-branch`) reads this file to render the SUMMARY telemetry table.

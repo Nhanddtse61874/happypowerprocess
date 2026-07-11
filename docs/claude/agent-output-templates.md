@@ -234,8 +234,8 @@ Template ID: `phase-summary-v1`
       "req_ids": ["..."],
       "model": "haiku|sonnet|opus",
       "wall_clock": "...",
-      "escalation": "haiku->sonnet|none",
-      "result": "done|blocked|skipped",
+      "escalation": "haiku->sonnet, or null when none",
+      "result": "done|done_with_concerns|blocked|skipped",
       "tokens": 0
     }
   ],
