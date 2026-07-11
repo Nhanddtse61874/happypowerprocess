@@ -1,0 +1,21 @@
+{
+  "active_harness": "claude-code",
+  "mode": "interactive",
+  "granularity": "standard",
+  "parallelization": true,
+  "commit_docs": {
+    "state_files": true,
+    "planning_artifacts": true
+  },
+  "commit_atomic": true,
+  "model_profile": "quality",
+  "model_defaults": {
+    "mechanical": "haiku",
+    "standard": "sonnet",
+    "complex": "opus"
+  },
+  "workflow": {
+    "research": true,
+    "plan_check": true
+  }
+}
