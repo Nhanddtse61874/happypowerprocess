@@ -117,7 +117,12 @@ Validated before approval; revision loop max 3 iterations (if issue count doesn'
 
 - **8a UAT:** user tests each AC; AI does not claim "done". AI creates `.planning/{phase}-UAT.md`, **shows expected behavior and asks if reality matches**, infers severity from the description. Fail → parallel debug agents → fix plans → Plan Checker → back to Step 7.
 - **8b Goal-Backward Verification:** cross-reference `must_haves` with implementation artifacts → `.planning/{phase}-VERIFICATION.md`. Gaps → gap-closure plans → Step 7.
+- **8c Sandbox Verify** (VER-01/02, if `workflow.sandbox_verify`): for a task that produced runnable code, run a BOUNDED execute→observe→fix loop — hard cap of 3 fix iterations; each fix traces to the task's REQ-ID and stays within the task's planned files (Surgical Changes); NO permission escalation (same Bash allowlist). Evidence-only: run evidence goes into the `phase-VERIFICATION.md` Evidence column, in a section separate from UAT. 8a UAT and the human Decision (PASS/PARTIAL/FAIL) stay unskippable — verify **never** auto-passes STEP 8.
 - **Mode B:** regression gate (run prior-phase tests) + schema-drift check (TS build + DB schema in sync).
+
+### Process-memory recall (STEP 0, if `workflow.memory_recall`)
+
+On Resume, after reading STATE.md + `.planning/config.json` and **before** the "keep or edit?" config prompt, grep the `.claude/memory/` process-memory store (schema in `memory-store-guide.md`) for the top-K lessons relevant to the resumed task and surface them. This is an **agent step** — the `SessionStart` hook does not fire on a mid-session resume, so recall runs here (a startup hook may add a one-line reminder, but the agent step is the reliable path). No-op when the flag is off or `.claude/memory/` is absent. Passive read only — never auto-advances the step.
 
 ### Brownfield bootstrap (STEP 0)
 
@@ -138,3 +143,12 @@ Once the library exists, these **conditional hooks** fire (no-op without a libra
 | 11 Ship | Knowledge Sync — write lessons back (failure-archaeology, debugging-playbook, config-and-flags, architecture-contract) |
 
 Hooks are mirrored in `CLAUDE.md` (STEP 1/4/7/9/11) — keep both in sync.
+
+### Process-memory write-back + maintenance (STEP 11, if `workflow.memory_recall`)
+
+Alongside — but **distinct from** — the Knowledge Sync hook above:
+
+- **Write-back (MEM-01):** capture process/workflow lessons (model escalations, plan misfires, config choices, workflow gotchas) into the `.claude/memory/` store, English-normalized (schema: `memory-store-guide.md`).
+- **MEM-03 flag-and-report:** run `memory-maintenance` (also `/memory-clean`) as an inline scan-and-report — it **flags** duplicate/stale/superseded/contradictory lessons; the human approves each removal. Never auto-deletes (pillar #1).
+
+**Boundary — exactly one home per fact:** a lesson about *how we worked* → `.claude/memory/` (this write-back); a fact about *what the code is* → `.claude/skills/<project>-*` (Knowledge Sync). Process-memory never writes into `.claude/skills/<project>-*`. Both are no-op when their store is absent.

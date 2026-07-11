@@ -33,6 +33,14 @@ Starting from phase goal, verified what MUST be true:
 |---|---|---|---|
 | {CAT}-01 | {requirement} | PASS / FAIL | {evidence} |
 
+## Sandbox Verify Evidence
+
+> Sandbox-verify (`workflow.sandbox_verify`) run evidence goes in the **Evidence** column above — kept separate from the human UAT approval, which stays a distinct, unskippable touchpoint. Verify never auto-passes the phase; the **Decision** below stays human-driven.
+
+| Task / REQ-ID | Run (command / observed) | Fix iters (≤3) | Evidence |
+|---|---|---|---|
+| {task} / {CAT}-NN | {what ran → what was observed} | {0-3} | {link / output ref} |
+
 ## Gaps Found
 
 | # | Gap | Severity | Suggested fix |
