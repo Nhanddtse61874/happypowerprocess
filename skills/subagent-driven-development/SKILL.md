@@ -314,7 +314,7 @@ Each line is a JSON object with these fields:
 | `model` | the model that produced the accepted result (final model if escalated) |
 | `wall_clock` | elapsed time for the task (e.g. seconds, or `"m:ss"`) |
 | `escalation` | escalation path if any, e.g. `"haiku->sonnet"`; omit or `null` when none |
-| `result` | task outcome — one of `done` / `done_with_concerns` / `blocked` / `skipped` (matches the `phase-summary-v1` contract) |
+| `result` | task outcome — one of `done` / `done_with_concerns` / `blocked` / `skipped` (matches the `phase-summary-v1` contract). Maps the implementer status: `DONE`→`done`, `DONE_WITH_CONCERNS`→`done_with_concerns`; `blocked`/`skipped` come from failure recovery |
 | `tokens` | **optional** — include **only when the harness exposes a real token count**. Never fabricate a token count; omit the key entirely when unavailable. |
 
 Example (one line):
