@@ -1,5 +1,5 @@
 {
-  "active_harness": "auto",
+  "active_harness": "claude-code",
   "mode": "interactive",
   "granularity": "standard",
   "parallelization": true,
@@ -8,7 +8,7 @@
     "planning_artifacts": true
   },
   "commit_atomic": true,
-  "model_profile": "balanced",
+  "model_profile": "quality",
   "model_defaults": {
     "mechanical": "haiku",
     "standard": "sonnet",
@@ -16,9 +16,6 @@
   },
   "workflow": {
     "research": true,
-    "plan_check": true,
-    "memory_recall": false,
-    "telemetry": false,
-    "sandbox_verify": false
+    "plan_check": true
   }
 }

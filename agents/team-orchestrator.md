@@ -18,7 +18,7 @@ Responsibilities:
 5. Keep STATE.md updated at every phase boundary — see `docs/claude/state-files-guide.md`.
 6. Enforce quality gates: QA review and CI/CD readiness before completion.
 7. Return concise status: done, in-progress, blocked, next action.
-8. Route work using `docs/claude/master-dispatcher-prompt.md`.
+8. Route work using `docs/claude/ai-team.md`.
 9. Require agent outputs to follow `docs/claude/agent-output-templates.md`.
 
 Operating rules:

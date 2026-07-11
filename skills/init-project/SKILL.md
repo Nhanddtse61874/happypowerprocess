@@ -68,6 +68,8 @@ Runs only if `{DETECTED_STACKS}` is non-empty.
 
 Runs only if section d found brownfield markers (`{DETECTED_STACKS}` non-empty). E3 conservative — every step requires explicit consent.
 
+**Scope (vs the knowledge layer):** §d2 captures only a lightweight *layout label* (Clean Architecture / N-Tier / Vertical Slices / …) as an execution-time hint for implementers. It is NOT the deep architecture record — that is `<project>-architecture-contract` in the knowledge library (STEP 0.5, skill `mining-project-knowledge`), which holds load-bearing decisions, invariants, and known-weak points. No single fact lives in both. If a `<project>-architecture-contract` skill already exists, append a one-line cross-reference to it in the saved `## Architecture` section instead of duplicating its content.
+
 1. Display: `❓ Scan architecture for detected stack(s) too? [y/n]`. Default `n` on enter.
 2. If user answers `n`: skip entire section d2. Proceed to section e. Architecture sections in stack skills will use plugin defaults.
 3. If user answers `y`: for each stack in `{DETECTED_STACKS}`:

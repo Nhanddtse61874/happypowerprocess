@@ -6,7 +6,7 @@ This project uses the **happypowerprocess** workflow. Every task (feature, bugfi
 
 Mode (A solo / B team spine) is **not pinned** at the project level — it is decided at **STEP 3 (Mode Selection Gate)** for each task based on 5 scoring criteria.
 
-**Note (v5.6.0+):** Mode B is Claude Code-only. On Cursor / Codex / OpenCode, Mode Gate auto-forces Mode A regardless of complexity score (per `harness-compatibility.md` in plugin docs dir).
+**Note (v5.6.0+):** Mode B is Claude Code-only. On Cursor / Codex / OpenCode, Mode Gate auto-forces Mode A regardless of complexity score (per `modes.md` in plugin docs dir).
 
 ## Plugin References
 
@@ -17,19 +17,19 @@ Plugin install dir (auto-detected by platform):
 Primary documents (relative path from plugin docs dir):
 - `current-process-workflow.md` — 11-step unified workflow (primary reference)
 - `state-files-guide.md` — state files guide (PROJECT, STATE, REQUIREMENTS, ROADMAP)
+- `memory-store-guide.md` — process-memory store (`.claude/memory/`): schema, location, boundary rule
 - `templates/` — templates for state and phase output files
 - `research-phase-guide.md` — research agents and outputs
-- `mode-selection-criteria.md` — Mode A vs B scoring (runs at STEP 3)
-- `master-dispatcher-prompt.md` — task routing
+- `config-schema.md` — all config.json fields + defaults (single source of truth)
+- `modes.md` — runtime modes + Mode Selection Gate + harness compatibility (runs at STEP 3)
+- `ai-team.md` — Mode B team topology + task routing
 - `agent-output-templates.md` — output template contracts (Mode B)
-- `runtime-modes.md` — Mode A and B details
 - `stack-skill-rule-map.md` — mandatory stack skills
-- `full-ai-team-setup.md` — AI team topology (Mode B)
 
 ## 11-Step Workflow (Authoritative)
 
 - **STEP 0 — Resume / New project**:
-  - **Resume**: read `.planning/STATE.md` + `.planning/config.json` → display config → ask "keep or edit?" → update if needed → continue.
+  - **Resume**: read `.planning/STATE.md` + `.planning/config.json` → **Memory Recall (MEM-01/04, gated by `workflow.memory_recall`): grep the `.claude/memory/` process-memory store (per `memory-store-guide.md`) for the top-K lessons relevant to the resumed task and surface them before the config prompt. AGENT step — the `SessionStart` hook does not fire on a mid-session resume, so recall runs here; no-op when the flag is off or `.claude/memory/` is absent** → display config → ask "keep or edit?" → update if needed → continue.
   - **New project**: collect config upfront → save `.planning/config.json` (mode, granularity, parallelization, commit_docs, commit_atomic, model_profile, model_defaults, workflow flags) → deep questioning → create state files from plugin templates.
   - `commit_docs`: `{state_files: bool, planning_artifacts: bool}` — when `planning_artifacts: false`, `.planning/` auto-added to `.gitignore`.
   - `commit_atomic`: `true` (per task — bisectable) / `false` (batch per wave).
@@ -39,13 +39,15 @@ Primary documents (relative path from plugin docs dir):
 
 - **Config Update (anytime)**: User says "update config" / "change config" / "change model" / "change commit strategy" at any time → AI reads `.planning/config.json`, displays it, lets user edit, updates immediately. If changes affect completed steps → warn + suggest re-plan.
 
-- **STEP 1 — Fast Lane Check** (`fast-lane-assessment-v1`): run before every task. If eligible (5 criteria all true: scope clear, ≤2 files, no arch/API change, no security/migration, low regression) → skip Steps 2-4.
+- **STEP 0.5 (optional) — Knowledge Bootstrap**: for a complex/brownfield project, optionally build a knowledge library (`.claude/skills/<project>-*`) via `/mine-knowledge` (skill `mining-project-knowledge`) — once per project. When it exists, STEP 1/4/7/9/11 consume and maintain it via the hooks below (each is a no-op without a library).
+
+- **STEP 1 — Fast Lane Check** (`fast-lane-assessment-v1`): run before every task. If eligible (5 criteria all true: scope clear, ≤2 files, no arch/API change, no security/migration, low regression) → skip Steps 2-4. Hook: if `<project>-change-control` flags the touched area dangerous → not Fast-Lane-eligible.
 
 - **STEP 2 — Brainstorm** (`skills/brainstorming/SKILL.md`): required unless Fast Lane. Output: approved design direction + `.planning/REQUIREMENTS.md` with REQ-IDs (testable, user-centric, atomic). Every v1 requirement must map to exactly one phase — 100% coverage required.
 
 - **STEP 3 — Mode Selection Gate**: score 5 criteria (domain count, risk, QA gate, cross-team, output format), suggest mode (A or B), wait for user approval. Mode locked after approval — source of truth for downstream phases.
 
-- **STEP 4 — Research**: skip if Fast Lane or `workflow.research: false`. Each agent loads CONTEXT.md + `.planning/config.json` + this CLAUDE.md before researching. Mode A: 2 agents (Stack + Pitfall). Mode B: 4 agents (Stack + Feature + Architecture + Pitfall) + Research Synthesizer. **All claims must have `[VERIFIED/CITED/ASSUMED]` tags** — never present assumed knowledge as fact.
+- **STEP 4 — Research**: skip if Fast Lane or `workflow.research: false`. Each agent loads CONTEXT.md + `.planning/config.json` + this CLAUDE.md before researching. Mode A: 2 agents (Stack + Pitfall). Mode B: 4 agents (Stack + Feature + Architecture + Pitfall) + Research Synthesizer. **All claims must have `[VERIFIED/CITED/ASSUMED]` tags** — never present assumed knowledge as fact. Hook: if `<project>-*` knowledge skills exist, load them FIRST and research only the gaps.
 
 - **STEP 5 — Spec**: Mode A → brainstorming skill solo. Mode B → `phase-discovery-lead` + `phase-architecture-lead` (input: brainstorm + research, no re-brainstorm).
 
@@ -60,19 +62,24 @@ Primary documents (relative path from plugin docs dir):
   - **Worktree isolation** when `parallelization: true` — sequential dispatch (avoids `.git/config.lock` race condition), parallel run, merge worktree branches back to main after wave.
   - Commit behavior per `commit_docs` + `commit_atomic` config.
   - **Stack skill mandatory** — match task domain → load skill from `stack-skill-rule-map.md`.
-  - **Failure recovery**: retry / skip / abort per plan; partial progress recorded in STATE.md for resume.
+  - **Failure recovery**: retry / skip / abort per plan; partial progress recorded in STATE.md for resume. Hook: on BLOCKED, consult `<project>-debugging-playbook` (if present) before escalating model.
+  - **Telemetry** (OBS-01, gated by `workflow.telemetry`): capture per-task metrics (tokens, wall-clock, model used, escalations) to `.planning/{phase}-telemetry.jsonl`. No-op when the flag is off.
 
 - **STEP 8 — UAT + Verification**:
   - **8a UAT**: User tests, AI does **not** claim done. AI creates `.planning/{phase}-UAT.md`, shows expected behavior, asks user to confirm or describe differences. AI infers severity from user description.
   - **8b Goal-Backward Verification**: AI cross-references `must_haves` (truths/artifacts/key_links) with implementation artifacts → `.planning/{phase}-VERIFICATION.md`.
+  - **8c Sandbox Verify** (VER-01/02, gated by `workflow.sandbox_verify`): for a task that produced runnable code, run a BOUNDED execute→observe→fix loop — hard cap of 3 fix iterations; each fix traces to the task's REQ-ID and stays within the task's planned files (Surgical Changes); NO permission escalation (same Bash allowlist). Evidence-only: run evidence goes into the `phase-VERIFICATION.md` Evidence column, in a section separate from UAT. 8a UAT and the human Decision (PASS/PARTIAL/FAIL) remain unskippable — verify NEVER auto-passes STEP 8.
   - Gap closure if needed (back to Step 7 with fix plans).
   - **Regression gate + schema drift detection** (Mode B): run prior phase tests + verify TS build + DB schema sync.
 
-- **STEP 9 — QA Gate**: Mode A → `requesting-code-review` skill. Mode B → `phase-qa-gate` + `qa-code-reviewer`. Severity: Critical / Important / Suggestion. Block → fix → Step 7. Approve / Approve with conditions → Step 10.
+- **STEP 9 — QA Gate**: Mode A → `requesting-code-review` skill. Mode B → `phase-qa-gate` + `qa-code-reviewer`. Severity: Critical / Important / Suggestion. Block → fix → Step 7. Approve / Approve with conditions → Step 10. Hook: use `<project>-validation-and-qa` (if present) as the evidence bar.
 
 - **STEP 10 — Release/DevOps**: Mode A → `finishing-a-development-branch` skill. Mode B → `phase-release-devops-lead` + `devops-cicd-assistant`. Skip in Mode A if no formal release gate needed.
 
-- **STEP 11 — Ship**: PR/merge + `.planning/{phase}-SUMMARY.md` + update `.planning/ROADMAP.md` + update `.planning/STATE.md`. Escalation if unresolved risk/conflict (present 2-3 options for user to decide).
+- **STEP 11 — Ship**: PR/merge + `.planning/{phase}-SUMMARY.md` + update `.planning/ROADMAP.md` + update `.planning/STATE.md`. Escalation if unresolved risk/conflict (present 2-3 options for user to decide). Knowledge Sync hook (if a `<project>-*` library exists): write lessons back — new bug → `failure-archaeology` + `debugging-playbook`; new config → `config-and-flags`; new decision → `architecture-contract`.
+  - **Process-Memory Write-Back** (feeds MEM-01/04 recall, gated by `workflow.memory_recall`): capture process/workflow lessons — model escalations, plan misfires, config choices, workflow gotchas — into the `.claude/memory/` store (English-normalized, per `memory-store-guide.md`). Boundary: this is DISTINCT from Knowledge Sync — a lesson about *how we worked* → `.claude/memory/`; a fact about *what the code is* → `.claude/skills/<project>-*`. Exactly one home per fact; process-memory never writes into `.claude/skills/<project>-*`.
+  - **MEM-03 flag-and-report** (gated by `workflow.memory_recall`): run the `memory-maintenance` skill (also `/memory-clean`) as an inline scan-and-report pass — FLAGS duplicate/stale/superseded/contradictory lessons only; the human approves each removal (never auto-deletes).
+  - **Telemetry table** (OBS-02, gated by `workflow.telemetry`): the `{phase}-SUMMARY.md` includes an aggregated telemetry table built from the captured per-task metrics. No-op when the flag is off.
 
 - **Never auto-advance**: Stop after each step, wait for user confirmation.
 

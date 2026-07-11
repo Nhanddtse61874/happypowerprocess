@@ -297,6 +297,34 @@ This update happens between tasks, NOT after every subagent dispatch. It's part 
 
 If `commit_atomic: true` in config.json, commit STATE.md with each task. If `commit_atomic: false`, commit at end of wave.
 
+## Telemetry capture (gated by `workflow.telemetry`)
+
+At the **same per-task controller point** as the STATE.md update above (after both reviews pass), the controller also records telemetry — **only when `workflow.telemetry: true` in `.planning/config.json`**. When the flag is `false` (the default), this step is a **no-op**: skip it entirely, write nothing.
+
+**This is controller-loop behavior, NOT a hook.** Token counts, the per-subagent model, and escalation events are controller-side workflow state — a `PostToolUse`/`Stop` hook cannot see them reliably, and on Windows without Git Bash a hook silently no-ops (empty telemetry looks like a clean run). The controller already writes per-task STATE.md; the telemetry write rides that same point.
+
+When gated on, **append exactly one line per task** to `.planning/{phase}-telemetry.jsonl` (`{phase}` = the current phase slug, e.g. `process-2.0`). The file is **append-only JSONL** — one JSON object per line, never rewritten. Append-only is deliberate: it is crash-tolerant, so a partial/truncated final line never corrupts the prior task records.
+
+Each line is a JSON object with these fields:
+
+| Field | Meaning |
+|---|---|
+| `task_id` | the task id/name from the plan XML |
+| `req_ids` | array of REQ-IDs the task satisfied |
+| `model` | the model that produced the accepted result (final model if escalated) |
+| `wall_clock` | elapsed time for the task (e.g. seconds, or `"m:ss"`) |
+| `escalation` | escalation path if any, e.g. `"haiku->sonnet"`; omit or `null` when none |
+| `result` | task outcome — one of `done` / `done_with_concerns` / `blocked` / `skipped` (matches the `phase-summary-v1` contract). Maps the implementer status: `DONE`→`done`, `DONE_WITH_CONCERNS`→`done_with_concerns`; `blocked`/`skipped` come from failure recovery |
+| `tokens` | **optional** — include **only when the harness exposes a real token count**. Never fabricate a token count; omit the key entirely when unavailable. |
+
+Example (one line):
+
+```jsonl
+{"task_id":"OBS-01","req_ids":["OBS-01"],"model":"opus","wall_clock":"1:42","escalation":null,"result":"done"}
+```
+
+Like the STATE.md write, this is a file append, not a user prompt — it does not pause continuous execution. Follow the same commit rule: with `commit_atomic: true` the JSONL is committed per task; with `commit_atomic: false`, at end of wave. STEP 11 (`finishing-a-development-branch`) reads this file to render the SUMMARY telemetry table.
+
 ## Integration
 
 **Required workflow skills:**

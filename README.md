@@ -2,7 +2,7 @@
 
 > AI workflow plugin: structured brainstorming, wave-based execution, persistent state, and 10 human checkpoints — all in your coding agent.
 
-![Version](https://img.shields.io/badge/version-5.8.0-blue)
+![Version](https://img.shields.io/badge/version-6.0.0-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
 ![Platform](https://img.shields.io/badge/platform-Claude%20Code%20|%20Codex%20|%20Cursor%20|%20OpenCode-purple)
 
@@ -47,6 +47,7 @@ The AI does not auto-advance. Every step requires your approval.
 
 ```
 STEP 0:  Bootstrap          → Read STATE.md (resume) or create project state files
+STEP 0.5: Knowledge (opt.)  → Build .claude/skills/<project>-* knowledge library   [OPTIONAL]
 STEP 1:  Fast Lane?         → Hotfix/small task: skip to STEP 5
 STEP 2:  Brainstorm         → Understand requirements, explore approaches     [USER APPROVES]
 STEP 3:  Mode Gate          → Mode A (solo) or Mode B (AI team)               [USER APPROVES]
@@ -61,6 +62,8 @@ STEP 11: Ship               → PR/merge + SUMMARY + ROADMAP + STATE updated    
 ```
 
 There are **10 explicit human checkpoints**. The AI accompanies you through each step — it never moves forward without your say-so.
+
+**Optional — Knowledge Layer (STEP 0.5):** for complex or inherited codebases, `/mine-knowledge` builds a per-project *knowledge library* (`.claude/skills/<project>-*`) capturing architecture decisions, failure history, config axes, and domain theory. The workflow then reads it before researching (Step 4), consults it while executing (Step 7), and writes lessons back on ship (Step 11). Candidate feature — validate on first run. See [`mining-project-knowledge`](skills/mining-project-knowledge/SKILL.md).
 
 ---
 
@@ -90,7 +93,7 @@ Use for multi-domain tasks, high-risk changes, or when you need formal QA/DevOps
 - `phase-release-devops-lead` handles CI/CD and release readiness
 - `team-orchestrator` coordinates at phase boundaries
 
-See [runtime-modes.md](docs/claude/runtime-modes.md) and [mode-selection-criteria.md](docs/claude/mode-selection-criteria.md) for details.
+See [modes.md](docs/claude/modes.md) for details.
 
 ---
 
@@ -133,6 +136,19 @@ Skills are specialized behaviors the agent loads on demand. They activate automa
 |---|---|---|
 | `version` | Displays the current plugin version from `package.json` | User types `/version` |
 
+### Bootstrap & Config Skills
+
+| Skill | Description | Activates when |
+|---|---|---|
+| `init-project` | Bootstraps state files, config, CLAUDE.md, permissions, gitignore | `/init-project` or new project |
+| `update-config` | Interactive config update with mid-workflow impact warnings | `/update-config` or "update config" |
+| `add-tech-stack` | Customizes a stack skill for the project, or adds a new stack | `/add-tech-stack <stack>` |
+| `sync-stack-skill` | Three-way merges a customized stack snapshot with the plugin default | `/sync-stack-skill` |
+| `validate-state` | Checks state files for drift, schema errors, and freshness gaps | STEP 0 resume (mandatory) |
+| `fast-lane-assessment-v1` | Scores whether a task can skip brainstorm + mode gate + research | STEP 1, before brainstorm |
+| `mining-project-knowledge` | Builds a per-project knowledge library — architecture, failure history, config, domain theory *(candidate)* | `/mine-knowledge` (STEP 0.5) |
+| `memory-maintenance` | Scans the process-memory store and flags duplicate / stale / superseded / contradictory lessons for human-approved removal | `/memory-clean` or STEP 11 (needs `workflow.memory_recall`) |
+
 ---
 
 ## Implementer Skills
@@ -153,14 +169,14 @@ Every implementation task must load the skill matching its stack. This is enforc
 
 ```
 happypowerprocess/
-├── skills/                    — 20 workflow skills (process, execution, quality, implementer, utility)
+├── skills/                    — 28 workflow skills (process, execution, quality, bootstrap, implementer, utility)
 │   ├── brainstorming/         — Design exploration and spec writing
 │   ├── writing-plans/         — Implementation plan creation
 │   ├── subagent-driven-development/ — Fresh subagent per task execution
 │   ├── test-driven-development/     — TDD enforcement
 │   ├── implementer-react-typescript/ — React/TS implementation rules
 │   ├── version/               — Plugin version display
-│   └── ...                    — 14 more skills
+│   └── ...                    — 22 more skills
 ├── agents/                    — 20 AI Team agents
 │   ├── phase-discovery-lead.md      — Requirements formalization
 │   ├── phase-architecture-lead.md   — Technical spec
@@ -175,17 +191,18 @@ happypowerprocess/
 │   │   ├── current-process-workflow.md — Full 11-step workflow reference
 │   │   ├── state-files-guide.md       — State file usage guide
 │   │   ├── research-phase-guide.md    — Research agents and claim provenance
-│   │   ├── mode-selection-criteria.md — Mode A vs B scoring
+│   │   ├── modes.md — Runtime modes + Mode Selection Gate
 │   │   ├── templates/                 — Templates for state and phase files
 │   │   └── ...                        — More workflow docs
 │   ├── plans/                 — Planning artifacts
 │   └── superpowers/           — Specs and design docs
 ├── tests/                     — Test suites
 ├── .github/                   — Issue templates, PR template
-├── CLAUDE.md                  — Contributor guidelines + workspace execution rules
+├── CLAUDE.md                  — Workspace execution rules (11-step workflow)
+├── CONTRIBUTING.md             — Upstream contribution guidelines
 ├── CHANGELOG.md               — Full version history (all releases)
 ├── RELEASE-NOTES.md           — Latest release highlights
-├── package.json               — Version source of truth (5.8.0)
+├── package.json               — Version source of truth (6.0.0)
 └── marketplace.json           — Plugin marketplace metadata
 ```
 
@@ -332,20 +349,20 @@ cd ~/.codex/happypowerprocess && git pull
 
 ## Configuration
 
-The workflow uses `.planning/config.json` to control behavior. This file is created during Step 0 (Bootstrap) and can be updated anytime by saying **"update config"**.
+The workflow uses `.planning/config.json` to control behavior. This file is created during Step 0 (Bootstrap) and can be updated anytime by saying **"update config"**. The table below covers the key options — full field reference (types, defaults, mid-workflow impact) lives in [`config-schema.md`](docs/claude/config-schema.md).
 
 ### Config Options
 
 | Key | Description | Values |
 |---|---|---|
-| `mode` | Interaction style | `"interactive"` (confirm each step) |
+| `mode` | Interaction style | `"interactive"` (confirm each step) / `"yolo"` (auto-approve) |
 | `granularity` | Number of phases in ROADMAP.md | `"coarse"` (3-5) / `"standard"` (5-8) / `"fine"` (8-12+) |
 | `parallelization` | Run independent tasks in parallel | `true` / `false` |
 | `commit_atomic` | When to commit changes | `true` (after each task) / `false` (batch per wave) |
 | `commit_docs` | Which documentation to commit | `{state_files: bool, planning_artifacts: bool}` |
 | `model_defaults` | Model assignment per task complexity | `{mechanical: "haiku", standard: "sonnet", complex: "opus"}` |
 | `model_profile` | Shifts all model tiers up/down from defaults | `"balanced"` (no shift) / `"quality"` (tier up) / `"budget"` (tier down) |
-| `workflow` | Toggle optional workflow phases | `{research: bool, plan_check: bool}` |
+| `workflow` | Toggle optional workflow phases + Process 2.0 capabilities | `{research: bool, plan_check: bool, memory_recall: bool, telemetry: bool, sandbox_verify: bool}` |
 
 ### Sample Config
 
@@ -367,7 +384,10 @@ The workflow uses `.planning/config.json` to control behavior. This file is crea
   },
   "workflow": {
     "research": true,
-    "plan_check": true
+    "plan_check": true,
+    "memory_recall": false,
+    "telemetry": false,
+    "sandbox_verify": false
   }
 }
 ```
@@ -376,18 +396,23 @@ The workflow uses `.planning/config.json` to control behavior. This file is crea
 - **`model_defaults`** — the planner assigns a model per task; you can override before execution
 - **`workflow.research: false`** — skips the research phase (Step 4)
 - **`workflow.plan_check: false`** — skips the 11-dimension plan validation
+- **`workflow.memory_recall` / `workflow.telemetry` / `workflow.sandbox_verify`** — the three Process 2.0 capabilities below, all default `false`
 
-### How `model_profile` shifts tiers
+### Model profiles
 
-`model_profile` applies a uniform shift to all three `model_defaults` tiers. Boundaries are clamped — `haiku` cannot shift lower, `opus` cannot shift higher.
+`model_profile` shifts all three `model_defaults` tiers uniformly — `quality` up, `budget` down, from `balanced` (clamped at boundaries). Use `quality` for higher accuracy at higher cost, `budget` for faster/cheaper runs. Full shift table + per-field mid-workflow impact: [`config-schema.md`](docs/claude/config-schema.md).
 
-| Profile | mechanical | standard | complex |
-|---|---|---|---|
-| `balanced` (default) | haiku | sonnet | opus |
-| `quality` (tier up) | sonnet | opus | opus |
-| `budget` (tier down) | haiku | haiku | sonnet |
+### Optional Process 2.0 capabilities (default off)
 
-Use `quality` when you want higher accuracy at higher cost. Use `budget` when you want faster, cheaper execution at lower capability.
+Process 2.0 adds three opt-in capabilities, each gated by a `workflow.*` flag and **defaulting to `false`**. The workflow behaves exactly as before until you turn one on — nothing is added to a task that didn't opt in.
+
+| Flag | What it does |
+|---|---|
+| `workflow.memory_recall` | STEP 0 recalls the top relevant prior lessons from the process-memory store before the config prompt; STEP 11 writes new lessons back and runs the `/memory-clean` maintenance pass |
+| `workflow.telemetry` | STEP 7 captures per-task metrics (tokens, wall-clock, model, escalations); STEP 11 aggregates them into a telemetry table in the phase SUMMARY |
+| `workflow.sandbox_verify` | STEP 8 runs a bounded, evidence-only execute→observe→fix loop that attaches run evidence to VERIFICATION before UAT — it never auto-passes the step |
+
+To enable one, edit `.planning/config.json` (set the flag to `true`) or run `/update-config`. See [`config-schema.md`](docs/claude/config-schema.md) for the full field reference.
 
 ---
 
@@ -409,8 +434,11 @@ Use `quality` when you want higher accuracy at higher cost. Use `budget` when yo
 |---|---|
 | [`current-process-workflow.md`](docs/claude/current-process-workflow.md) | Full 11-step workflow with all rules |
 | [`state-files-guide.md`](docs/claude/state-files-guide.md) | State files — what they are, when to update |
+| [`memory-store-guide.md`](docs/claude/memory-store-guide.md) | Process-memory store (`.claude/memory/`) — schema, location, boundary rule |
 | [`research-phase-guide.md`](docs/claude/research-phase-guide.md) | Research phase agents, claim provenance |
-| [`mode-selection-criteria.md`](docs/claude/mode-selection-criteria.md) | How to score and select Mode A vs B |
+| [`modes.md`](docs/claude/modes.md) | Runtime modes + Mode Selection Gate + harness compatibility |
+| [`ai-team.md`](docs/claude/ai-team.md) | Mode B team topology + dispatch routing |
+| [`config-schema.md`](docs/claude/config-schema.md) | All `.planning/config.json` fields (single source of truth) |
 | [`agent-output-templates.md`](docs/claude/agent-output-templates.md) | Output template contracts (JSON) |
 | [`stack-skill-rule-map.md`](docs/claude/stack-skill-rule-map.md) | Mandatory skill per stack |
 | [`workflow-diagram.md`](docs/claude/workflow-diagram.md) | Mermaid diagram of full flow |
@@ -420,7 +448,7 @@ Use `quality` when you want higher accuracy at higher cost. Use `budget` when yo
 
 ## Contributing
 
-Read the full contributor guidelines in [CLAUDE.md](CLAUDE.md) before submitting a PR.
+Read the full contributor guidelines in [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a PR.
 
 Key rules:
 1. **Read the PR template** at [`.github/PULL_REQUEST_TEMPLATE.md`](.github/PULL_REQUEST_TEMPLATE.md) and fill in every section
