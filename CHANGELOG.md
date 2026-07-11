@@ -1,5 +1,26 @@
 # Changelog
 
+## [6.0.0] - 2026-07-11
+
+### Added
+
+- **Process 2.0 — three opt-in, default-off capabilities**, each gated by a `workflow.*` flag and built entirely from existing Claude Code primitives (markdown memory files, the `SessionStart` hook, the STEP 7 controller loop, the Bash tool). No external runtime, no new dependency. The 11-step workflow is unchanged until a flag is enabled.
+  - **`workflow.memory_recall`** (MEM-01/02/03/04) — a process-memory store at `.claude/memory/` (committed to git) for "how we worked" lessons. STEP 0 Resume recalls the top-relevant entries on demand (grep/glob search-then-load, top-K ranked — not a full-index load) before the config prompt; STEP 11 writes new lessons back, English-normalized. Lessons carry a `scope: global | project` tag so per-project entries never bloat the global index. Boundary rule: process-memory captures "how we worked"; the knowledge library (`.claude/skills/<project>-*`) stays authoritative for "what the code IS" — process-memory never writes into it.
+  - **`workflow.telemetry`** (OBS-01/02) — the STEP 7 controller appends per-task metrics (`model`, `wall_clock`, `escalation`, `req_ids`, and `tokens` when the harness exposes it) to `.planning/{phase}-telemetry.jsonl` (append-only, crash-tolerant); STEP 11 `finishing-a-development-branch` aggregates them into a telemetry table in the phase SUMMARY.
+  - **`workflow.sandbox_verify`** (VER-01/02) — STEP 8 runs a bounded, evidence-only execute→observe→fix loop: hard cap of 3 fix iterations, each fix scope-fenced to the task's REQ-ID and planned files, no permission escalation. Run evidence lands in the `phase-VERIFICATION.md` Evidence column, separate from UAT; STEP 8a UAT and the human PASS/PARTIAL/FAIL decision stay unskippable — verify never auto-passes the step.
+- **`docs/claude/memory-store-guide.md`** (NEW) — schema/contract for the `.claude/memory/` store: location, file format (MEMORY.md index + one `.md` per lesson), and the boundary rule vs the knowledge library.
+- **`skills/memory-maintenance/SKILL.md`** (NEW) — scans the process-memory store and **flags** duplicate / stale / superseded / contradictory lessons for human-approved removal (never auto-deletes). Runs via `/memory-clean` or as an inline flag-and-report pass at STEP 11.
+- **`commands/memory-clean.md`** (NEW) — slash-command registration for the maintenance skill.
+- **Three config flags** — `workflow.memory_recall`, `workflow.telemetry`, `workflow.sandbox_verify` added to `docs/claude/config-schema.md` (schema rows + display-grouping indices 11/12/13) and `docs/claude/templates/config.json`, all default **`false`** (CFG-01).
+
+### Pillars preserved
+
+- Never auto-advance · REQ-ID 100% traceability · AI does not self-declare done. Hooks only inject reminders; recall/telemetry are passive reads/writes; sandbox verify is bounded and evidence-only; memory maintenance flags but never deletes.
+
+### Backward compatibility
+
+- 100% — every capability defaults off, so projects on prior versions behave identically until a flag is flipped. Memory recall, telemetry, and the maintenance pass are all no-ops when their flag is off or their store is absent.
+
 ## [5.8.0] - 2026-05-21
 
 ### Added

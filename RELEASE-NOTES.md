@@ -1,5 +1,72 @@
 # Release Notes — happypowerprocess
 
+## v6.0.0 (2026-07-11)
+
+### Process 2.0 — Memory Recall, Observability & Sandbox Verification
+
+Process 2.0 absorbs the strengths of three agent stacks (Mem0, DeerFlow, MS Agent Framework) into the existing 11-step workflow as **native Claude Code primitives — no external runtime, no new dependency**. It ships **three opt-in capabilities, each gated by a `workflow.*` flag and defaulting to `false`**. The workflow is unchanged until you enable one.
+
+- **`workflow.memory_recall`** — a process-memory store at `.claude/memory/` (committed to git) captures "how we worked" lessons. STEP 0 Resume recalls the top-relevant entries on demand (grep/glob, ranked, top-K — not a full-index load) before the config prompt; STEP 11 writes new lessons back (English-normalized). Distinct from the knowledge library, which stays authoritative for "what the code IS".
+- **`workflow.telemetry`** — the STEP 7 controller appends per-task metrics (model, wall-clock, escalations, tokens when the harness exposes them) to `.planning/{phase}-telemetry.jsonl`; STEP 11 aggregates them into a telemetry table in the phase SUMMARY.
+- **`workflow.sandbox_verify`** — STEP 8 runs a **bounded, evidence-only** execute→observe→fix loop (hard cap 3 iterations, scope-fenced to the task's REQ-ID and planned files, no permission escalation). It attaches run evidence to VERIFICATION **before** UAT and **never** auto-passes the step — UAT and the human PASS/PARTIAL/FAIL decision remain unskippable.
+
+### Memory maintenance
+
+- **`/memory-clean`** (skill `memory-maintenance`) — scans the process-memory store and **flags** duplicate / stale / superseded / contradictory lessons for **human-approved** removal (never auto-deletes). Runs on demand or as an inline flag-and-report pass at STEP 11.
+
+### New files
+
+- **`docs/claude/memory-store-guide.md`** — schema/contract for the `.claude/memory/` store: location, file format, and the boundary rule vs the knowledge library.
+- **`skills/memory-maintenance/SKILL.md`** — the maintenance skill behind `/memory-clean` and the STEP-11 pass.
+- **`commands/memory-clean.md`** — slash-command registration.
+- **Three new config flags** — `workflow.memory_recall`, `workflow.telemetry`, `workflow.sandbox_verify` added to `config-schema.md` + `templates/config.json`, all default `false`.
+
+### The 3 pillars are preserved
+
+Never auto-advance · REQ-ID 100% traceability · AI does not self-declare done. Hooks only inject reminders; recall/telemetry are passive reads/writes; verify is bounded and evidence-only; maintenance flags but never deletes.
+
+### Backward compatibility
+
+- 100% — every capability defaults off. Projects on prior versions behave identically until a flag is flipped. Both memory recall and telemetry are no-ops when their store/flag is absent.
+
+---
+
+## v5.8.0 (2026-05-21)
+
+### State Files Validation System (4-layer defense)
+
+- **`validate-state` skill (NEW)** — runs at STEP 0 of every session resume (and on demand). Four check categories against state files: Existence, Schema (STATE.md sections + status enum + date format; REQUIREMENTS.md REQ-ID pattern + phase coverage + no dupes; ROADMAP/PROJECT sections), Freshness (STATE.md `last_updated` vs latest artifact/commit), and Drift (cross-reference current_step against artifacts, REQ-ID phase coverage, milestone alignment, mode consistency).
+- **Verdicts** — **CLEAN** (continue), **WARN** (display report, user picks `accept_drift / fix_now / cancel`), **FAIL** (block until fixed). No state file is modified without user consent.
+
+### Layer 1 — preventive STATE.md updates
+
+- `brainstorming`, `writing-plans`, `executing-plans`, `subagent-driven-development`, and `finishing-a-development-branch` each gained a mandatory "Update STATE.md" sub-step, so state stays fresh after every brainstorm / plan / wave / task / branch close.
+
+### Layer 3 — workflow integration
+
+- **`hooks/session-start`** detects STATE.md in cwd and injects a `<project-state-reminder>` telling the AI to run `validate-state` first (Claude Code + Cursor + Copilot CLI; Codex falls back to the CLAUDE.md directive).
+- CLAUDE.md, `current-process-workflow.md`, and `state-files-guide.md` updated to mandate validate-state at STEP 0.
+
+### Backward compatibility
+
+- No breaking change. Stale state files get a WARN on next resume → user chooses how to proceed. New skill is opt-in via STEP 0; skills with the new sub-step no-op when STATE.md is absent; the hook no-ops when STATE.md is not in cwd.
+
+---
+
+## v5.7.0 (2026-05-21)
+
+### Fast Lane skill + upstream sync
+
+- **`fast-lane-assessment-v1` skill (NEW)** — fills the gate that STEP 1 of the workflow named but never had a runnable skill for. Scores five criteria + hard exclusions → emits JSON → user confirmation. References existing sources of truth (criteria in `current-process-workflow.md` STEP 1, output schema in `agent-output-templates.md` T6) instead of duplicating them.
+- **Upstream sync (fork-block preserved)** — `using-git-worktrees` (Step 0 isolation detection, native-tool preference with git fallback), `finishing-a-development-branch` (environment detection, detached-HEAD menu, CWD safety, provenance-based cleanup), and `subagent-driven-development` (upstream "Continuous execution" paragraph, with the fork's Pre-Task Confirmation preserved and an explicit `mode: yolo` exception).
+- **Diff audit** — seven skills confirmed byte-identical to upstream; four intentionally retained fork-ahead (documented).
+
+### Backward compatibility
+
+- No config schema changes. No breaking changes to Mode A or Mode B; STEP 1 now resolves to a real skill instead of a missing reference. Worktree changes are additive.
+
+---
+
 ## v5.6.0 (2026-05-07)
 
 ### Mode B Claude-only Policy

@@ -45,10 +45,11 @@ If still no match → abort: `Plugin schema doc not found. Searched ~/.claude/, 
 
 ## d. Display Current Config
 
-Print a numbered table (entries derived from schema's "Display Grouping Convention" section; current count is 10, but use schema as source of truth):
+Print a numbered table whose rows and indices come **directly from the schema's "Display Grouping Convention" section** — do NOT hardcode the count or the highest index. Derive both from the grouping table each run, so new schema fields surface automatically. As of the current schema the grouping spans indices 0–13 (rendered below); if the schema adds rows, render them too.
 
 ```
 Current config:
+  0. active_harness:                    {value}
   1. mode:                              {value}
   2. granularity:                       {value}
   3. parallelization:                   {value}
@@ -61,9 +62,12 @@ Current config:
      model_defaults.complex:            {value}
   9. workflow.research:                 {value}
  10. workflow.plan_check:               {value}
+ 11. workflow.memory_recall:            {value}
+ 12. workflow.telemetry:                {value}
+ 13. workflow.sandbox_verify:           {value}
 ```
 
-Index 8 covers all 3 `model_defaults` sub-fields together — when picked, walk through all 3 sequentially.
+Index 8 covers all 3 `model_defaults` sub-fields together — when picked, walk through all 3 sequentially. Indices 11–13 are the Process 2.0 capability flags (`memory_recall`, `telemetry`, `sandbox_verify`), default `false`.
 
 ## e. User Picks Fields
 
