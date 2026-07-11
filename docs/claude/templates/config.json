@@ -16,6 +16,9 @@
   },
   "workflow": {
     "research": true,
-    "plan_check": true
+    "plan_check": true,
+    "memory_recall": false,
+    "telemetry": false,
+    "sandbox_verify": false
   }
 }

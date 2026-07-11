@@ -21,6 +21,9 @@ This file is the single source of truth for all fields in `.planning/config.json
 | `model_defaults.complex` | string | `opus` | model name | Model for complex tasks (architecture, design judgment) | Unexecuted tasks use new model |
 | `workflow.research` | bool | `true` | `true` / `false` | Enable research phase (STEP 4 of workflow) | Apply from next step |
 | `workflow.plan_check` | bool | `true` | `true` / `false` | Enable Plan Checker (validates 11 dimensions, max 3 revision loops) | Apply from next plan |
+| `workflow.memory_recall` | bool | `false` | `true` / `false` | Enable process-memory recall at STEP 0 (grep/glob top-K lessons before "keep or edit?") | Apply from next STEP 0 / resume |
+| `workflow.telemetry` | bool | `false` | `true` / `false` | Enable per-task telemetry capture at STEP 7 and the SUMMARY telemetry table at STEP 11 | Apply from next task |
+| `workflow.sandbox_verify` | bool | `false` | `true` / `false` | Enable bounded sandbox execute→observe→fix verification at STEP 8 (evidence-only, UAT preserved) | Apply from next STEP 8 |
 
 ---
 
@@ -41,6 +44,9 @@ When `/update-config` displays the config table to the user, schema rows are gro
 | 8 | model_defaults.mechanical + model_defaults.standard + model_defaults.complex | **Grouped**: picking index 8 walks all 3 sub-fields sequentially |
 | 9 | workflow.research | Sub-field, displayed individually |
 | 10 | workflow.plan_check | Sub-field, displayed individually |
+| 11 | workflow.memory_recall | Sub-field, displayed individually |
+| 12 | workflow.telemetry | Sub-field, displayed individually |
+| 13 | workflow.sandbox_verify | Sub-field, displayed individually |
 
 **Rule for new fields**: When adding a new schema row, decide if it should:
 - (a) Get its own top-level index (default for independent fields)
